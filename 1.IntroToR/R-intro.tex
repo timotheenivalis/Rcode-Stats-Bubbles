@@ -1,0 +1,175 @@
+\documentclass[12pt,a4paper]{scrartcl}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+%\usepackage{silence}
+\usepackage{mdframed}
+%\WarningFilter{mdframed}{You got a bad break}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{color}
+\colorlet{exampcol}{blue!10}
+\usepackage{multicol}
+\usepackage{booktabs}
+
+\title{A minimalistic introduction to R}
+\date{\today}
+\author{Timothée Bonnet \& al.}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+\maketitle
+
+\textit{This document recycles tutorials written by Koen van Benthem and Tina Cornioley}
+
+\tableofcontents
+
+
+
+\vspace{2cm}
+\begin{mdframed}
+\textit{We do not claim to teach you the most efficient way to use \texttt{R}. If you at some point during the computer practicals encounter a code that you could make more efficient or elegant, please do let us know! \\[1.5ex] 
+However, do try to understand exactly what we are doing and how the functions we use work. The best way to learn how functions work is by either using the \texttt{R}-manaul (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
+\end{mdframed}
+\newpage
+
+\section*{How this document works}
+This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
+R code and output is generally contained within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
+
+\section{Trash your calculator}
+\texttt{R} can be used as a calculator, and a far more powerful one that any physical calculator. If you use your calculator to enter numbers in \texttt{R}, you are being inefficient.
+
+Below we demonstrate the use of some basic mathematical operators:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlnum{1}\hlopt{+}\hlnum{3} \hlcom{#addition}
+\end{alltt}
+\begin{verbatim}
+## [1] 4
+\end{verbatim}
+\begin{alltt}
+\hlnum{5}\hlopt{-}\hlnum{2} \hlcom{#substraction}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlnum{6}\hlopt{*}\hlnum{4} \hlcom{#multiplication}
+\end{alltt}
+\begin{verbatim}
+## [1] 24
+\end{verbatim}
+\begin{alltt}
+\hlnum{14}\hlopt{/}\hlnum{2} \hlcom{#division}
+\end{alltt}
+\begin{verbatim}
+## [1] 7
+\end{verbatim}
+\begin{alltt}
+\hlnum{2}\hlopt{^}\hlnum{3} \hlcom{#exponent}
+\end{alltt}
+\begin{verbatim}
+## [1] 8
+\end{verbatim}
+\begin{alltt}
+\hlnum{2}\hlopt{**}\hlnum{3} \hlcom{#or equivalently}
+\end{alltt}
+\begin{verbatim}
+## [1] 8
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+There are many mathematical functions already present in R:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{exp}\hlstd{(}\hlnum{3}\hlstd{)} \hlcom{#exponential}
+\end{alltt}
+\begin{verbatim}
+## [1] 20.08554
+\end{verbatim}
+\begin{alltt}
+\hlkwd{log}\hlstd{(}\hlnum{2.71}\hlstd{)} \hlcom{#logarithm}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9969486
+\end{verbatim}
+\begin{alltt}
+\hlkwd{sqrt}\hlstd{(}\hlnum{9}\hlstd{)} \hlcom{#square root, which of course you can also write as:}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlnum{9} \hlopt{^} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlkwd{sin}\hlstd{(pi}\hlopt{/}\hlnum{2}\hlstd{);} \hlkwd{cos}\hlstd{(}\hlnum{1}\hlstd{);} \hlkwd{tan}\hlstd{(pi}\hlopt{/}\hlnum{3}\hlstd{)} \hlcom{#trigonometric functions}
+\end{alltt}
+\begin{verbatim}
+## [1] 1
+## [1] 0.5403023
+## [1] 1.732051
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{document}
