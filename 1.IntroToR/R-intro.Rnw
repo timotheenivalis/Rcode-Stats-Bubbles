@@ -33,8 +33,8 @@ options(width=60)
 
 \vspace{2cm}
 \begin{mdframed}
-\textit{We do not claim to teach you the most efficient way to use \texttt{R}. If you at some point during the computer practicals encounter a code that you could make more efficient or elegant, please do let us know! \\[1.5ex] 
-However, do try to understand exactly what we are doing and how the functions we use work. The best way to learn how functions work is by either using the \texttt{R}-manaul (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
+\textit{There are many ways to achieve the same goal in \texttt{R}, and we do not claim to teach you the most efficient way to use \texttt{R}. If you at some point during the computer practicals encounter a code that you could make more efficient or elegant, please do let us know! \\[1.5ex] 
+Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manaul (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
 \end{mdframed}
 \newpage
 
@@ -42,7 +42,12 @@ However, do try to understand exactly what we are doing and how the functions we
 This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
 R code and output is generally contained within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
 
+All the files necessary to go through the workshop are (or should be!) in the folder of a github repository. We recommand you copy these files, or fork the repository if you are a git user.
+
+Now, let's the fun begin.
+
 \section{Trash your calculator}
+\subsection{Operators}
 \texttt{R} can be used as a calculator, and a far more powerful one that any physical calculator. If you use your calculator to enter numbers in \texttt{R}, you are being inefficient.
 
 Below we demonstrate the use of some basic mathematical operators:
@@ -63,5 +68,60 @@ sqrt(9) #square root, which of course you can also write as:
 9 ^ (1/2)
 sin(pi/2); cos(1); tan(pi/3) #trigonometric functions
 @
+
+\begin{mdframed}
+\textbf{Small exercise}
+Use R to compute
+$$
+  y = \frac{1}{2\sqrt{2\pi}} e^{\frac{-1}{2} (\frac{3-\pi}{2})^2}
+$$
+
+<<echo=FALSE, eval=FALSE>>=
+(1/(2*sqrt(2*pi))) * exp((-1/2)*((3-pi)/2)^2)
+@
+
+\end{mdframed}
+
+Logical operators are very important for programming and scripting.
+You can test whether two things are equal with double = signs:
+<<logop>>=
+3 == 6/2 #is 3 equal to 6/2? TRUE!
+3 == pi  # FALSE!
+@
+
+You can also test if they are NOT equal with the operator \texttt{!=}:
+<<>>=
+2 != 3
+2 != 2
+@
+
+The AND operator is \texttt{\&}
+<<>>=
+2 == 2 & 3==3
+2 ==2 & 3==2
+@
+
+The OR operator is \texttt{\textbar}
+<<>>=
+2 == 2 | 3==2
+2 == 4 | 3==2
+@
+
+
+
+\subsection{Assignment}
+
+
+<<>>=
+
+@
+
+\section{loops and if statements}
+
+\subsection{for loops}
+
+\subsection{while loops}
+
+\subsection{if statements}
 
 \end{document}
