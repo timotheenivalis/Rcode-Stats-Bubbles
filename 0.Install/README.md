@@ -1,14 +1,8 @@
 # Installing R and RStudio
 
-<<<<<<< HEAD
 Please install the latest version of *R* on your laptop (at the very least be sure the version is >3.2).
 
 Although not strictly necessary, installing the latest version of *RStudio* is strongly recommended, and the workshops will be prepared assuming that you run R from RStudio.
-=======
-You will need to install *R* on your laptop.
-
-Although not strictly necessary, installing *RStudio* is strongly suggested, and the workshops will be prepared assuming that you run R from RStudio.
->>>>>>> d646ef336729b12e5782c22034067d4916721eee
 
 If you experience difficulties with the installation(s), email me and I will do my best to assist.
 
@@ -53,6 +47,3 @@ Under linux, you may also be able to install RStudio with
 ```sh
 sudo apt-get intall rstudio
 ```
-=======
-## RStudio
->>>>>>> d646ef336729b12e5782c22034067d4916721eee
