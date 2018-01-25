@@ -1,6 +1,10 @@
 # Installing R and RStudio
 
-Please install the latest version of *R* on your laptop (at the very least be sure the version is >3.2).
+Please install the latest version of *R* on your laptop (at the very least be sure the version is >3.2). In R, you can check the version with the command
+```R
+version
+```
+
 
 Although not strictly necessary, installing the latest version of *RStudio* is strongly recommended, and the workshops will be prepared assuming that you run R from RStudio.
 
