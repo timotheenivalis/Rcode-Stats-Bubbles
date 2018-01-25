@@ -43,5 +43,61 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{R and RStudio}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{What R can do}
+
+  \pause Everything.
+
+\end{frame}
+%%%%%%%%%%%
+
+
+\section{The mean}
+
+\begin{frame}[fragile]{Calculating a mean}
+
+<<>>=
+  (2 + 3 + 5 + 1) / 4
+@
+\pause
+<<>>=
+  a <- 2
+  b <- 3
+  c <- 5
+  d <- 1
+  
+  (a + b + c + d) / 4
+@
+\pause
+<<>>=
+  a <- 45
+  (a + b + c + d) / 4
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Calculating a mean}
+  <<>>=
+  mean(x = c(2,3,5,1))
+  @
+  
+  \pause
+  
+  
+\end{frame}
+%%%%%%%%%%%
+
+\section{Open exercise}
+
+\begin{frame}
+  Calculate population growth rate year-by-year ($ N_{t+1}/N_{t}$) in XXX data.
+  
+  
+  
+\end{frame}
 
 \end{document}
