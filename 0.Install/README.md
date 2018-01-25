@@ -8,7 +8,6 @@ If you experience difficulties with the installation(s), email me and I will do 
 
 ## R
 
-<<<<<<< HEAD
 Go to [https://cran.curtin.edu.au/](https://cran.curtin.edu.au/)  or [https://cloud.r-project.org/](https://cloud.r-project.org/).
 Click the download option appropriate for your operating system (Linux, Windows, OS X), then:
 
