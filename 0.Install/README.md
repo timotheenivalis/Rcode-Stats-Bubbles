@@ -50,3 +50,7 @@ Under linux, you may also be able to install RStudio with
 ```sh
 sudo apt-get intall rstudio
 ```
+# Using R from RStudio
+
+By default, RStudio is organized in four panes (quadrants):
+![image](rstudiolayout.jpg)
