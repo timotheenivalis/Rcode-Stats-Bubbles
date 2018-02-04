@@ -13,6 +13,8 @@
 \usepackage{multicol}
 \usepackage{booktabs}
 
+\usepackage{hyperref}
+
 \title{A minimalist introduction to R}
 \date{\today}
 \author{Timothée Bonnet \& al.}
@@ -174,18 +176,101 @@ a[1:2] <- 1
 a
 @
 
+\subsection{Matrix}
+A matrix is similar to a vector, but in two dimensions.
+You can create one with the function \texttt{matrix()}.
+
+For instance:
+<<>>=
+a <- matrix(data = c(1,2,3,4), nrow = 2)
+a
+@
+
+You can access the cell in the row $i$ of the column $j$ using squared brackets like for vectors, but since there are two dimensions rather than one, you may give two numbers: \texttt{a[i,j]}.
+
+<<>>=
+#extracting the element in the first row of the second column:
+a[1,2]
+
+# extracting all of the second row:
+a[2,]
+
+# changing all of the first column:
+a[,1] <- 29
+a
+@
+
+That is all for now. If you want to learn more, check the help for this function, using:
+<<eval=FALSE>>=
+?matrix
+@
+
+\subsection{Data-frame}
+Data-frames are similar to matrices, but are much more flexible: they can store different data types and their elements can be accessed in more efficient ways.
+
+\textbf{R is probably most efficient and user-friendly when analyses rely on data-frames.}
 
 
+<<>>=
+plant_data <- data.frame(plant = c("potatoes", "water hemlock", "carrot"),
+                         number= c(3,5,39), danger= c(FALSE,TRUE,FALSE))
 
-\section{loops and if statements}
+plant_data
+@
+
+You can access and modify elements in the same way as for matrices:
+<<>>=
+plant_data[3,2]
+plant_data[3,]
+@
+
+But you can also use column names, which are more human-friendly than numbers:
+<<>>=
+plant_data[1,"plant"]
+
+plant_data[,"danger"]
+@
+
+In some case it is easier to work with a different syntax using the dollar sign. Below, we access the same elements using this alternative syntax:
+
+<<>>=
+plant_data$plant[1]
+
+plant_data$danger
+@
+
+\section{Loops and if statements}
+Loops allow you to 
 
 \subsection{for loops}
-
-\subsection{while loops}
 
 \subsection{if statements}
 
 
+\section{Simple Graphics}
 
+You can create graphics with various functions, the most fundamental one being \texttt{plot()}.
+For instance:
+
+<<plot1, fig.height=4, fig.width=6>>=
+plot(x = c(1,2,3,4), y=c(0,0.2,0.4,0.5))
+@
+
+(the graph should appear when you run this line)
+
+
+That's rather ugly, and we will learn how to make beautiful graphes in efficient ways. For now, let's just tweak a few things to demonstrate the use of options within the plot function:
+
+<<plot2, fig.height=4, fig.width=6>>=
+plot(x = c(1,2,3,4), y=c(0,0.2,0.4,0.5), type = "b",
+     main = "Important result", xlab = "Cause", 
+     ylab = "Consequence", xlim = c(0,4), col="red")
+@
+
+\begin{mdframed}
+\textbf{Small exercise}\\
+Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red.
+
+\end{mdframed}
 
 \end{document}
