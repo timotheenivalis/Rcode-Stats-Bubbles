@@ -54,3 +54,18 @@ sudo apt-get intall rstudio
 
 By default, RStudio is organized in four panes (quadrants):
 ![image](rstudiolayout.jpg)
+
+Very quickly, they are:
+1. Script: think of this as a (fancy) text editor. What you type there is not run by R (you have to send it to R, with the buttons in the top-right of the pane, by pressing a hot-key (something like control-enter), or by copy-pasting if you are not sure about other options).
+2. Console: **this is R**. Type anything, press enter, R should react (most likely by printing an error message if you literally typed anything).
+3. Workspace and History: the objects you created by typing R commands; and the history of what you typed. Not crucial for now
+4. Files, Plots, Packages, Help: not crucial for now.
+
+Try and run a command directly in the console, for instance:
+```R
+2 + 3
+```
+
+If somehow you don't manage to have R make this calculation (I think the result should be around five), get in touch with me before the first workshop, and I will try to help!
+
+ 
