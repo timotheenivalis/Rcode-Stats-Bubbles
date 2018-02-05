@@ -17,6 +17,13 @@
 \MakeOuterQuote{"}
 
 \usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=black
+}
 
 \title{A minimalist introduction to R}
 \date{\today}
@@ -39,15 +46,15 @@ opts_chunk$set(background='#D7DDEB')
 \vspace{2cm}
 \begin{mdframed}
 \textit{There are many ways to achieve the same goal in \texttt{R}, and we do not claim to teach you the most efficient way to use \texttt{R}. You may find more elegant ways! \\[1.5ex] 
-Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manual (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
+Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manual (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and observe what the function does with these data.}
 \end{mdframed}
 \newpage
 
 \section*{How this document works}
 %This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
-R code and output is generally contained within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
+R code and output are within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
 
-All the files necessary to go through the workshop are (or should be!) in the folder of a github repository. We recommend you copy these files, or fork the repository if you are a git user.
+There are a few small exercises in each section. If you encounter any difficulty with them, ask me for help before the workshop (for instance just before, I will be in the room 30 minutes early).
 
 Now, let's the fun begin.
 
@@ -142,7 +149,7 @@ c <- a == "b"
 c
 @
 
-\section{Containers}
+\section{No need to write it on paper: Containers}
 A container is some kind of object that can contain several values.
 
 \subsection{Vectors}
