@@ -63,7 +63,12 @@
 \usepackage{multicol}
 \usepackage{booktabs}
 
-\title{A minimalistic introduction to R}
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+\usepackage{hyperref}
+
+\title{A minimalist introduction to R}
 \date{\today}
 \author{Timothée Bonnet \& al.}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -72,24 +77,22 @@
 
 \maketitle
 
-\textit{This document recycles tutorials written by Koen van Benthem and Tina Cornioley}
-
 \tableofcontents
 
 
 
 \vspace{2cm}
 \begin{mdframed}
-\textit{There are many ways to achieve the same goal in \texttt{R}, and we do not claim to teach you the most efficient way to use \texttt{R}. If you at some point during the computer practicals encounter a code that you could make more efficient or elegant, please do let us know! \\[1.5ex] 
-Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manaul (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
+\textit{There are many ways to achieve the same goal in \texttt{R}, and we do not claim to teach you the most efficient way to use \texttt{R}. You may find more elegant ways! \\[1.5ex] 
+Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manual (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
 \end{mdframed}
 \newpage
 
 \section*{How this document works}
-This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
+%This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
 R code and output is generally contained within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
 
-All the files necessary to go through the workshop are (or should be!) in the folder of a github repository. We recommand you copy these files, or fork the repository if you are a git user.
+All the files necessary to go through the workshop are (or should be!) in the folder of a github repository. We recommend you copy these files, or fork the repository if you are a git user.
 
 Now, let's the fun begin.
 
@@ -99,7 +102,7 @@ Now, let's the fun begin.
 
 Below we demonstrate the use of some basic mathematical operators:
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlnum{1}\hlopt{+}\hlnum{3} \hlcom{#addition}
 \end{alltt}
@@ -141,7 +144,7 @@ Below we demonstrate the use of some basic mathematical operators:
 
 There are many mathematical functions already present in R:
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{exp}\hlstd{(}\hlnum{3}\hlstd{)} \hlcom{#exponential}
 \end{alltt}
@@ -177,7 +180,8 @@ There are many mathematical functions already present in R:
 \end{kframe}
 \end{knitrout}
 
-\begin{mdframed}{Small}
+\begin{mdframed}
+\textbf{Small exercise}\\
 Use R to compute
 $$
   y = \frac{1}{2\sqrt{2\pi}} e^{\frac{-1}{2} (\frac{3-\pi}{2})^2}
@@ -190,7 +194,7 @@ $$
 Logical operators are very important for programming and scripting.
 You can test whether two things are equal with double = signs:
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlnum{3} \hlopt{==} \hlnum{6}\hlopt{/}\hlnum{2} \hlcom{#is 3 equal to 6/2? TRUE!}
 \end{alltt}
@@ -208,7 +212,7 @@ You can test whether two things are equal with double = signs:
 
 You can also test if they are NOT equal with the operator \texttt{!=}:
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlnum{2} \hlopt{!=} \hlnum{3}
 \end{alltt}
@@ -226,7 +230,7 @@ You can also test if they are NOT equal with the operator \texttt{!=}:
 
 The AND operator is \texttt{\&}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlnum{2} \hlopt{==} \hlnum{2} \hlopt{&} \hlnum{3}\hlopt{==}\hlnum{3}
 \end{alltt}
@@ -244,7 +248,7 @@ The AND operator is \texttt{\&}
 
 The OR operator is \texttt{\textbar}
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlnum{2} \hlopt{==} \hlnum{2} \hlopt{|} \hlnum{3}\hlopt{==}\hlnum{2}
 \end{alltt}
@@ -260,19 +264,617 @@ The OR operator is \texttt{\textbar}
 \end{kframe}
 \end{knitrout}
 
-
+\begin{mdframed}
+\textbf{Small exercise}\\
+Try and guess the result of these logical tests before running them:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlopt{!} \hlnum{1}\hlopt{==}\hlnum{2}
+\hlstd{(}\hlnum{1}\hlopt{!=}\hlnum{2} \hlopt{|} \hlnum{3}\hlopt{==}\hlnum{4}\hlstd{)} \hlopt{&} \hlstd{(}\hlnum{2}\hlopt{==}\hlnum{4}\hlopt{/}\hlnum{2}\hlstd{)}
+\hlstr{"abc"} \hlopt{!=} \hlstr{"bc"}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{mdframed}
 
 \subsection{Assignment}
+Values can be assigned to objects to store them and make your code flexible. You assign a value to an object using the operator \verb+ <- + (or \verb+ = +, but be careful not to confuse this with the \verb+ == + used in tests).
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#You can use objects in calculation}
+\hlstd{a} \hlkwb{<-} \hlnum{12}
+\hlstd{a} \hlopt{+} \hlnum{2}
+\end{alltt}
+\begin{verbatim}
+## [1] 14
+\end{verbatim}
+\begin{alltt}
+\hlcom{# you can assign an object value to another object}
+\hlstd{b} \hlkwb{<-} \hlstd{a}
+\hlstd{c} \hlkwb{<-} \hlstd{a}\hlopt{*}\hlstd{b}
+
+\hlcom{# you can re-assign an object}
+\hlstd{a} \hlkwb{<-} \hlstr{"c"}
+\hlstd{b} \hlkwb{<-} \hlstr{"c"}
+\hlstd{a} \hlopt{==} \hlstd{b}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\begin{alltt}
+\hlstd{c} \hlkwb{<-} \hlstd{a} \hlopt{==} \hlstr{"b"}
+\hlstd{c}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\section{Containers}
+A container is some kind of object that can contain several values.
+
+\subsection{Vectors}
+The simplest container is a vector.
+A flexible way to create a vector by \textit{concatenating} several values with the syntax \verb+ c(x,y,...)+.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{a} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{9}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{)}
+\hlstd{a}
+\end{alltt}
+\begin{verbatim}
+## [1] 3 9 3 5
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+You can now do calculations on your vector:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{a} \hlopt{*} \hlnum{2}
+\end{alltt}
+\begin{verbatim}
+## [1]  6 18  6 10
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+You can access one or several elements in the vector using squared brackets
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#access one value}
+\hlstd{a[}\hlnum{1}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlstd{a[}\hlnum{2}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] 9
+\end{verbatim}
+\begin{alltt}
+\hlcom{#access multiple values by concatenating locations}
+\hlstd{a[}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{3}\hlstd{)]}
+\end{alltt}
+\begin{verbatim}
+## [1] 3 3
+\end{verbatim}
+\begin{alltt}
+\hlcom{#access mutiple successive values}
+\hlstd{a[}\hlnum{2}\hlopt{:}\hlnum{4}\hlstd{]}\hlcom{#the syntax x:y means "all integers between x and y"}
+\end{alltt}
+\begin{verbatim}
+## [1] 9 3 5
+\end{verbatim}
+\begin{alltt}
+\hlcom{#modify a value}
+\hlstd{a[}\hlnum{3}\hlstd{]} \hlkwb{<-} \hlopt{-}\hlnum{5}
+\hlstd{a}
+\end{alltt}
+\begin{verbatim}
+## [1]  3  9 -5  5
+\end{verbatim}
+\begin{alltt}
+\hlcom{#modify mutiple values}
+\hlstd{a[}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{]} \hlkwb{<-} \hlnum{1}
+\hlstd{a}
+\end{alltt}
+\begin{verbatim}
+## [1]  1  1 -5  5
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\subsection{Matrix}
+A matrix is similar to a vector, but in two dimensions.
+You can create one with the function \texttt{matrix()}.
+
+For instance:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{a} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{a}
+\end{alltt}
+\begin{verbatim}
+##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+You can access the cell in the row $i$ of the column $j$ using squared brackets like for vectors, but since there are two dimensions rather than one, you may give two numbers: \texttt{a[i,j]}.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#extracting the element in the first row of the second column:}
+\hlstd{a[}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlcom{# extracting all of the second row:}
+\hlstd{a[}\hlnum{2}\hlstd{,]}
+\end{alltt}
+\begin{verbatim}
+## [1] 2 4
+\end{verbatim}
+\begin{alltt}
+\hlcom{# changing all of the first column:}
+\hlstd{a[,}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlnum{29}
+\hlstd{a}
+\end{alltt}
+\begin{verbatim}
+##      [,1] [,2]
+## [1,]   29    3
+## [2,]   29    4
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+That is all for now. If you want to learn more, check the help for this function, using:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlopt{?}\hlstd{matrix}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\subsection{Data-frame}
+Data-frames are similar to matrices, but are much more flexible: they can store different data types and their elements can be accessed in more efficient ways.
+
+\textbf{R is probably most efficient and user-friendly when analyses rely on data-frames.}
 
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{plant} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"potatoes"}\hlstd{,} \hlstr{"water hemlock"}\hlstd{,} \hlstr{"carrot"}\hlstd{),}
+                         \hlkwc{number}\hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{39}\hlstd{),} \hlkwc{danger}\hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{FALSE}\hlstd{,}\hlnum{TRUE}\hlstd{,}\hlnum{FALSE}\hlstd{),}
+                         \hlkwc{stringsAsFactors} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlstd{plant_data}
+\end{alltt}
+\begin{verbatim}
+##           plant number danger
+## 1      potatoes      3  FALSE
+## 2 water hemlock      5   TRUE
+## 3        carrot     39  FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+You can access and modify elements in the same way as for matrices:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data[}\hlnum{3}\hlstd{,}\hlnum{2}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] 39
+\end{verbatim}
+\begin{alltt}
+\hlstd{plant_data[}\hlnum{3}\hlstd{,]}
+\end{alltt}
+\begin{verbatim}
+##    plant number danger
+## 3 carrot     39  FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+But you can also use column names, which are more human-friendly than numbers:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data[}\hlnum{1}\hlstd{,}\hlstr{"plant"}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] "potatoes"
+\end{verbatim}
+\begin{alltt}
+\hlstd{plant_data[,}\hlstr{"danger"}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE  TRUE FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+In some case it is easier to work with a different syntax using the dollar sign. Below, we access the same elements using this alternative syntax:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data}\hlopt{$}\hlstd{plant[}\hlnum{1}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+## [1] "potatoes"
+\end{verbatim}
+\begin{alltt}
+\hlstd{plant_data}\hlopt{$}\hlstd{danger}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE  TRUE FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+It is very easy to create new columns, with one or the other syntax:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data[,}\hlstr{"tasty"}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{TRUE}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{TRUE}\hlstd{)} \hlcom{#NA means missing value}
+
+\hlstd{plant_data}\hlopt{$}\hlstd{color} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"variable"}\hlstd{,} \hlstr{"green"}\hlstd{,} \hlstr{"orange"}\hlstd{)}
+
+\hlstd{plant_data}
+\end{alltt}
+\begin{verbatim}
+##           plant number danger tasty    color
+## 1      potatoes      3  FALSE  TRUE variable
+## 2 water hemlock      5   TRUE    NA    green
+## 3        carrot     39  FALSE  TRUE   orange
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+You can also add new entries (rows):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plant_data[}\hlnum{4}\hlstd{,]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"eucalyptus"}\hlstd{,} \hlnum{24}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{FALSE}\hlstd{,} \hlstr{"green"}\hlstd{)}
+\hlstd{plant_data}
+\end{alltt}
+\begin{verbatim}
+##           plant number danger tasty    color
+## 1      potatoes      3  FALSE  TRUE variable
+## 2 water hemlock      5   TRUE  <NA>    green
+## 3        carrot     39  FALSE  TRUE   orange
+## 4    eucalyptus     24   <NA> FALSE    green
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
-\section{loops and if statements}
+\begin{mdframed}
+\textbf{Small exercise}\\
+Imagine you are a koala. Change the information about eucalyptus tastiness in the data-frame \verb+plant_data+.
 
-\subsection{for loops}
+\end{mdframed}
 
-\subsection{while loops}
+\section{For loops}
+Loops are a way to automatize repetitive tasks. 
 
-\subsection{if statements}
+To demonstrate this, let's load some data that are buit-in R:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{data}\hlstd{(volcano)}
+\hlkwd{head}\hlstd{(volcano)}
+\end{alltt}
+\begin{verbatim}
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]  100  100  101  101  101  101  101  100  100   100
+## [2,]  101  101  102  102  102  102  102  101  101   101
+## [3,]  102  102  103  103  103  103  103  102  102   102
+## [4,]  103  103  104  104  104  104  104  103  103   103
+## [5,]  104  104  105  105  105  105  105  104  104   103
+## [6,]  105  105  105  106  106  106  106  105  105   104
+##      [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19]
+## [1,]   101   101   102   102   102   102   103   104   103
+## [2,]   102   102   103   103   103   103   104   105   104
+## [3,]   103   103   104   104   104   104   105   106   105
+## [4,]   103   104   104   104   105   105   106   107   106
+## [5,]   104   104   105   105   105   106   107   108   108
+## [6,]   104   105   105   106   106   107   109   110   110
+##      [,20] [,21] [,22] [,23] [,24] [,25] [,26] [,27] [,28]
+## [1,]   102   101   101   102   103   104   104   105   107
+## [2,]   103   102   102   103   105   106   106   107   109
+## [3,]   104   104   105   106   107   108   110   111   113
+## [4,]   106   106   107   108   110   111   114   117   118
+## [5,]   108   109   110   112   114   115   118   121   122
+## [6,]   112   113   115   116   118   119   121   124   126
+##      [,29] [,30] [,31] [,32] [,33] [,34] [,35] [,36] [,37]
+## [1,]   107   107   108   108   110   110   110   110   110
+## [2,]   110   110   110   110   111   112   113   114   116
+## [3,]   114   115   114   115   116   118   119   119   121
+## [4,]   117   119   120   121   122   124   125   126   127
+## [5,]   121   123   128   131   129   130   131   131   132
+## [6,]   126   129   134   137   137   136   136   135   136
+##      [,38] [,39] [,40] [,41] [,42] [,43] [,44] [,45] [,46]
+## [1,]   110   110   110   108   108   108   107   107   108
+## [2,]   115   114   112   110   110   110   109   108   109
+## [3,]   121   120   118   116   114   112   111   110   110
+## [4,]   127   126   124   122   120   117   116   113   111
+## [5,]   132   131   130   128   126   122   119   115   114
+## [6,]   136   136   135   133   129   126   122   118   116
+##      [,47] [,48] [,49] [,50] [,51] [,52] [,53] [,54] [,55]
+## [1,]   108   108   108   108   107   107   107   107   106
+## [2,]   109   109   109   108   108   108   108   107   107
+## [3,]   110   110   109   109   109   109   108   108   107
+## [4,]   110   110   110   109   109   109   109   108   108
+## [5,]   112   110   110   110   110   110   109   109   108
+## [6,]   115   113   111   110   110   110   110   109   108
+##      [,56] [,57] [,58] [,59] [,60] [,61]
+## [1,]   106   105   105   104   104   103
+## [2,]   106   106   105   105   104   104
+## [3,]   107   106   106   105   105   104
+## [4,]   107   107   106   106   105   105
+## [5,]   107   107   107   106   106   105
+## [6,]   108   108   107   107   106   106
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\texttt{volcano} is a matrix containing topographic information for the Maunga Whau volcano.
+
+You can visualize it with:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{image}\hlstd{(volcano)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/imvol-1} 
+
+\end{knitrout}
+
+Now, let's pretend with want the average elevation for every column.
+
+We can use the function \texttt{mean()} to calculate the average of the first column, remembering how to access a column in a matrix:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{( volcano[,}\hlnum{1}\hlstd{] )}
+\end{alltt}
+\begin{verbatim}
+## [1] 110.5862
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+We could change 1 to 2, then 3, then 4... until 61, and run 61 R-commands, but that is horribly inefficient. 
+That is where a for-loop may be useful. Instead of writing code for the column "1" or "2"..."61",  we will write code for column "i", where "i" varies between 1 and 61: \texttt{mean( volcano[,i] )}.
+
+Now, R doesn't know yet what "i" is, and would return an error message if you run this:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{( volcano[,i] )}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mean(volcano[, i]): object 'i' not found}}\end{kframe}
+\end{knitrout}
+
+We need to include our code within a for-loop defining "i":
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{61}\hlstd{)}
+\hlstd{\{}
+  \hlstd{...}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+The above code can be read as: "Define a variable i that will take integer values between 1 and 61, and do whatever is withing curly brackets for each value of i. "
+
+If we run this:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{61}\hlstd{)}
+\hlstd{\{}
+  \hlkwd{mean}\hlstd{( volcano[,i] )}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+it looks like nothing happened. Actually, R did compute all the averages, but we didn't ask R to print the results or store them somewhere, so the loop was useless. 
+
+We can print the results using the function \texttt{print()}:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{61}\hlstd{)}
+\hlstd{\{}
+  \hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{( volcano[,i] ))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] 110.5862
+## [1] 111.8276
+## [1] 112.954
+## [1] 114.1149
+## [1] 115.1264
+## [1] 116.1034
+## [1] 117.1494
+## [1] 118.069
+## [1] 119.4483
+## [1] 121.3218
+## [1] 123.3448
+## [1] 125.4368
+## [1] 127.6207
+## [1] 130.023
+## [1] 132.6667
+## [1] 134.9655
+## [1] 137.1379
+## [1] 139.1034
+## [1] 141.1149
+## [1] 143.2414
+## [1] 145.2414
+## [1] 147.1494
+## [1] 148.8736
+## [1] 150.023
+## [1] 150.8391
+## [1] 151.2529
+## [1] 151.1034
+## [1] 150.4253
+## [1] 149.4023
+## [1] 148.4023
+## [1] 147.5402
+## [1] 146.3908
+## [1] 145.2644
+## [1] 144.3103
+## [1] 143.5517
+## [1] 142.977
+## [1] 142.4943
+## [1] 141.7701
+## [1] 141.2069
+## [1] 140.4483
+## [1] 139.4368
+## [1] 138.092
+## [1] 136.4483
+## [1] 134.7126
+## [1] 132.6092
+## [1] 130.3218
+## [1] 128.3793
+## [1] 126.1724
+## [1] 124.3103
+## [1] 122.023
+## [1] 119.4828
+## [1] 116.9655
+## [1] 114.8736
+## [1] 112.8161
+## [1] 110.9885
+## [1] 109.0115
+## [1] 107.3678
+## [1] 105.8276
+## [1] 104.6322
+## [1] 103.8046
+## [1] 103.1609
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Even better, we can store the results in a vector that we create before the loop:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{averages} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{=} \hlnum{61}\hlstd{)}
+
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{61}\hlstd{)}
+\hlstd{\{}
+  \hlstd{averages[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{( volcano[,i] )}
+\hlstd{\}}
+
+\hlstd{averages}
+\end{alltt}
+\begin{verbatim}
+##  [1] 110.5862 111.8276 112.9540 114.1149 115.1264 116.1034
+##  [7] 117.1494 118.0690 119.4483 121.3218 123.3448 125.4368
+## [13] 127.6207 130.0230 132.6667 134.9655 137.1379 139.1034
+## [19] 141.1149 143.2414 145.2414 147.1494 148.8736 150.0230
+## [25] 150.8391 151.2529 151.1034 150.4253 149.4023 148.4023
+## [31] 147.5402 146.3908 145.2644 144.3103 143.5517 142.9770
+## [37] 142.4943 141.7701 141.2069 140.4483 139.4368 138.0920
+## [43] 136.4483 134.7126 132.6092 130.3218 128.3793 126.1724
+## [49] 124.3103 122.0230 119.4828 116.9655 114.8736 112.8161
+## [55] 110.9885 109.0115 107.3678 105.8276 104.6322 103.8046
+## [61] 103.1609
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Finally, we can make the code more robust and reproducible by calculating the number of columns in the data instead of assuming it is always going to be 61. For that, we use the function \texttt{ncol()} that simply returns the number of columns in a data-frame or a matrix:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{averages} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{=} \hlkwd{ncol}\hlstd{(volcano))}
+
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(volcano))}
+\hlstd{\{}
+  \hlstd{averages[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{( volcano[,i] )}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{mdframed}
+\textbf{Small exercise}\\
+Make a for-loop that calculate the variance for each row of volcano. You will probably want to use the function \texttt{var()} and the function \texttt{nrow()}.
+
+\end{mdframed}
+
+\section{Simple Graphics}
+
+You can create graphics with various functions, the most fundamental one being \texttt{plot()}.
+For instance:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{y}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0.2}\hlstd{,}\hlnum{0.4}\hlstd{,}\hlnum{0.5}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/plot1-1} 
+
+\end{knitrout}
+
+(the graph should appear when you run this line)
+
+
+That's rather ugly, and we will learn how to make beautiful graphes in efficient ways. For now, let's just tweak a few things to demonstrate the use of options within the plot function:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{y}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0.2}\hlstd{,}\hlnum{0.4}\hlstd{,}\hlnum{0.5}\hlstd{),} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,}
+     \hlkwc{main} \hlstd{=} \hlstr{"Important result"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"Cause"}\hlstd{,}
+     \hlkwc{ylab} \hlstd{=} \hlstr{"Consequence"}\hlstd{,} \hlkwc{xlim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/plot2-1} 
+
+\end{knitrout}
+
+\begin{mdframed}
+\textbf{Small exercise}\\
+Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red.
+
+\end{mdframed}
 
 \end{document}
