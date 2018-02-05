@@ -1,12 +1,12 @@
 # Installing R and RStudio
 
-Please install the latest version of *R* on your laptop (at the very least be sure the version is >3.2). In R, you can check the version with the command
+Please install the latest version of **R** on your laptop (at the very least be sure the version is >3.2). In R, you can check the version with the command
 ```R
 version
 ```
 
 
-Although not strictly necessary, installing the latest version of *RStudio* is strongly recommended, and the workshops will be prepared assuming that you run R from RStudio.
+Although not strictly necessary, installing the latest version of **RStudio** is strongly recommended, and the workshops will be prepared assuming that you run R from RStudio.
 
 If you experience difficulties with the installation(s), email me and I will do my best to assist.
 
@@ -67,5 +67,3 @@ Try and run a command directly in the console, for instance:
 ```
 
 If somehow you don't manage to have R make this calculation (I think the result should be around five), get in touch with me before the first workshop, and I will try to help!
-
- 
