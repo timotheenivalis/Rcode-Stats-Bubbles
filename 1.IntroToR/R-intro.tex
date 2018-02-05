@@ -77,7 +77,7 @@
 
 \title{A minimalist introduction to R}
 \date{\today}
-\author{Timothée Bonnet \& al.}
+\author{Timothée Bonnet\\ (thanks to Koen van Benthem and Ashley Latimer for help)}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -91,17 +91,17 @@
 \vspace{2cm}
 \begin{mdframed}
 \textit{There are many ways to achieve the same goal in \texttt{R}, and we do not claim to teach you the most efficient way to use \texttt{R}. You may find more elegant ways! \\[1.5ex] 
-Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manual (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and analyse what the function does to this data.}
+Do try to understand exactly what the code and the functions we use do. The best way to learn how functions work is by either using the \texttt{R}-manual (type \texttt{?functionname} or use the RStudio Help tab by clicking on it or pressing F1) or by creating dummy data (just make up a small amount of data yourself, using \texttt{R} if possible!) and observe what the function does with these data.}
 \end{mdframed}
 \newpage
 
 \section*{How this document works}
 %This is a \texttt{knitr} document, which knits \texttt{R} code and output within a \LaTeX document.
-R code and output is generally contained within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
+R code and output are within boxes with a gray background. Comments within the R code start with a \# symbol; lines with R-outputs start with \#\#.
 
-All the files necessary to go through the workshop are (or should be!) in the folder of a github repository. We recommend you copy these files, or fork the repository if you are a git user.
+There are a few small exercises in each section. If you encounter any difficulty with them, ask me for help before the workshop (for instance just before, I will be in the room 30 minutes early).
 
-Now, let's the fun begin.
+Now, let the fun begin.
 
 \section{Trash your calculator}
 \subsection{Operators}
@@ -141,7 +141,7 @@ Below we demonstrate the use of some basic mathematical operators:
 ## [1] 8
 \end{verbatim}
 \begin{alltt}
-\hlnum{2}\hlopt{**}\hlnum{3} \hlcom{#or equivalently}
+\hlnum{2}\hlopt{**}\hlnum{3} \hlcom{#other version for exponent}
 \end{alltt}
 \begin{verbatim}
 ## [1] 8
@@ -165,19 +165,21 @@ There are many mathematical functions already present in R:
 ## [1] 0.9969486
 \end{verbatim}
 \begin{alltt}
-\hlkwd{sqrt}\hlstd{(}\hlnum{9}\hlstd{)} \hlcom{#square root, which of course you can also write as:}
+\hlkwd{sqrt}\hlstd{(}\hlnum{9}\hlstd{)} \hlcom{#square root}
 \end{alltt}
 \begin{verbatim}
 ## [1] 3
 \end{verbatim}
 \begin{alltt}
-\hlnum{9} \hlopt{^} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)}
+\hlnum{9} \hlopt{^} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)} \hlcom{# other version for square root}
 \end{alltt}
 \begin{verbatim}
 ## [1] 3
 \end{verbatim}
 \begin{alltt}
-\hlkwd{sin}\hlstd{(pi}\hlopt{/}\hlnum{2}\hlstd{);} \hlkwd{cos}\hlstd{(}\hlnum{1}\hlstd{);} \hlkwd{tan}\hlstd{(pi}\hlopt{/}\hlnum{3}\hlstd{)} \hlcom{#trigonometric functions}
+\hlcom{#trigonometric functions :}
+\hlcom{#(use ";" for several expressions on the same line)}
+\hlkwd{sin}\hlstd{(pi}\hlopt{/}\hlnum{2}\hlstd{);} \hlkwd{cos}\hlstd{(}\hlnum{1}\hlstd{);} \hlkwd{tan}\hlstd{(pi}\hlopt{/}\hlnum{3}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 1
@@ -189,12 +191,24 @@ There are many mathematical functions already present in R:
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Use R to compute
+Use R to compute:
+$$
+  y = (\cos (0.1\pi))^3
+$$
+You should get 0.8602387
+
+And:
+$$
+  y = \log (3-2) + 5
+$$
+You should get 5
+
+And if you dare:
 $$
   y = \frac{1}{2\sqrt{2\pi}} e^{\frac{-1}{2} (\frac{3-\pi}{2})^2}
 $$
 
-
+You should get 0.1989719
 
 \end{mdframed}
 
@@ -231,6 +245,24 @@ You can also test if they are NOT equal with the operator \texttt{!=}:
 \end{alltt}
 \begin{verbatim}
 ## [1] FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The \texttt{!} symbol means "not" in general, so you can use it to get the opposite result:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlopt{!}\hlnum{TRUE}
+\end{alltt}
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+\begin{alltt}
+\hlopt{!}\hlnum{FALSE}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -321,8 +353,9 @@ Values can be assigned to objects to store them and make your code flexible. You
 \end{kframe}
 \end{knitrout}
 
-\section{Containers}
-A container is some kind of object that can contain several values.
+\section{No need to write it on paper: Containers}
+A container is some kind of object that can store values, like numbers, characters, booleans (TRUE/FALSE)...
+We will present vectors, matrices and data-frames. 
 
 \subsection{Vectors}
 The simplest container is a vector.
@@ -331,7 +364,7 @@ A flexible way to create a vector by \textit{concatenating} several values with 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{a} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{9}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{)}
+\hlstd{a} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{9}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{)} \hlcom{# c is for concatenate}
 \hlstd{a}
 \end{alltt}
 \begin{verbatim}
@@ -410,13 +443,22 @@ For instance:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{a} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{a} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)} \hlcom{#fills columns before rows}
 \hlstd{a}
 \end{alltt}
 \begin{verbatim}
 ##      [,1] [,2]
 ## [1,]    1    3
 ## [2,]    2    4
+\end{verbatim}
+\begin{alltt}
+\hlcom{#if you want to fill rows before columns:}
+\hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{byrow} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -470,17 +512,17 @@ Data-frames are similar to matrices, but are much more flexible: they can store 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{plant_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{plant} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"potatoes"}\hlstd{,} \hlstr{"water hemlock"}\hlstd{,} \hlstr{"carrot"}\hlstd{),}
+\hlstd{plant_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{plant} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"potatoes"}\hlstd{,} \hlstr{"hemlock"}\hlstd{,} \hlstr{"carrot"}\hlstd{),}
                          \hlkwc{number}\hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{39}\hlstd{),} \hlkwc{danger}\hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{FALSE}\hlstd{,}\hlnum{TRUE}\hlstd{,}\hlnum{FALSE}\hlstd{),}
                          \hlkwc{stringsAsFactors} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 
 \hlstd{plant_data}
 \end{alltt}
 \begin{verbatim}
-##           plant number danger
-## 1      potatoes      3  FALSE
-## 2 water hemlock      5   TRUE
-## 3        carrot     39  FALSE
+##      plant number danger
+## 1 potatoes      3  FALSE
+## 2  hemlock      5   TRUE
+## 3   carrot     39  FALSE
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -489,13 +531,13 @@ You can access and modify elements in the same way as for matrices:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{plant_data[}\hlnum{3}\hlstd{,}\hlnum{2}\hlstd{]}
+\hlstd{plant_data[}\hlnum{3}\hlstd{,}\hlnum{2}\hlstd{]} \hlcom{#first number is for row, second for column}
 \end{alltt}
 \begin{verbatim}
 ## [1] 39
 \end{verbatim}
 \begin{alltt}
-\hlstd{plant_data[}\hlnum{3}\hlstd{,]}
+\hlstd{plant_data[}\hlnum{3}\hlstd{,]} \hlcom{#get all columns for the third row}
 \end{alltt}
 \begin{verbatim}
 ##    plant number danger
@@ -508,13 +550,13 @@ But you can also use column names, which are more human-friendly than numbers:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{plant_data[}\hlnum{1}\hlstd{,}\hlstr{"plant"}\hlstd{]}
+\hlstd{plant_data[}\hlnum{1}\hlstd{,}\hlstr{"plant"}\hlstd{]} \hlcom{# first row of column named "plant"}
 \end{alltt}
 \begin{verbatim}
 ## [1] "potatoes"
 \end{verbatim}
 \begin{alltt}
-\hlstd{plant_data[,}\hlstr{"danger"}\hlstd{]}
+\hlstd{plant_data[,}\hlstr{"danger"}\hlstd{]} \hlcom{# all of "danger" column}
 \end{alltt}
 \begin{verbatim}
 ## [1] FALSE  TRUE FALSE
@@ -546,17 +588,17 @@ It is very easy to create new columns, with one or the other syntax:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{plant_data[,}\hlstr{"tasty"}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{TRUE}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{TRUE}\hlstd{)} \hlcom{#NA means missing value}
+\hlstd{plant_data[,}\hlstr{"tasty"}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{TRUE}\hlstd{,} \hlnum{NA}\hlstd{,} \hlnum{TRUE}\hlstd{)} \hlcom{#NA (Not Applicable) indicates missing value}
 
 \hlstd{plant_data}\hlopt{$}\hlstd{color} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"variable"}\hlstd{,} \hlstr{"green"}\hlstd{,} \hlstr{"orange"}\hlstd{)}
 
 \hlstd{plant_data}
 \end{alltt}
 \begin{verbatim}
-##           plant number danger tasty    color
-## 1      potatoes      3  FALSE  TRUE variable
-## 2 water hemlock      5   TRUE    NA    green
-## 3        carrot     39  FALSE  TRUE   orange
+##      plant number danger tasty    color
+## 1 potatoes      3  FALSE  TRUE variable
+## 2  hemlock      5   TRUE    NA    green
+## 3   carrot     39  FALSE  TRUE   orange
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -569,11 +611,11 @@ You can also add new entries (rows):
 \hlstd{plant_data}
 \end{alltt}
 \begin{verbatim}
-##           plant number danger tasty    color
-## 1      potatoes      3  FALSE  TRUE variable
-## 2 water hemlock      5   TRUE  <NA>    green
-## 3        carrot     39  FALSE  TRUE   orange
-## 4    eucalyptus     24   <NA> FALSE    green
+##        plant number danger tasty    color
+## 1   potatoes      3  FALSE  TRUE variable
+## 2    hemlock      5   TRUE  <NA>    green
+## 3     carrot     39  FALSE  TRUE   orange
+## 4 eucalyptus     24   <NA> FALSE    green
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -581,9 +623,64 @@ You can also add new entries (rows):
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Imagine you are a koala. Change the information about eucalyptus tastiness in the data-frame \verb+plant_data+.
+Imagine you are a koala. Change the information about eucalyptus tastiness in the data-frame \verb+plant_data+ (yes, you will need to create this data-frame using the code above if you haven't done that already.)
 
 \end{mdframed}
+
+\subsection{What is this object again?}
+
+If you don't remember what your object is, or what it contains, you can use the function \texttt{str}:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{str}\hlstd{(plant_data)}\hlcom{# a data.frame}
+\end{alltt}
+\begin{verbatim}
+## 'data.frame':	4 obs. of  5 variables:
+##  $ plant : chr  "potatoes" "hemlock" "carrot" "eucalyptus"
+##  $ number: chr  "3" "5" "39" "24"
+##  $ danger: chr  "FALSE" "TRUE" "FALSE" NA
+##  $ tasty : chr  "TRUE" NA "TRUE" "FALSE"
+##  $ color : chr  "variable" "green" "orange" "green"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{str}\hlstd{(a)} \hlcom{# a num(eric vector)}
+\end{alltt}
+\begin{verbatim}
+##  num [1:2, 1:2] 29 29 3 4
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+That works not only for containers, but for any R object:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{str}\hlstd{(}\hlnum{1}\hlstd{)} \hlcom{#num(eric)}
+\end{alltt}
+\begin{verbatim}
+##  num 1
+\end{verbatim}
+\begin{alltt}
+\hlkwd{str}\hlstd{(}\hlnum{TRUE}\hlstd{)} \hlcom{# logi(cal)}
+\end{alltt}
+\begin{verbatim}
+##  logi TRUE
+\end{verbatim}
+\begin{alltt}
+\hlkwd{str}\hlstd{(}\hlstr{"banana"}\hlstd{)} \hlcom{#chr (character string)}
+\end{alltt}
+\begin{verbatim}
+##  chr "banana"
+\end{verbatim}
+\begin{alltt}
+\hlkwd{str}\hlstd{(exp)} \hlcom{# a function taking one parameter...}
+\end{alltt}
+\begin{verbatim}
+## function (x)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \section{For loops}
 Loops are a way to automatize repetitive tasks. 
@@ -593,7 +690,20 @@ To demonstrate this, let's load some data that are buit-in R:
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{data}\hlstd{(volcano)}
-\hlkwd{head}\hlstd{(volcano)}
+\hlkwd{str}\hlstd{(volcano)}
+\end{alltt}
+\begin{verbatim}
+##  num [1:87, 1:61] 100 101 102 103 104 105 105 106 107 108 ...
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The function \texttt{str} tells us that the object volcano is a numeric object, with two dimensions, a.k.a. a matrix, and that this matrix has 87 rows and 61 columns.
+
+We can have a look at the first rows of the matrix with the function \texttt{head}:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(volcano)}\hlcom{#shows the first rows of the matrix}
 \end{alltt}
 \begin{verbatim}
 ##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
@@ -649,20 +759,20 @@ To demonstrate this, let's load some data that are buit-in R:
 \end{kframe}
 \end{knitrout}
 
-\texttt{volcano} is a matrix containing topographic information for the Maunga Whau volcano.
+\texttt{volcano} contains topographic information for the Maunga Whau volcano.
 
 You can visualize it with:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{image}\hlstd{(volcano)}
+\hlkwd{image}\hlstd{(volcano)} \hlcom{#a volcano indeed!}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/imvol-1} 
 
 \end{knitrout}
 
-Now, let's pretend with want the average elevation for every column.
+Now, let's pretend we want the average elevation for every column.
 
 We can use the function \texttt{mean()} to calculate the average of the first column, remembering how to access a column in a matrix:
 \begin{knitrout}
@@ -846,6 +956,10 @@ Make a for-loop that calculate the variance for each row of volcano. You will pr
 
 \end{mdframed}
 
+\begin{mdframed}
+NB: here you do not really need a for loop. R has shorter, more efficient alternatives (we will talk about them later), but I believe it is crucial to master for loops which are much more flexible and transparent than alternatives.
+\end{mdframed}
+
 \section{Simple Graphics}
 
 You can create graphics with various functions, the most fundamental one being \texttt{plot()}.
@@ -880,8 +994,7 @@ That's rather ugly, and we will learn how to make beautiful graphes in efficient
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red.
-
+Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red. You may want to check the help page for plot, type \texttt{?plot} (or search plot in the RStudio Help tab).
 \end{mdframed}
 
 \end{document}

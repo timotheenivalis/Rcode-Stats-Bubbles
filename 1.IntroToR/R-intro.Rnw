@@ -27,7 +27,7 @@
 
 \title{A minimalist introduction to R}
 \date{\today}
-\author{Timothée Bonnet \& al.}
+\author{Timothée Bonnet\\ (thanks to Koen van Benthem and Ashley Latimer for help)}
 
 \begin{document}
 
@@ -56,7 +56,7 @@ R code and output are within boxes with a gray background. Comments within the R
 
 There are a few small exercises in each section. If you encounter any difficulty with them, ask me for help before the workshop (for instance just before, I will be in the room 30 minutes early).
 
-Now, let's the fun begin.
+Now, let the fun begin.
 
 \section{Trash your calculator}
 \subsection{Operators}
@@ -69,28 +69,41 @@ Below we demonstrate the use of some basic mathematical operators:
 6*4 #multiplication
 14/2 #division
 2^3 #exponent
-2**3 #or equivalently
+2**3 #other version for exponent
 @
 
 There are many mathematical functions already present in R:
 <<mathfun>>=
 exp(3) #exponential
 log(2.71) #logarithm
-sqrt(9) #square root, which of course you can also write as:
-9 ^ (1/2)
-sin(pi/2); cos(1); tan(pi/3) #trigonometric functions
+sqrt(9) #square root
+9 ^ (1/2) # other version for square root
+
+#trigonometric functions :
+#(use ";" for several expressions on the same line)
+sin(pi/2); cos(1); tan(pi/3) 
 @
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Use R to compute
+Use R to compute:
+$$
+  y = (\cos (0.1\pi))^3
+$$
+You should get \Sexpr{cos(0.1*pi) ^ 3}
+
+And:
+$$
+  y = \log (3-2) + 5
+$$
+You should get \Sexpr{log(3-2) +5}
+
+And if you dare:
 $$
   y = \frac{1}{2\sqrt{2\pi}} e^{\frac{-1}{2} (\frac{3-\pi}{2})^2}
 $$
 
-<<echo=FALSE, eval=FALSE>>=
-(1/(2*sqrt(2*pi))) * exp((-1/2)*((3-pi)/2)^2)
-@
+You should get \Sexpr{(1/(2*sqrt(2*pi))) * exp((-1/2)*((3-pi)/2)^2)}
 
 \end{mdframed}
 
@@ -105,6 +118,12 @@ You can also test if they are NOT equal with the operator \texttt{!=}:
 <<>>=
 2 != 3
 2 != 2
+@
+
+The \texttt{!} symbol means "not" in general, so you can use it to get the opposite result:
+<<>>=
+!TRUE
+!FALSE
 @
 
 The AND operator is \texttt{\&}
@@ -150,14 +169,15 @@ c
 @
 
 \section{No need to write it on paper: Containers}
-A container is some kind of object that can contain several values.
+A container is some kind of object that can store values, like numbers, characters, booleans (TRUE/FALSE)...
+We will present vectors, matrices and data-frames. 
 
 \subsection{Vectors}
 The simplest container is a vector.
 A flexible way to create a vector by \textit{concatenating} several values with the syntax \verb+ c(x,y,...)+.
 
 <<>>=
-a <- c(3,9,3,5)
+a <- c(3,9,3,5) # c is for concatenate
 a
 @
 
@@ -194,8 +214,11 @@ You can create one with the function \texttt{matrix()}.
 
 For instance:
 <<>>=
-a <- matrix(data = c(1,2,3,4), nrow = 2)
+a <- matrix(data = c(1,2,3,4), nrow = 2) #fills columns before rows
 a
+
+#if you want to fill rows before columns:
+matrix(data = c(1,2,3,4), nrow = 2, byrow = TRUE)
 @
 
 You can access the cell in the row $i$ of the column $j$ using squared brackets like for vectors, but since there are two dimensions rather than one, you may give two numbers: \texttt{a[i,j]}.
@@ -224,7 +247,7 @@ Data-frames are similar to matrices, but are much more flexible: they can store 
 
 
 <<>>=
-plant_data <- data.frame(plant = c("potatoes", "water hemlock", "carrot"),
+plant_data <- data.frame(plant = c("potatoes", "hemlock", "carrot"),
                          number= c(3,5,39), danger= c(FALSE,TRUE,FALSE),
                          stringsAsFactors = FALSE)
 
@@ -233,15 +256,15 @@ plant_data
 
 You can access and modify elements in the same way as for matrices:
 <<>>=
-plant_data[3,2]
-plant_data[3,]
+plant_data[3,2] #first number is for row, second for column
+plant_data[3,] #get all columns for the third row
 @
 
 But you can also use column names, which are more human-friendly than numbers:
 <<>>=
-plant_data[1,"plant"]
+plant_data[1,"plant"] # first row of column named "plant"
 
-plant_data[,"danger"]
+plant_data[,"danger"] # all of "danger" column
 @
 
 In some case it is easier to work with a different syntax using the dollar sign. Below, we access the same elements using this alternative syntax:
@@ -255,7 +278,7 @@ plant_data$danger
 It is very easy to create new columns, with one or the other syntax:
 
 <<>>=
-plant_data[,"tasty"] <- c(TRUE, NA, TRUE) #NA means missing value
+plant_data[,"tasty"] <- c(TRUE, NA, TRUE) #NA (Not Applicable) indicates missing value
 
 plant_data$color <- c("variable", "green", "orange")
 
@@ -271,9 +294,25 @@ plant_data
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Imagine you are a koala. Change the information about eucalyptus tastiness in the data-frame \verb+plant_data+.
+Imagine you are a koala. Change the information about eucalyptus tastiness in the data-frame \verb+plant_data+ (yes, you will need to create this data-frame using the code above if you haven't done that already.)
 
 \end{mdframed}
+
+\subsection{What is this object again?}
+
+If you don't remember what your object is, or what it contains, you can use the function \texttt{str}:
+<<>>=
+str(plant_data)# a data.frame
+str(a) # a num(eric vector)
+@
+
+That works not only for containers, but for any R object:
+<<>>=
+str(1) #num(eric)
+str(TRUE) # logi(cal)
+str("banana") #chr (character string)
+str(exp) # a function taking one parameter...
+@
 
 \section{For loops}
 Loops are a way to automatize repetitive tasks. 
@@ -281,17 +320,23 @@ Loops are a way to automatize repetitive tasks.
 To demonstrate this, let's load some data that are buit-in R:
 <<>>=
 data(volcano)
-head(volcano)
+str(volcano)
+@
+The function \texttt{str} tells us that the object volcano is a numeric object, with two dimensions, a.k.a. a matrix, and that this matrix has 87 rows and 61 columns.
+
+We can have a look at the first rows of the matrix with the function \texttt{head}:
+<<>>=
+head(volcano)#shows the first rows of the matrix
 @
 
-\texttt{volcano} is a matrix containing topographic information for the Maunga Whau volcano.
+\texttt{volcano} contains topographic information for the Maunga Whau volcano.
 
 You can visualize it with:
 <<imvol>>=
-image(volcano)
+image(volcano) #a volcano indeed!
 @
 
-Now, let's pretend with want the average elevation for every column.
+Now, let's pretend we want the average elevation for every column.
 
 We can use the function \texttt{mean()} to calculate the average of the first column, remembering how to access a column in a matrix:
 <<>>=
@@ -366,6 +411,10 @@ Make a for-loop that calculate the variance for each row of volcano. You will pr
 
 \end{mdframed}
 
+\begin{mdframed}
+NB: here you do not really need a for loop. R has shorter, more efficient alternatives (we will talk about them later), but I believe it is crucial to master for loops which are much more flexible and transparent than alternatives.
+\end{mdframed}
+
 \section{Simple Graphics}
 
 You can create graphics with various functions, the most fundamental one being \texttt{plot()}.
@@ -388,8 +437,7 @@ plot(x = c(1,2,3,4), y=c(0,0.2,0.4,0.5), type = "b",
 
 \begin{mdframed}
 \textbf{Small exercise}\\
-Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red.
-
+Modify the code above to obtain a graph with a y-axis that goes up to 1 (maybe what we are measuring on the y-axis is a proportion, so it seem fair to show the axis from 0 to 1), with the data being represented by a line only (without the dots), plotted in blue instead of red. You may want to check the help page for plot, type \texttt{?plot} (or search plot in the RStudio Help tab).
 \end{mdframed}
 
 \end{document}
