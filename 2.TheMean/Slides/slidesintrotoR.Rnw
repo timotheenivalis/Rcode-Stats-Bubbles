@@ -44,21 +44,37 @@ setPar()
 %%%%%%%%%%%
 
 \begin{frame}{R and RStudio}
-  
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{Figures/rstudiolayout}
+  \end{center}
 \end{frame}
 %%%%%%%%%%%
 
 \begin{frame}{What R can do}
 
-  \pause Everything.
-
+  \pause \begin{exampleblock}{Everything.$^{1,2}$}
+    
+  {\tiny $1$ Except think about your science}\\
+  {\tiny $2$ Occasionally in a non efficient way}
+  \end{exampleblock}
+  
+  \pause \begin{block}{What about RStudio?}
+  Make your life easier\\
+  Many handy tricks.
+  \end{block}
 \end{frame}
 %%%%%%%%%%%
 
-
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{}
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+  \end{frame}
+} 
 \section{The mean}
 
-\begin{frame}[fragile]{Calculating a mean}
+\begin{frame}[fragile]{Calculating a mean: Arithmetic and assignment}
 
 <<>>=
   (2 + 3 + 5 + 1) / 4
@@ -80,24 +96,146 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Calculating a mean}
+
+\begin{frame}[fragile]{Calculating a mean: using vectors} % tiring to type again and again
   <<>>=
-  mean(x = c(2,3,5,1))
+  c(2,3,5,1) # c is for concatenate
+  @
+  \pause
+  <<>>=
+  mydata <- c(2,3,5,1) # save the vector
+  @
+  \pause
+  
+  <<>>=
+   mydata <- (2,3,5,1) # c is missing => error!
   @
   
   \pause
   
+  Why bother with vectors?
+  <<>>=
+    mydata[2] <- 4
+    mydata
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Calculating a mean: using functions}%shortcut
+  
+  How to use a function?
+  <<>>=
+    ?mean  
+  @
+  
+\pause
+
+  <<>>=
+  mean(c(2,4,5,1))
+  mean(mydata)
+  
+  mean(x = mydata)
+  @
+  
+
+\end{frame}
+%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Working with 2D objects}
+
+\begin{frame}[fragile]{Loading data}
+  
+  <<>>=
+    data("trees")
+  @
+  \pause
+  
+  <<>>=
+  str(trees)
+  @
+  
+  Try also \texttt{summary}, \texttt{class}, \texttt{head}, \texttt{tail}
+\end{frame}
+%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{T-test}
+
+\begin{frame}[fragile]{Student's T.test introduction}% presenting the test, the output...
+  <<>>=
+  ?t.test
+  @
+  
+  \pause
+  <<>>=
+  t.test(1:10, y = c(7:20))
+  @
   
 \end{frame}
 %%%%%%%%%%%
 
-\section{Open exercise}
+\begin{frame}[fragile]{T.test introduction}% presenting the test, the output...
 
-\begin{frame}
-  Calculate population growth rate year-by-year ($ N_{t+1}/N_{t}$) in XXX data.
+  <<>>=
+    boxplot(c(1:10, 7:20) ~ c(rep(1,10), rep(2, 14)))
+  @
+\end{frame}
+%%%%%%%%%%%
+
+
+\section{Open problem}
+
+\begin{frame}[fragile]{The t.test problem}
   
+  <<>>=
+  t.test(1:10, y = c(2:20,-9), var.equal = FALSE)
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{The t.test problem}
+  <<>>=
+  t.test(1:10, y = c(2:20,-9), var.equal = TRUE)
+  @
+ 
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{The t.test problem}
+  Random sample from a Gaussian distribution with variance 1
+  <<>>=
+    set.seed(seed = 179)
+    x1 <- rnorm(n = 20, mean = 0, sd = 1)
+    x2 <- rnorm(n = 20, mean = 0, sd = 1)
+    
+
+    var(x1)
+    var(x2)
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{The t.test problem}
+  <<>>=
+    var.test(x = x1, y = x2)
+  @
+  \textbf{Should we use var.equal = TRUE or FALSE ?\\}
   
+  \textbf{When var.test significant/not?}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{}
+
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}{Bonus open problems if you get bored}
+
   
 \end{frame}
-
+  
 \end{document}
