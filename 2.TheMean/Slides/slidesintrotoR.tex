@@ -244,7 +244,7 @@
 %%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Working with 2D objects}
+\section{Data-frames}
 
 \begin{frame}[fragile]{Loading data}
   
@@ -275,9 +275,268 @@
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Access}
+  
+  \begin{block}{Bracket-syntax}
+    \begin{itemize}
+      \item Row: dataframe[row, ]
+      \item Column: dataframe[ , column]
+      \item Element: dataframe[row, column]
+    \end{itemize}
+  \end{block}
+  
+  \pause
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{trees[,}\hlnum{1}\hlstd{]}
+\hlstd{trees[}\hlnum{1}\hlopt{:}\hlnum{8}\hlstd{,]}
+\hlstd{trees[}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{),} \hlnum{3}\hlstd{]}
+\hlstd{trees[,} \hlstr{"Height"}\hlstd{]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \begin{block}{Dollar-syntax}
+    \begin{itemize}
+      \item Column \verb+ dataframe$column_name +
+      \item Element \verb+ dataframe$column_name[row] +
+    \end{itemize}
+  \end{block}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{trees}\hlopt{$}\hlstd{Height}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 
+\begin{frame}[fragile]{Finally time to think a tiny bit!}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{Figures/brain}
+  \end{center}
+\centering
+  \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
+  
+\end{frame}
+%%%%%%%%%%%
 
+\begin{frame}[fragile]{How to get the row means?}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{(trees[}\hlnum{1}\hlstd{,])}
+\hlkwd{mean}\hlstd{(trees[}\hlnum{2}\hlstd{,])}
+\hlkwd{mean}\hlstd{(trees[...,])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  \pause
+  \begin{center}:
+    \includegraphics[width=0.4\textwidth]{Figures/ineff}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to get the row means? For-loops}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{for} (i in 1:N)
+  \{
+    something as a function of i
+  \}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \pause
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ResultMean} \hlkwb{<-} \hlkwd{vector}\hlstd{()} \hlcom{# we will store the results there}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{31}\hlstd{)}
+\hlstd{\{}
+  \hlstd{ResultMean[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{as.numeric}\hlstd{(trees[i,]))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{For-loops: your turn!}
+
+Load Sunspots data.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{data}\hlstd{(}\hlstr{"rock"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \centering
+\textbf{\large Use a for loop to obtain column averages}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{More concise alternative: apply functions}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{apply}(X = dataframe, MARGIN = \hlkwd{1} (row) or \hlkwd{2} (col), FUN = function)
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \pause
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{apply}\hlstd{(}\hlkwc{X} \hlstd{= rock,} \hlkwc{MARGIN} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{FUN} \hlstd{= mean)}\hlcom{#by row (not meaningful)}
+\hlkwd{apply}\hlstd{(}\hlkwc{X} \hlstd{= rock,} \hlkwc{MARGIN} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{FUN} \hlstd{= mean)}\hlcom{#by column}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}[fragile]{Even better (worse)...}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{colMeans}\hlstd{(rock)}
+  \hlkwd{rowMeans}\hlstd{(rock)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \pause
+  
+  \begin{alertblock}{Trade-off concision  / flexibility}
+    \begin{itemize}
+      \item colMeans shortest, but does only means
+      \item apply very flexible, but does only array/matrix/data-frame
+      \item for-loop looks complex, but infinitely flexible
+      \item (NB: your computer does a for-loop whether you see it or not)
+    \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
+%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Visualisation}
+
+\begin{frame}[fragile]{plot function}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(rock)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plorock-1} 
+
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(rock}\hlopt{$}\hlstd{peri)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plorock2-1} 
+
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= rock}\hlopt{$}\hlstd{peri,} \hlkwc{y} \hlstd{= rock}\hlopt{$}\hlstd{area)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plorock3-1} 
+
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= rock}\hlopt{$}\hlstd{peri,} \hlkwc{y} \hlstd{= rock}\hlopt{$}\hlstd{area,} \hlkwc{main} \hlstd{=} \hlstr{"Eureka!"}\hlstd{,}
+     \hlkwc{xlab} \hlstd{=} \hlstr{"Perimeter"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"area"}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{pch}\hlstd{=}\hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plorock4-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function: back to the mean}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{data}\hlstd{(}\hlstr{"iris"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function: back to the mean}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(iris}\hlopt{$}\hlstd{Sepal.Length,} \hlkwc{col}\hlstd{=iris}\hlopt{$}\hlstd{Species)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/iris1-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{boxplots}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{boxplot}\hlstd{(iris}\hlopt{$}\hlstd{Sepal.Length} \hlopt{~} \hlstd{iris}\hlopt{$}\hlstd{Species)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plorock5-1} 
+\begin{kframe}\begin{alltt}
+\hlcom{#or plot(iris$Sepal.Length ~ iris$Species)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{T-test}
 
@@ -323,12 +582,21 @@ mean of x mean of y
   \hlkwd{boxplot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlnum{7}\hlopt{:}\hlnum{20}\hlstd{)} \hlopt{~} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{10}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{14}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-24-1} 
 
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Are irises different?}
+
+  \textbf{Use t-tests to compare species in the iris dataset}
+  
+  \begin{center}
+    \includegraphics[height=0.6\textwidth]{Figures/iris}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
 
 \section{Open problem}
 
@@ -440,8 +708,12 @@ ratio of variances
 \end{frame}
 %%%%%%%%%%%
 \begin{frame}{Bonus open problems if you get bored}
-
+  \begin{enumerate}
+    \item What is the fastest way to get row averages in a data-frame?
+    \item Create a function called colVars, like colMeans but for variance
+    \item Create nice plots to visualize iris data (ideally journal-quality)
+  \end{enumerate}
   
 \end{frame}
-  
+%%%%%%%%%%%  
 \end{document}

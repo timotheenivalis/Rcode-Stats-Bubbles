@@ -142,7 +142,7 @@ setPar()
 %%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Working with 2D objects}
+\section{Data-frames}
 
 \begin{frame}[fragile]{Loading data}
   
@@ -159,9 +159,190 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Access}
+  
+  \begin{block}{Bracket-syntax}
+    \begin{itemize}
+      \item Row: dataframe[row, ]
+      \item Column: dataframe[ , column]
+      \item Element: dataframe[row, column]
+    \end{itemize}
+  \end{block}
+  
+  \pause
+  <<eval=FALSE>>=
+  trees[,1]
+  trees[1:8,]
+  trees[c(2,1,2), 3]
+  trees[, "Height"]
+  @
+  
+  \begin{block}{Dollar-syntax}
+    \begin{itemize}
+      \item Column \verb+ dataframe$column_name +
+      \item Element \verb+ dataframe$column_name[row] +
+    \end{itemize}
+  \end{block}
+  
+  <<eval=FALSE>>=
+    trees$Height
+  @
+\end{frame}
+%%%%%%%%%%%
 
+\begin{frame}[fragile]{Finally time to think a tiny bit!}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{Figures/brain}
+  \end{center}
+\centering
+  \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
+  
+\end{frame}
+%%%%%%%%%%%
 
+\begin{frame}[fragile]{How to get the row means?}
+  <<eval=FALSE>>=
+  mean(trees[1,])
+  mean(trees[2,])
+  mean(trees[...,])
+  @
+  \pause
+  \begin{center}:
+    \includegraphics[width=0.4\textwidth]{Figures/ineff}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to get the row means? For-loops}
+
+  <<eval = FALSE>>=
+    for (i in 1:N)
+    {
+      something as a function of i
+    }
+  @
+  
+  \pause
+    <<eval = FALSE>>=
+    ResultMean <- vector() # we will store the results there
+    for (i in 1:31)
+    {
+      ResultMean[i] <- mean(as.numeric(trees[i,]))
+    }
+  @
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{For-loops: your turn!}
+
+Load Sunspots data.
+  <<>>=
+    data("rock")
+  @
+  
+  \centering
+\textbf{\large Use a for loop to obtain column averages}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{More concise alternative: apply functions}
+
+  <<eval=FALSE>>=
+  apply(X = dataframe, MARGIN = 1 (row) or 2 (col), FUN = function)
+  @
+  
+  \pause
+  
+  <<eval=FALSE>>=
+  apply(X = rock, MARGIN = 1, FUN = mean)#by row (not meaningful)
+  apply(X = rock, MARGIN = 2, FUN = mean)#by column
+  @
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}[fragile]{Even better (worse)...}
+
+  <<eval=FALSE>>=
+    colMeans(rock)  
+    rowMeans(rock)
+  @
+  
+  \pause
+  
+  \begin{alertblock}{Trade-off concision  / flexibility}
+    \begin{itemize}
+      \item colMeans shortest, but does only means
+      \item apply very flexible, but does only array/matrix/data-frame
+      \item for-loop looks complex, but infinitely flexible
+      \item (NB: your computer does a for-loop whether you see it or not)
+    \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
+%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Visualisation}
+
+\begin{frame}[fragile]{plot function}
+
+<<plorock>>=
+plot(rock)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+<<plorock2>>=
+plot(rock$peri)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+<<plorock3>>=
+plot(x = rock$peri, y = rock$area)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function}
+
+<<plorock4>>=
+plot(x = rock$peri, y = rock$area, main = "Eureka!", 
+     xlab = "Perimeter", ylab = "area", col="blue", pch=2)
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function: back to the mean}
+  <<>>=
+  data("iris")  
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{plot function: back to the mean}
+<<iris1>>=
+plot(iris$Sepal.Length, col=iris$Species)
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{boxplots}
+  <<plorock5>>=
+  boxplot(iris$Sepal.Length ~ iris$Species)
+  #or plot(iris$Sepal.Length ~ iris$Species)
+@
+
+\end{frame}
+%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{T-test}
 
@@ -186,6 +367,15 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Are irises different?}
+
+  \textbf{Use t-tests to compare species in the iris dataset}
+  
+  \begin{center}
+    \includegraphics[height=0.6\textwidth]{Figures/iris}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
 
 \section{Open problem}
 
@@ -234,8 +424,12 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 \begin{frame}{Bonus open problems if you get bored}
-
+  \begin{enumerate}
+    \item What is the fastest way to get row averages in a data-frame?
+    \item Create a function called colVars, like colMeans but for variance
+    \item Create nice plots to visualize iris data (ideally journal-quality)
+  \end{enumerate}
   
 \end{frame}
-  
+%%%%%%%%%%%  
 \end{document}
