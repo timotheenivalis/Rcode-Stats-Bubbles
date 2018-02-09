@@ -96,8 +96,15 @@
   \end{exampleblock}
   
   \pause \begin{block}{What about RStudio?}
-  Make your life easier\\
-  Many handy tricks.
+  \begin{itemize}
+    \item Makes your life easier
+    \item Many handy tricks. So far we have seen:
+      \begin{itemize}
+      \item Autocomplete suggestion (all alone or press tab)
+      \item Ctrl-Enter to send command to R
+      \item str() and View() objects in Environment
+      \end{itemize}
+    \end{itemize}
   \end{block}
 \end{frame}
 %%%%%%%%%%%
@@ -324,6 +331,25 @@
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Solution for one column}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{Figures/brain}
+  \end{center}
+\centering
+  \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{mean}\hlstd{(trees}\hlopt{$}\hlstd{Girth[}\hlnum{1}\hlopt{:}\hlnum{30}\hlstd{])}
+  \hlkwd{mean}\hlstd{(trees[}\hlnum{1}\hlopt{:}\hlnum{30}\hlstd{,} \hlstr{"Girth"}\hlstd{])}
+  \hlkwd{mean}\hlstd{(trees}\hlopt{$}\hlstd{Girth[}\hlopt{-}\hlnum{31}\hlstd{])}
+  \hlkwd{mean}\hlstd{(trees[}\hlopt{-}\hlnum{31}\hlstd{,} \hlstr{"Girth"}\hlstd{])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the row means?}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -372,7 +398,7 @@
 
 \begin{frame}[fragile]{For-loops: your turn!}
 
-Load Sunspots data.
+Load rock data.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -387,6 +413,34 @@ Load Sunspots data.
 \end{frame}
 %%%%%%%%%%%
 
+
+\begin{frame}[fragile]{Solution}
+
+Load rock data.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{data}\hlstd{(}\hlstr{"rock"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \centering
+\textbf{\large Use a for loop to obtain column averages}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{storage} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{=} \hlkwd{ncol}\hlstd{(rock))}
+  \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(rock))}
+  \hlstd{\{}
+    \hlstd{storage[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{(rock[,i])}
+  \hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{More concise alternative: apply functions}
 
 \begin{knitrout}
@@ -582,7 +636,7 @@ mean of x mean of y
   \hlkwd{boxplot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlnum{7}\hlopt{:}\hlnum{20}\hlstd{)} \hlopt{~} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{10}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{14}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-24-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-27-1} 
 
 \end{knitrout}
 \end{frame}
@@ -598,122 +652,32 @@ mean of x mean of y
 \end{frame}
 %%%%%%%%%%%
 
-\section{Open problem}
+\begin{frame}[fragile]{Are irises different? Solution}
 
-\begin{frame}[fragile]{The t.test problem}
+  \textbf{Use t-tests to compare species in the iris dataset}
   
+  Sorry, I was mean and forgot to tell about subsetting, which you needed here.\\
+  Subset to the species \textit{setosa}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{t.test}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlkwc{y} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlopt{:}\hlnum{20}\hlstd{,}\hlopt{-}\hlnum{9}\hlstd{),} \hlkwc{var.equal} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+  \hlstd{iris[iris}\hlopt{$}\hlstd{Species} \hlopt{==} \hlstr{"setosa"}\hlstd{, ]}
 \end{alltt}
-\begin{verbatim}
-
-	Welch Two Sample t-test
-
-data:  1:10 and c(2:20, -9)
-t = -2.4345, df = 27.642, p-value = 0.02163
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- -8.2885317 -0.7114683
-sample estimates:
-mean of x mean of y 
-      5.5      10.0 
-\end{verbatim}
 \end{kframe}
 \end{knitrout}
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{t.test}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlkwc{y} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlopt{:}\hlnum{20}\hlstd{,}\hlopt{-}\hlnum{9}\hlstd{),} \hlkwc{var.equal} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-
-	Two Sample t-test
-
-data:  1:10 and c(2:20, -9)
-t = -1.9134, df = 28, p-value = 0.06597
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- -9.3175688  0.3175688
-sample estimates:
-mean of x mean of y 
-      5.5      10.0 
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
- 
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-  Random sample from a Gaussian distribution with variance 1
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-  \hlkwd{set.seed}\hlstd{(}\hlkwc{seed} \hlstd{=} \hlnum{179}\hlstd{)}
-  \hlstd{x1} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{20}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
-  \hlstd{x2} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{20}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
-
-
-  \hlkwd{var}\hlstd{(x1)}
-\end{alltt}
-\begin{verbatim}
-[1] 0.7040416
-\end{verbatim}
-\begin{alltt}
-  \hlkwd{var}\hlstd{(x2)}
-\end{alltt}
-\begin{verbatim}
-[1] 1.810404
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-  \hlkwd{var.test}\hlstd{(}\hlkwc{x} \hlstd{= x1,} \hlkwc{y} \hlstd{= x2)}
-\end{alltt}
-\begin{verbatim}
-
-	F test to compare two variances
-
-data:  x1 and x2
-F = 0.38889, num df = 19, denom df = 19, p-value = 0.04593
-alternative hypothesis: true ratio of variances is not equal to 1
-95 percent confidence interval:
- 0.1539260 0.9825028
-sample estimates:
-ratio of variances 
-         0.3888866 
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-  \textbf{Should we use var.equal = TRUE or FALSE ?\\}
   
-  \textbf{When var.test significant/not?}
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}{}
-
-\end{frame}
-%%%%%%%%%%%
-\begin{frame}{Bonus open problems if you get bored}
-  \begin{enumerate}
-    \item What is the fastest way to get row averages in a data-frame?
-    \item Create a function called colVars, like colMeans but for variance
-    \item Create nice plots to visualize iris data (ideally journal-quality)
-  \end{enumerate}
+  One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= iris}\hlopt{$}\hlstd{Sepal.Length[iris}\hlopt{$}\hlstd{Species} \hlopt{==} \hlstr{"setosa"}\hlstd{],}
+        \hlkwc{y} \hlstd{= iris}\hlopt{$}\hlstd{Sepal.Length[iris}\hlopt{$}\hlstd{Species} \hlopt{==} \hlstr{"versicolor"}\hlstd{])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
   
 \end{frame}
-%%%%%%%%%%%  
+%%%%%%%%%%%
+
 \end{document}

@@ -59,8 +59,15 @@ setPar()
   \end{exampleblock}
   
   \pause \begin{block}{What about RStudio?}
-  Make your life easier\\
-  Many handy tricks.
+  \begin{itemize}
+    \item Makes your life easier
+    \item Many handy tricks. So far we have seen:
+      \begin{itemize}
+      \item Autocomplete suggestion (all alone or press tab)
+      \item Ctrl-Enter to send command to R
+      \item str() and View() objects in Environment
+      \end{itemize}
+    \end{itemize}
   \end{block}
 \end{frame}
 %%%%%%%%%%%
@@ -200,6 +207,21 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Solution for one column}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{Figures/brain}
+  \end{center}
+\centering
+  \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
+  
+  <<eval=FALSE>>=
+    mean(trees$Girth[1:30])
+    mean(trees[1:30, "Girth"])
+    mean(trees$Girth[-31])
+    mean(trees[-31, "Girth"])
+  @
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{How to get the row means?}
   <<eval=FALSE>>=
   mean(trees[1,])
@@ -236,7 +258,7 @@ setPar()
 
 \begin{frame}[fragile]{For-loops: your turn!}
 
-Load Sunspots data.
+Load rock data.
   <<>>=
     data("rock")
   @
@@ -247,6 +269,26 @@ Load Sunspots data.
 \end{frame}
 %%%%%%%%%%%
 
+
+\begin{frame}[fragile]{Solution}
+
+Load rock data.
+  <<>>=
+    data("rock")
+  @
+  
+  \centering
+\textbf{\large Use a for loop to obtain column averages}
+  
+  <<eval=FALSE>>=
+    storage <- vector(length = ncol(rock))
+    for (i in 1:ncol(rock))
+    {
+      storage[i] <- mean(rock[,i])
+    }
+  @
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{More concise alternative: apply functions}
 
   <<eval=FALSE>>=
@@ -377,59 +419,24 @@ plot(iris$Sepal.Length, col=iris$Species)
 \end{frame}
 %%%%%%%%%%%
 
-\section{Open problem}
+\begin{frame}[fragile]{Are irises different? Solution}
 
-\begin{frame}[fragile]{The t.test problem}
+  \textbf{Use t-tests to compare species in the iris dataset}
   
-  <<>>=
-  t.test(1:10, y = c(2:20,-9), var.equal = FALSE)
+  Sorry, I was mean and forgot to tell about subsetting, which you needed here.\\
+  Subset to the species \textit{setosa}:
+  <<eval=FALSE>>=
+    iris[iris$Species == "setosa", ]  
   @
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-  <<>>=
-  t.test(1:10, y = c(2:20,-9), var.equal = TRUE)
-  @
- 
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-  Random sample from a Gaussian distribution with variance 1
-  <<>>=
-    set.seed(seed = 179)
-    x1 <- rnorm(n = 20, mean = 0, sd = 1)
-    x2 <- rnorm(n = 20, mean = 0, sd = 1)
-    
-
-    var(x1)
-    var(x2)
-  @
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{The t.test problem}
-  <<>>=
-    var.test(x = x1, y = x2)
-  @
-  \textbf{Should we use var.equal = TRUE or FALSE ?\\}
   
-  \textbf{When var.test significant/not?}
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}{}
-
-\end{frame}
-%%%%%%%%%%%
-\begin{frame}{Bonus open problems if you get bored}
-  \begin{enumerate}
-    \item What is the fastest way to get row averages in a data-frame?
-    \item Create a function called colVars, like colMeans but for variance
-    \item Create nice plots to visualize iris data (ideally journal-quality)
-  \end{enumerate}
+  One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
+  <<eval=FALSE>>=
+    t.test(x = iris$Sepal.Length[iris$Species == "setosa"],
+          y = iris$Sepal.Length[iris$Species == "versicolor"])
+  @
+  
   
 \end{frame}
-%%%%%%%%%%%  
+%%%%%%%%%%%
+
 \end{document}
