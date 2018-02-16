@@ -14,6 +14,8 @@
 \usepackage{amssymb}%
 \usepackage{graphicx}
 
+\usepackage{tikz}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
 \title[\textbf{Linear models}]{Understanding, fitting and interpreting linear models in R}
@@ -52,10 +54,51 @@ setPar()
   \end{frame}
 } 
 
-\section{Null-hypothesis testing}
+\section{Statistical inference}%very general, still simplistic
 % the t-test exercise
 
-\begin{frame}{}
+\begin{frame}{Philosophy}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,0) {Scientific question};
+    \pause
+    \node (st) at (0,-1) {};
+    \draw[->, thick] (sq)--(st);
+    \pause
+    \node (mo) at (0,-2) {Model and Statistical question};
+    \draw[->, thick] (st)--(mo);
+    \pause
+    \node (dac) at (2,-2) {Data collection};
+    \draw[->, thick] (mo)--(dac);
+    
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Testing the t.test}
+  
+  <<>>=
+    data("iris")
+  @
+
+    One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
+  <<eval=FALSE>>=
+    t.test(x = iris$Sepal.Length[iris$Species == "setosa"],
+          y = iris$Sepal.Length[iris$Species == "versicolor"])
+  @
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Testing the t.test}
+  <<boxplot, fig.width=5, fig.height=5, out.width='0.5\\textwidth'>>=
+  boxplot(Sepal.Length ~ Species, 
+          data = iris[iris$Species %in% c("setosa","versicolor"),],
+          drop = TRUE, ylab="Sepal length", xlab="Species")
+  @
+  
 \end{frame}
 %%%%%%%%%%%
 
