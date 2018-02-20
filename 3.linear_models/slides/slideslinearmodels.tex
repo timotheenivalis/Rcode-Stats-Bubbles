@@ -104,8 +104,21 @@
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{Disclaimer}
+  \begin{itemize}
+    \item Assume you got lectures about statistics and
+       \begin{itemize}
+        \item know why we need statistics
+        \item have heard of the general philosophy
+       \end{itemize}
+    \item We may simplify to focus on practical aspects
+    \item Correct us if we say something completely awful
+  \end{itemize}
+  
+\end{frame}
+%%%%%%%%%%%
+
 \section{Statistical inference}%very general, still simplistic
-% the t-test exercise
 
 \begin{frame}{General approach}
 
@@ -149,7 +162,40 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-\pause
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{str}\hlstd{(iris)}
+  \hlkwd{plot}\hlstd{(iris)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \begin{enumerate}
+    \item \color{red}{Scientific question}: Are the taxa "setosa" and "versicolor" different species?
+  \pause
+    \item Model and stat question:
+      \begin{itemize}
+        \item Model:
+          \begin{itemize}
+            \item There is an intrinsic/expected sepal length value for a species; an individual value is the sum of this expectation and a random Gaussian deviation.
+            \item $y_i = \mu_{species_i} + \epsilon_i$ with  $\epsilon \sim N(0,\sigma^2)$
+            \item t-test
+          \end{itemize}
+        \pause
+        \item Statistical question: 
+          \begin{itemize}
+            \item Does sepal length \textbf{differ significantly} between the two taxa \textbf{in our sample}?
+            \item Is the observed difference between taxa likely if both taxa have the same intrinsic/expected value?
+          \end{itemize}
+        \end{itemize}
+      \item Data collection
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Reminder t.test}
     One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -176,63 +222,65 @@ mean of x mean of y
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Reminder t.test: Are they different?}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{boxplot}\hlstd{(Sepal.Length} \hlopt{~} \hlstd{Species,}
-        \hlkwc{data} \hlstd{= iris[iris}\hlopt{$}\hlstd{Species} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"setosa"}\hlstd{,}\hlstr{"versicolor"}\hlstd{),],}
-        \hlkwc{drop} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"Sepal length"}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"Species"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.9\textwidth,height=0.6\textwidth]{figure/boxplot2-1} 
-
-\end{knitrout}
-\end{column}
-\begin{column}{0.5\textwidth}
-  \begin{itemize}
-    \item Means: 5.006 vs. 5.936
-    \item Standard deviation: 0.35 and 0.52
-    \item Standard error (SD/ $\sqrt n$): 0.05 and 0.07
-  \end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-%%%%%%%%%%%
+% \begin{frame}[fragile]{Reminder t.test: Are they different?}
+% 
+%   <<boxplot, fig.width=5, fig.height=5, out.width='0.5\\textwidth', eval=FALSE>>=
+%   boxplot(Sepal.Length ~ Species, 
+%           data = iris[iris$Species %in% c("setosa","versicolor"),],
+%           drop = TRUE, ylab="Sepal length", xlab="Species")
+%   @
+% \begin{columns}
+% \begin{column}{0.5\textwidth}
+% <<boxplot2, fig.width=5, fig.height=5, out.width='0.9\\textwidth', echo=FALSE>>=
+%   boxplot(Sepal.Length ~ Species, 
+%           data = iris[iris$Species %in% c("setosa","versicolor"),],
+%           drop = TRUE, ylab="Sepal length", xlab="Species")
+%   @
+% \end{column}
+% \begin{column}{0.5\textwidth}
+%   \begin{itemize}
+%     \item Means: 5.006 vs. 5.936
+%     \item Standard deviation: 0.35 and 0.52
+%     \item Standard error (SD/ $\sqrt n$): 0.05 and 0.07
+%   \end{itemize}
+% \end{column}
+% \end{columns}
+% \end{frame}
+% %%%%%%%%%%%
 
 \begin{frame}[fragile]{When do we know it is different?}
 
-\textbf{Estimation\\}
-
-Estimated difference $= \color{red}{\text{Mean}_1 - \text{Mean}_2 }$\\
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item Statistical estimation
+  \begin{itemize}
+    \item a Estimation
+      \begin{itemize}
+        \item Cannot know true difference $\mu_{species_1} - \mu_{species_2}$
+        \item Estimated difference $= \color{red}{\text{Mean}_1 - \text{Mean}_2 }$
+        \item Difference contains random variation
+      \end{itemize}
+    \item b Quantify uncertainty / Statistical significance
+      \begin{itemize}
+        \item $
+      t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
+      \frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
+      $
+        \item We know exactly how t is distributed when $\mu_{species_1} - \mu_{species_2} = 0$
+        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$
+        \item Can derive confidence interval and standard error
+      \end{itemize}
+  \end{itemize}
+\end{enumerate}
 
 \pause
-\vspace{1cm}
-
-\textbf{Quantify uncertainty / Statistical significance \\}
-
-t-statistic unlikely to be \emph{large} when estimated means are equal\\
-
-$$
-t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
-\frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
-$$
-
-  \begin{enumerate}
+Less uncertainty with
+  \begin{itemize}
     \item \color{red}{Larger absolute difference}
     \item \color{orange}{Smaller variability}
     \item \color{blue}{Larger sample size}
-  \end{enumerate}
+  \end{itemize}
 
-\pause
-\vspace{1cm}
-\textbf{\emph{Same for every statistical model}}
 
 \end{frame}
 %%%%%%%%%%%
