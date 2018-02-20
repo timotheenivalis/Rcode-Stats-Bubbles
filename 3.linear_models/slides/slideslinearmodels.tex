@@ -412,12 +412,7 @@ Load data:
 \end{kframe}
 \end{knitrout}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error in setwd(dir = "{}Documents/GitHub/Rcode-Stats-Bubbles/3.linear\_models/"{}): cannot change working directory}}\end{kframe}
-\end{knitrout}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -584,30 +579,35 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \end{frame}
 %%%%%%%%%%%
 
-%
-% \begin{frame}{Visualizing}
-% \begin{figure}
-% <<boxplot2, dev='tikz', echo=FALSE >>=
-% setPar()
-% boxplot(activity ~ weather, data = dat.behav, ylab="activity")
-% @
-% \end{figure}
-% \end{frame}
-% %%%%%%%%%%%%%%%%%%%%%%
-%
-% \begin{frame}{Does wheather change behavior?}
-%
-% <<>>=
-% tt <- t.test(formula = activity ~ weather, data = dat.behav, var.equal = TRUE)
-%
-% @
-%
-% \end{frame}
-% %%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Linear models in details}
-\begin{frame}
+\begin{frame}[fragile]{Interpretation}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{Ans} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"Anscombe.csv"}\hlstd{)}
+\end{alltt}
 
+
+{\ttfamily\noindent\color{warningcolor}{Warning in file(file, "{}rt"{}): cannot open file 'Anscombe.csv': No such file or directory}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error in file(file, "{}rt"{}): cannot open the connection}}\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Linear model basic assumptions}
+ \begin{block}{}
+     \begin{itemize}[<+->]
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
+      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
+       \item {\color{red!20!black}{Little error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
+       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
+       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \end{itemize}
+ \end{block}
 \end{frame}
 %%%%%%%%%%%
 
