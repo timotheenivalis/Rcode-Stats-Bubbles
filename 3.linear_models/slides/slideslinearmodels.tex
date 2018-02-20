@@ -95,11 +95,11 @@
   \begin{itemize}
     \item Go to the last slide for bonus exercises
     \item Work on code for your research and ask question during exercise time
-    \item But try and keep an eye out for interesting crumbs!
+    \item But try and keep an eye out, just in case
   \end{itemize}
   
   \begin{center}
-    \includegraphics[height=0.3\textheight]{Figures/too-easy-whats-next.jpg}
+    \includegraphics[height=0.5\textheight]{Figures/too-easy-whats-next.jpg}
   \end{center}
 \end{frame}
 %%%%%%%%%%%
@@ -107,21 +107,33 @@
 \section{Statistical inference}%very general, still simplistic
 % the t-test exercise
 
-\begin{frame}{Philosophy}
+\begin{frame}{General approach}
 
 \begin{center}
   \begin{tikzpicture}
-    \node (sq) at (0,0) {Scientific question};
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
     \pause
-    \node (st) at (0,-1) {};
-    \draw[->, thick] (sq)--(st);
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
     \pause
-    \node (mo) at (0,-2) {Model and Statistical question};
-    \draw[->, thick] (st)--(mo);
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
     \pause
-    \node (dac) at (2,-2) {Data collection};
-    \draw[->, thick] (mo)--(dac);
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    \pause
     
+    \node (che) at (0,-5) {5. Diagnostic, check assumptions, prediction};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \pause
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
   \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -129,6 +141,7 @@
 
 \begin{frame}[fragile]{Reminder t.test}
   
+  \pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -136,7 +149,7 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
+\pause
     One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -163,7 +176,7 @@ mean of x mean of y
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Reminder t.test}
+\begin{frame}[fragile]{Reminder t.test: Are they different?}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -195,7 +208,16 @@ mean of x mean of y
 
 \begin{frame}[fragile]{When do we know it is different?}
 
-t-statistic unlikely to be large by chance\\
+\textbf{Estimation\\}
+
+Estimated difference $= \color{red}{\text{Mean}_1 - \text{Mean}_2 }$\\
+
+\pause
+\vspace{1cm}
+
+\textbf{Quantify uncertainty / Statistical significance \\}
+
+t-statistic unlikely to be \emph{large} when estimated means are equal\\
 
 $$
 t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
@@ -209,13 +231,14 @@ $$
   \end{enumerate}
 
 \pause
-
-Same for every statistical model
+\vspace{1cm}
+\textbf{\emph{Same for every statistical model}}
 
 \end{frame}
+%%%%%%%%%%%
   
-\begin{frame}[fragile]{When do we know it is different? Try it!}
-\textbf{1. Larger absolute difference}
+\begin{frame}[fragile]{When do we know it is different?}
+\textbf{\color{red}{1. Larger absolute difference}}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -237,7 +260,7 @@ Same for every statistical model
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%
-\begin{frame}[fragile]{When do we know it is different? Try it!}
+\begin{frame}[fragile]{When do we know it is different?}
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -262,7 +285,7 @@ Same for every statistical model
 \begin{frame}[fragile]{When do we know it is different? Try it!}
 
 \begin{alertblock}{Exercise}
-Follow the same approach to observe the effect of smaller variability and/or larger sample size.
+Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{larger sample size}}.
 \end{alertblock}
 \end{frame}
 %%%%%%%%%%%
@@ -270,11 +293,13 @@ Follow the same approach to observe the effect of smaller variability and/or lar
 \begin{frame}{By the way, what are these p-values?}
 Blabla
 
-Reference to a null-model
-
-Under null hypothesis, uniform distribution.
-
-Implies proportion(significance) = 0.05
+\begin{exampleblock}{Properties}
+  \begin{itemize}
+    \item Reference to a null-model ($H_0$) with assumptions
+    \item Uniform distribution under $H_0$ \dots
+    \item \dots hence proportion(significance under $H_0$) = significance threshold
+  \end{itemize}
+\end{exampleblock}
 \end{frame}
 %%%%%%%%%%%
 
@@ -308,32 +333,49 @@ What if variance are different by chance only?
 \end{kframe}
 \end{knitrout}
 
+\begin{alertblock}{Exercise}
+  What option is more correct for var.equal?
+\end{alertblock}
 
 \end{frame}
 %%%%%%%%%%%
-\section{t-test, ANOVA, linear model}
+\section{t-test, ANOVA, regression: all is one, one is all}
 
 \begin{frame}[fragile]{A small example}
 
-Animal behavior in response to weather.
-Measure activity
+Animal behavior in response to weather
 
 
+
+Load data:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getwd}\hlstd{()}
+\hlkwd{setwd}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{dat.behav} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"datbehav.csv"}\hlstd{)}
-\hlkwd{str}\hlstd{(dat.behav)}
+\hlstd{dat.behav} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"datbehav.csv"}\hlstd{)} \hlcom{# path to file}
 \end{alltt}
-\begin{verbatim}
-'data.frame':	35 obs. of  2 variables:
- $ weather : Factor w/ 2 levels "rainy","sunny": 2 2 2 2 2 2 2 2 2 2 ...
- $ activity: num  5.93 4.47 6.81 5.08 5.4 ...
-\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
+\pause
+STEP 1: have a look at your data
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{str}\hlstd{(dat.behav)}
+\hlkwd{summary}\hlstd{(dat.behav)}
+\hlkwd{plot}\hlstd{(dat.behav)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%
 
@@ -341,8 +383,10 @@ Measure activity
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{fitstudent} \hlkwb{<-} \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}\hlstr{"rainy"}\hlstd{],}
-                     \hlkwc{y} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}\hlstr{"sunny"}\hlstd{],}
+\hlstd{fitstudent} \hlkwb{<-} \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}
+                                              \hlstr{"rainy"}\hlstd{],}
+                     \hlkwc{y} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}
+                                              \hlstr{"sunny"}\hlstd{],}
                      \hlkwc{var.equal} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \hlkwd{print}\hlstd{(fitstudent)}
 \end{alltt}
@@ -415,9 +459,11 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 
-\pause
-\textbf{NB: aov() vs. anova()}
+\begin{frame}[fragile]{NB: aov() vs. anova()}
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}

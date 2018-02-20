@@ -70,21 +70,33 @@ setPar()
 \section{Statistical inference}%very general, still simplistic
 % the t-test exercise
 
-\begin{frame}{Philosophy}
+\begin{frame}{General approach}
 
 \begin{center}
   \begin{tikzpicture}
-    \node (sq) at (0,0) {Scientific question};
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
     \pause
-    \node (st) at (0,-1) {};
-    \draw[->, thick] (sq)--(st);
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
     \pause
-    \node (mo) at (0,-2) {Model and Statistical question};
-    \draw[->, thick] (st)--(mo);
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
     \pause
-    \node (dac) at (2,-2) {Data collection};
-    \draw[->, thick] (mo)--(dac);
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    \pause
     
+    \node (che) at (0,-5) {5. Diagnostic, check assumptions, prediction};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \pause
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
   \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -92,10 +104,11 @@ setPar()
 
 \begin{frame}[fragile]{Reminder t.test}
   
+  \pause
   <<>>=
     data("iris")
   @
-
+\pause
     One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
   <<eval=TRUE>>=
     t.test(x = iris$Sepal.Length[iris$Species == "setosa"],
@@ -105,7 +118,7 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Reminder t.test}
+\begin{frame}[fragile]{Reminder t.test: Are they different?}
 
   <<boxplot, fig.width=5, fig.height=5, out.width='0.5\\textwidth', eval=FALSE>>=
   boxplot(Sepal.Length ~ Species, 
@@ -133,7 +146,16 @@ setPar()
 
 \begin{frame}[fragile]{When do we know it is different?}
 
-t-statistic unlikely to be large by chance\\
+\textbf{Estimation\\}
+
+Estimated difference $= \color{red}{\text{Mean}_1 - \text{Mean}_2 }$\\
+
+\pause
+\vspace{1cm}
+
+\textbf{Quantify uncertainty / Statistical significance \\}
+
+t-statistic unlikely to be \emph{large} when estimated means are equal\\
 
 $$
 t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
@@ -147,13 +169,14 @@ $$
   \end{enumerate}
 
 \pause
-
-Same for every statistical model
+\vspace{1cm}
+\textbf{\emph{Same for every statistical model}}
 
 \end{frame}
+%%%%%%%%%%%
   
-\begin{frame}[fragile]{When do we know it is different? Try it!}
-\textbf{1. Larger absolute difference}
+\begin{frame}[fragile]{When do we know it is different?}
+\textbf{\color{red}{1. Larger absolute difference}}
 <<>>=
 nbsim <- 1000
 pdistri_large <- vector(length = nbsim)
@@ -171,7 +194,7 @@ for (i in 1:nbsim)
 @
 \end{frame}
 %%%%%%%%%%
-\begin{frame}[fragile]{When do we know it is different? Try it!}
+\begin{frame}[fragile]{When do we know it is different?}
 \centering
 <<comphist1, dev='pdf', fig.width=14, out.height='0.5\\textheight'>>=
 par(mfrow=c(1,2), cex=2)
@@ -188,7 +211,7 @@ par(mfrow=c(1,1))
 \begin{frame}[fragile]{When do we know it is different? Try it!}
 
 \begin{alertblock}{Exercise}
-Follow the same approach to observe the effect of smaller variability and/or larger sample size.
+Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{larger sample size}}.
 \end{alertblock}
 \end{frame}
 %%%%%%%%%%%
@@ -196,11 +219,13 @@ Follow the same approach to observe the effect of smaller variability and/or lar
 \begin{frame}{By the way, what are these p-values?}
 Blabla
 
-Reference to a null-model
-
-Under null hypothesis, uniform distribution.
-
-Implies proportion(significance) = 0.05
+\begin{exampleblock}{Properties}
+  \begin{itemize}
+    \item Reference to a null-model ($H_0$) with assumptions
+    \item Uniform distribution under $H_0$ \dots
+    \item \dots hence proportion(significance under $H_0$) = significance threshold
+  \end{itemize}
+\end{exampleblock}
 \end{frame}
 %%%%%%%%%%%
 
@@ -218,15 +243,17 @@ var(rnorm(20, mean = 0, sd = 1))
 var(rnorm(20, mean = 0, sd = 1))
 @
 
+\begin{alertblock}{Exercise}
+  What option is more correct for var.equal?
+\end{alertblock}
 
 \end{frame}
 %%%%%%%%%%%
-\section{t-test, ANOVA, linear model}
+\section{t-test, ANOVA, regression: all is one, one is all}
 
 \begin{frame}[fragile]{A small example}
 
-Animal behavior in response to weather.
-Measure activity
+Animal behavior in response to weather
 
 <<a0,echo=FALSE, results='hide', eval=FALSE>>=
 set.seed(125)
@@ -237,19 +264,33 @@ dat.behav <- data.frame(weather=weather, activity = activity)
 write.csv(dat.behav, file = "datbehav.csv", row.names = FALSE)
 @
 
-<<a1>>=
-dat.behav <- read.csv(file = "datbehav.csv")
-str(dat.behav)
+Load data:
+<<eval=FALSE>>=
+getwd()
+setwd()
 @
 
+<<a1>>=
+dat.behav <- read.csv(file = "datbehav.csv") # path to file
+@
+
+\pause
+STEP 1: have a look at your data
+<<eval=FALSE>>=
+str(dat.behav)
+summary(dat.behav)
+plot(dat.behav)
+@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile]{t-test}
 <<>>=
 
-fitstudent <- t.test(x = dat.behav$activity[dat.behav$weather=="rainy"],
-                     y = dat.behav$activity[dat.behav$weather=="sunny"],
+fitstudent <- t.test(x = dat.behav$activity[dat.behav$weather==
+                                              "rainy"],
+                     y = dat.behav$activity[dat.behav$weather==
+                                              "sunny"],
                      var.equal = TRUE)
 print(fitstudent)
 @
@@ -273,9 +314,11 @@ summary(fitanova)
 fitlm <- lm(data = dat.behav, formula = activity ~ weather)
 summary(fitlm)
 @
+\end{frame}
+%%%%%%%%%%%
 
-\pause
-\textbf{NB: aov() vs. anova()}
+\begin{frame}[fragile]{NB: aov() vs. anova()}
+
 <<eval=FALSE>>=
 aov(data = dat.behav, formula = activity ~ weather)
 anova(fitlm)
