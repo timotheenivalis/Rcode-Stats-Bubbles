@@ -18,7 +18,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
-\title[\textbf{Linear models}]{Understanding, fitting and interpreting linear models in R}
+\title[\textbf{Linear models}]{Statistical inference and linear models}
 \date{\today}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,6 +53,19 @@ setPar()
     \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
   \end{frame}
 } 
+
+\begin{frame}{If you get bored}
+  \begin{itemize}
+    \item Go to the last slide for bonus exercises
+    \item Work on code for your research and ask question during exercise time
+    \item But try and keep an eye out, just in case
+  \end{itemize}
+  
+  \begin{center}
+    \includegraphics[height=0.5\textheight]{Figures/too-easy-whats-next.jpg}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
 
 \section{Statistical inference}%very general, still simplistic
 % the t-test exercise

@@ -1,0 +1,456 @@
+\documentclass[10pt]{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}%
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+
+\usepackage[utf8]{inputenc}%
+
+% graphics
+%% Figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{xcolor}%for color mixing
+
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
+\usepackage{graphicx}
+
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
+\title[\textbf{Linear models}]{Statistical inference and linear models}
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+
+\begin{frame}
+\maketitle	
+\end{frame}
+%%%%%%%%%%%
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{}
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+  \end{frame}
+} 
+
+\begin{frame}{If you get bored}
+  \begin{itemize}
+    \item Go to the last slide for bonus exercises
+    \item Work on code for your research and ask question during exercise time
+    \item But try and keep an eye out for interesting crumbs!
+  \end{itemize}
+  
+  \begin{center}
+    \includegraphics[height=0.3\textheight]{Figures/too-easy-whats-next.jpg}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\section{Statistical inference}%very general, still simplistic
+% the t-test exercise
+
+\begin{frame}{Philosophy}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,0) {Scientific question};
+    \pause
+    \node (st) at (0,-1) {};
+    \draw[->, thick] (sq)--(st);
+    \pause
+    \node (mo) at (0,-2) {Model and Statistical question};
+    \draw[->, thick] (st)--(mo);
+    \pause
+    \node (dac) at (2,-2) {Data collection};
+    \draw[->, thick] (mo)--(dac);
+    
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Reminder t.test}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{data}\hlstd{(}\hlstr{"iris"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+    One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= iris}\hlopt{$}\hlstd{Sepal.Length[iris}\hlopt{$}\hlstd{Species} \hlopt{==} \hlstr{"setosa"}\hlstd{],}
+        \hlkwc{y} \hlstd{= iris}\hlopt{$}\hlstd{Sepal.Length[iris}\hlopt{$}\hlstd{Species} \hlopt{==} \hlstr{"versicolor"}\hlstd{])}
+\end{alltt}
+\begin{verbatim}
+
+	Welch Two Sample t-test
+
+data:  iris$Sepal.Length[iris$Species == "setosa"] and iris$Sepal.Length[iris$Species == "versicolor"]
+t = -10.521, df = 86.538, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.1057074 -0.7542926
+sample estimates:
+mean of x mean of y 
+    5.006     5.936 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Reminder t.test}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{boxplot}\hlstd{(Sepal.Length} \hlopt{~} \hlstd{Species,}
+        \hlkwc{data} \hlstd{= iris[iris}\hlopt{$}\hlstd{Species} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"setosa"}\hlstd{,}\hlstr{"versicolor"}\hlstd{),],}
+        \hlkwc{drop} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"Sepal length"}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"Species"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.9\textwidth,height=0.6\textwidth]{figure/boxplot2-1} 
+
+\end{knitrout}
+\end{column}
+\begin{column}{0.5\textwidth}
+  \begin{itemize}
+    \item Means: 5.006 vs. 5.936
+    \item Standard deviation: 0.35 and 0.52
+    \item Standard error (SD/ $\sqrt n$): 0.05 and 0.07
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{When do we know it is different?}
+
+t-statistic unlikely to be large by chance\\
+
+$$
+t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
+\frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
+$$
+
+  \begin{enumerate}
+    \item \color{red}{Larger absolute difference}
+    \item \color{orange}{Smaller variability}
+    \item \color{blue}{Larger sample size}
+  \end{enumerate}
+
+\pause
+
+Same for every statistical model
+
+\end{frame}
+  
+\begin{frame}[fragile]{When do we know it is different? Try it!}
+\textbf{1. Larger absolute difference}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{nbsim} \hlkwb{<-} \hlnum{1000}
+\hlstd{pdistri_large} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{= nbsim)}
+\hlstd{pdistri_small} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{= nbsim)}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{nbsim)}
+  \hlstd{\{}
+  \hlstd{x1} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)}
+  \hlstd{x2} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)} \hlcom{#large diff}
+  \hlstd{x3} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{2.5}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{)} \hlcom{#small diff}
+  \hlstd{out_large} \hlkwb{<-} \hlkwd{t.test}\hlstd{(x1, x2)}
+  \hlstd{out_small} \hlkwb{<-} \hlkwd{t.test}\hlstd{(x1, x3)}
+  \hlstd{pdistri_large[i]}\hlkwb{<-}\hlstd{out_large}\hlopt{$}\hlstd{p.value}
+  \hlstd{pdistri_small[i]}\hlkwb{<-}\hlstd{out_small}\hlopt{$}\hlstd{p.value}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%
+\begin{frame}[fragile]{When do we know it is different? Try it!}
+\centering
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{),} \hlkwc{cex}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{hist}\hlstd{(pdistri_large,} \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}
+     \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"Prop signif="}\hlstd{,}\hlkwd{mean}\hlstd{(pdistri_large}\hlopt{<}\hlnum{0.05}\hlstd{)))}
+\hlkwd{hist}\hlstd{(pdistri_small,} \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}
+     \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"Prop signi="}\hlstd{,}\hlkwd{mean}\hlstd{(pdistri_small}\hlopt{<}\hlnum{0.05}\hlstd{)))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.8\textwidth,height=0.5\textheight]{figure/comphist1-1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{When do we know it is different? Try it!}
+
+\begin{alertblock}{Exercise}
+Follow the same approach to observe the effect of smaller variability and/or larger sample size.
+\end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{By the way, what are these p-values?}
+Blabla
+
+Reference to a null-model
+
+Under null hypothesis, uniform distribution.
+
+Implies proportion(significance) = 0.05
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{T-test exercise}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= ...,} \hlkwc{y}\hlstd{=....,} \hlkwc{var.equal} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= ...,} \hlkwc{y}\hlstd{=....,} \hlkwc{var.equal} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+What if variance are different by chance only?
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1234}\hlstd{)}
+\hlkwd{var}\hlstd{(}\hlkwd{rnorm}\hlstd{(}\hlnum{20}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+[1] 1.027806
+\end{verbatim}
+\begin{alltt}
+\hlkwd{var}\hlstd{(}\hlkwd{rnorm}\hlstd{(}\hlnum{20}\hlstd{,} \hlkwc{mean} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{sd} \hlstd{=} \hlnum{1}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+[1] 0.6265501
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\end{frame}
+%%%%%%%%%%%
+\section{t-test, ANOVA, linear model}
+
+\begin{frame}[fragile]{A small example}
+
+Animal behavior in response to weather.
+Measure activity
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dat.behav} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"datbehav.csv"}\hlstd{)}
+\hlkwd{str}\hlstd{(dat.behav)}
+\end{alltt}
+\begin{verbatim}
+'data.frame':	35 obs. of  2 variables:
+ $ weather : Factor w/ 2 levels "rainy","sunny": 2 2 2 2 2 2 2 2 2 2 ...
+ $ activity: num  5.93 4.47 6.81 5.08 5.4 ...
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{t-test}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{fitstudent} \hlkwb{<-} \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}\hlstr{"rainy"}\hlstd{],}
+                     \hlkwc{y} \hlstd{= dat.behav}\hlopt{$}\hlstd{activity[dat.behav}\hlopt{$}\hlstd{weather}\hlopt{==}\hlstr{"sunny"}\hlstd{],}
+                     \hlkwc{var.equal} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{print}\hlstd{(fitstudent)}
+\end{alltt}
+\begin{verbatim}
+
+	Two Sample t-test
+
+data:  dat.behav$activity[dat.behav$weather == "rainy"] and dat.behav$activity[dat.behav$weather == "sunny"]
+t = 3.2752, df = 33, p-value = 0.002485
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.6138373 2.6270325
+sample estimates:
+mean of x mean of y 
+ 6.781476  5.161041 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{ANOVA}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{fitanova} \hlkwb{<-} \hlkwd{aov}\hlstd{(}\hlkwc{data} \hlstd{= dat.behav,} \hlkwc{formula} \hlstd{= activity} \hlopt{~} \hlstd{weather)}
+\hlkwd{summary}\hlstd{(fitanova)}
+\end{alltt}
+\begin{verbatim}
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+weather      1  11.25  11.253   10.73 0.00248 **
+Residuals   33  34.62   1.049                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Linear regression}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{fitlm} \hlkwb{<-} \hlkwd{lm}\hlstd{(}\hlkwc{data} \hlstd{= dat.behav,} \hlkwc{formula} \hlstd{= activity} \hlopt{~} \hlstd{weather)}
+\hlkwd{summary}\hlstd{(fitlm)}
+\end{alltt}
+\begin{verbatim}
+
+Call:
+lm(formula = activity ~ weather, data = dat.behav)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.3547 -0.6028  0.2346  0.6419  1.6534 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    6.7815     0.4581  14.805 3.94e-16 ***
+weathersunny  -1.6204     0.4948  -3.275  0.00248 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.024 on 33 degrees of freedom
+Multiple R-squared:  0.2453,	Adjusted R-squared:  0.2224 
+F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\pause
+\textbf{NB: aov() vs. anova()}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{aov}\hlstd{(}\hlkwc{data} \hlstd{= dat.behav,} \hlkwc{formula} \hlstd{= activity} \hlopt{~} \hlstd{weather)}
+\hlkwd{anova}\hlstd{(fitlm)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+
+%
+% \begin{frame}{Visualizing}
+% \begin{figure}
+% <<boxplot2, dev='tikz', echo=FALSE >>=
+% setPar()
+% boxplot(activity ~ weather, data = dat.behav, ylab="activity")
+% @
+% \end{figure}
+% \end{frame}
+% %%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{frame}{Does wheather change behavior?}
+%
+% <<>>=
+% tt <- t.test(formula = activity ~ weather, data = dat.behav, var.equal = TRUE)
+%
+% @
+%
+% \end{frame}
+% %%%%%%%%%%%
+
+
+\end{document}
