@@ -205,7 +205,7 @@ setPar()
       \frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
       $
         \item We know exactly how t is distributed when $\mu_{species_1} - \mu_{species_2} = 0$
-        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$
+        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$ ($p$-value)
         \item Can derive confidence interval and standard error
       \end{itemize}
   \end{itemize}
@@ -223,7 +223,8 @@ Less uncertainty with
 \end{frame}
 %%%%%%%%%%%
   
-\begin{frame}[fragile]{When do we know it is different?}
+\begin{frame}[fragile]{When do we know it is different? Simulations}
+\pause
 \textbf{\color{red}{1. Larger absolute difference}}
 <<>>=
 nbsim <- 1000
@@ -249,7 +250,7 @@ par(mfrow=c(1,2), cex=2)
 hist(pdistri_large, xlim=c(0,1),
      main=paste("Prop signif=",mean(pdistri_large<0.05)))
 hist(pdistri_small, xlim=c(0,1),
-     main=paste("Prop signi=",mean(pdistri_small<0.05)))
+     main=paste("Prop signif=",mean(pdistri_small<0.05)))
 par(mfrow=c(1,1))
 @
 
@@ -264,20 +265,26 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{By the way, what are these p-values?}
-Blabla
+\begin{frame}{By the way, what are these p-values?}%focus on p-value criticized
+
+\textit{Probability for a summary statistic to be greater or equal to the observed summary statistic, \textbf{when the null-hypothesis of a given statistical model is true.}}
+
+\pause
 
 \begin{exampleblock}{Properties}
   \begin{itemize}
-    \item Reference to a null-model ($H_0$) with assumptions
+    \item Depends on the null-hypothesis ($H_0$) of a given model with assumptions
     \item Uniform distribution under $H_0$ \dots
     \item \dots hence proportion(significance under $H_0$) = significance threshold
   \end{itemize}
 \end{exampleblock}
+
+\pause
+\textbf{NB: Focus on $p$-value criticized, but common and they not more evil than other misused statistics!}
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{T-test exercise}
+\begin{frame}[fragile]{T-test exercise: p-values and simulations}
 
 <<eval=FALSE>>=
 t.test(x = ..., y=...., var.equal = TRUE)
@@ -318,6 +325,10 @@ getwd()
 setwd()
 @
 
+<<echo=FALSE>>=
+setwd(dir = "Documents/GitHub/Rcode-Stats-Bubbles/3.linear_models/")
+@
+
 <<a1>>=
 dat.behav <- read.csv(file = "datbehav.csv") # path to file
 @
@@ -345,6 +356,24 @@ print(fitstudent)
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{t-test, graphically}
+\textbf{Difference between means}
+\centering
+<<echo=FALSE>>=
+plot(x=c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.02),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.02)),
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+arrows(x0 = 1.5, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]),
+       y1=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=3, col = "dark red", lwd=5)
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5)
+@
+\end{frame}
+%%%%%%%%%%
+
 \begin{frame}[fragile]{ANOVA}
 
 
@@ -356,6 +385,33 @@ summary(fitanova)
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{ANOVA, graphically}
+\textbf{Variance decomposition}
+\centering
+<<echo=FALSE>>=
+xpos <- c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.06),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.06))
+plot(x=xpos,
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5, lty=2)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5, lty=2)
+arrows(x0=0.5, x1=2.5, y0=mean(dat.behav$activity), code=0, col = "blue", lwd=5, lty=2)
+
+arrows(x0 =xpos, y0=c(rep(mean(dat.behav$activity[dat.behav$weather=="sunny"]), times=length(dat.behav$activity[dat.behav$weather=="sunny"])), rep(mean(dat.behav$activity[dat.behav$weather=="rainy"]), times=length(dat.behav$activity[dat.behav$weather=="rainy"]))),
+       y1=dat.behav$activity, code=0, col="dark red")
+arrows(x0=c(1,2), y0=rep(mean(dat.behav$activity), times=2),
+       y1=c(mean(dat.behav$activity[dat.behav$weather=="sunny"]),
+        mean(dat.behav$activity[dat.behav$weather=="rainy"])),
+       col="dark blue", lwd=8, code=0)
+
+@
+\end{frame}
+%%%%%%%%%%
+
 \begin{frame}[fragile]{Linear regression}
 
 <<>>=
@@ -364,6 +420,24 @@ summary(fitlm)
 @
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Regression, graphically}
+\textbf{Rate of change}
+\centering
+<<echo=FALSE>>=
+plot(x=c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.02),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.02)),
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5)
+abline(a = coef(fitlm)[1]+2*coef(fitlm)[2], b=-coef(fitlm)[2], lwd=5, col="dark red")
+@
+\end{frame}
+%%%%%%%%%%
+
 
 \begin{frame}[fragile]{NB: aov() vs. anova()}
 
@@ -375,6 +449,17 @@ anova(fitlm)
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{All is one\dots}
+\pause
+  \begin{block}{\dots but \texttt{lm()} rules!}
+    \begin{itemize}
+      \item t-test, ANOVA, regression and others can be mathematically equivalent
+      \item In R, \texttt{lm()} and related functions can do them all\dots
+      \item \dots and much more!
+    \end{itemize}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%
 
 %
 % \begin{frame}{Visualizing}
@@ -396,6 +481,23 @@ anova(fitlm)
 %
 % \end{frame}
 % %%%%%%%%%%%
+
+\section{Linear models in details}
+\begin{frame}
+
+\end{frame}
+%%%%%%%%%%%
+
+\section{Bonus fun}
+\begin{frame}{Extra exercises}
+
+\begin{alertblock}{Linear models}
+  \begin{enumerate}
+    \item 
+  \end{enumerate}
+\end{alertblock}
+\end{frame}
+%%%%%%%%%%%
 
 
 \end{document}

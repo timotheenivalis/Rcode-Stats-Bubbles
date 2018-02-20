@@ -267,7 +267,7 @@ mean of x mean of y
       \frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
       $
         \item We know exactly how t is distributed when $\mu_{species_1} - \mu_{species_2} = 0$
-        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$
+        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$ ($p$-value)
         \item Can derive confidence interval and standard error
       \end{itemize}
   \end{itemize}
@@ -285,7 +285,8 @@ Less uncertainty with
 \end{frame}
 %%%%%%%%%%%
   
-\begin{frame}[fragile]{When do we know it is different?}
+\begin{frame}[fragile]{When do we know it is different? Simulations}
+\pause
 \textbf{\color{red}{1. Larger absolute difference}}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -317,7 +318,7 @@ Less uncertainty with
 \hlkwd{hist}\hlstd{(pdistri_large,} \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}
      \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"Prop signif="}\hlstd{,}\hlkwd{mean}\hlstd{(pdistri_large}\hlopt{<}\hlnum{0.05}\hlstd{)))}
 \hlkwd{hist}\hlstd{(pdistri_small,} \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{),}
-     \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"Prop signi="}\hlstd{,}\hlkwd{mean}\hlstd{(pdistri_small}\hlopt{<}\hlnum{0.05}\hlstd{)))}
+     \hlkwc{main}\hlstd{=}\hlkwd{paste}\hlstd{(}\hlstr{"Prop signif="}\hlstd{,}\hlkwd{mean}\hlstd{(pdistri_small}\hlopt{<}\hlnum{0.05}\hlstd{)))}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.8\textwidth,height=0.5\textheight]{figure/comphist1-1} 
@@ -338,20 +339,26 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{By the way, what are these p-values?}
-Blabla
+\begin{frame}{By the way, what are these p-values?}%focus on p-value criticized
+
+\textit{Probability for a summary statistic to be greater or equal to the observed summary statistic, \textbf{when the null-hypothesis of a given statistical model is true.}}
+
+\pause
 
 \begin{exampleblock}{Properties}
   \begin{itemize}
-    \item Reference to a null-model ($H_0$) with assumptions
+    \item Depends on the null-hypothesis ($H_0$) of a given model with assumptions
     \item Uniform distribution under $H_0$ \dots
     \item \dots hence proportion(significance under $H_0$) = significance threshold
   \end{itemize}
 \end{exampleblock}
+
+\pause
+\textbf{NB: Focus on $p$-value criticized, but common and they not more evil than other misused statistics!}
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{T-test exercise}
+\begin{frame}[fragile]{T-test exercise: p-values and simulations}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -407,6 +414,13 @@ Load data:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error in setwd(dir = "{}Documents/GitHub/Rcode-Stats-Bubbles/3.linear\_models/"{}): cannot change working directory}}\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{dat.behav} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"datbehav.csv"}\hlstd{)} \hlcom{# path to file}
 \end{alltt}
@@ -456,6 +470,17 @@ mean of x mean of y
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{t-test, graphically}
+\textbf{Difference between means}
+\centering
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-11-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%
+
 \begin{frame}[fragile]{ANOVA}
 
 
@@ -476,6 +501,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{ANOVA, graphically}
+\textbf{Variance decomposition}
+\centering
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-13-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%
 
 \begin{frame}[fragile]{Linear regression}
 
@@ -510,6 +546,18 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Regression, graphically}
+\textbf{Rate of change}
+\centering
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-15-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%
+
+
 \begin{frame}[fragile]{NB: aov() vs. anova()}
 
 \begin{knitrout}
@@ -524,6 +572,17 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{All is one\dots}
+\pause
+  \begin{block}{\dots but \texttt{lm()} rules!}
+    \begin{itemize}
+      \item t-test, ANOVA, regression and others can be mathematically equivalent
+      \item In R, \texttt{lm()} and related functions can do them all\dots
+      \item \dots and much more!
+    \end{itemize}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%
 
 %
 % \begin{frame}{Visualizing}
@@ -545,6 +604,23 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 %
 % \end{frame}
 % %%%%%%%%%%%
+
+\section{Linear models in details}
+\begin{frame}
+
+\end{frame}
+%%%%%%%%%%%
+
+\section{Bonus fun}
+\begin{frame}{Extra exercises}
+
+\begin{alertblock}{Linear models}
+  \begin{enumerate}
+    \item 
+  \end{enumerate}
+\end{alertblock}
+\end{frame}
+%%%%%%%%%%%
 
 
 \end{document}
