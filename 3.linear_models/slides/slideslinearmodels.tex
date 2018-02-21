@@ -696,7 +696,7 @@ Not necessarily wrong, but typical interpretation assumes:
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Diagnostic}
+\begin{frame}[fragile]{Diagnostic: summary and plot}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -710,25 +710,72 @@ Not necessarily wrong, but typical interpretation assumes:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{summary}\hlstd{(lm1)}
-  \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+ \hlkwd{summary}\hlstd{(lm1)}
+ \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
  \hlkwd{plot}\hlstd{(lm1)}
- \hlkwd{summary}\hlstd{(lm2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{summary}\hlstd{(lm2)}
  \hlkwd{plot}\hlstd{(lm2)}
   \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]{Diagnostic: prediction}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{pred2} \hlkwb{<-} \hlkwd{predict}\hlstd{(lm2,} \hlkwc{se.fit} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{interval} \hlstd{=} \hlstr{"confidence"}\hlstd{)}
+\hlstd{pred2} \hlkwb{<-} \hlkwd{cbind}\hlstd{(Ans[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{2}\hlstd{,], pred2)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\pause
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/pred2-1} 
+
+\end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Practice lm() with parasites}
+
+
+  
+  \begin{alertblock}{What explains variation in parasitic load?}
+  You collected ecto-parasites on some furry large mammals at three locations. Parasites break easily when we collect them and are impossible to count, so we decide to measure parasitic load as their mass. \textbf{Why do some mammals have larger parasitic load?} \pause
+    \begin{itemize}
+      \item Load the \texttt{Para.csv} data (don't forget: str(), summary(), plot()\dots)
+      \item Model \verb+Parasite_Mass+ using \texttt{lm()}
+      \item Find what variables predict \verb+Parasite_Mass+
+      \item How good are your models? Assumptions? Prediction?
+      \item What biological interpretation can you imagine?
+      \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bonus fun}
 \begin{frame}{Extra exercises}
 
+
+
 \begin{alertblock}{Linear models}
   \begin{enumerate}
-    \item 
+    \item Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3. Something is weird, what is going on? What to do?
+    \item For model that can be fitted with t.test, aov, and lm, is one of the function faster?
+    \item Write your own code to obtain a prediction from a lm (that is, a simpler version of the predict function), with confidence interval. (extra toughness: do it using the matrix formulation of the analytical solution to a linear model)
   \end{enumerate}
 \end{alertblock}
 \end{frame}

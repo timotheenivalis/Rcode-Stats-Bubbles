@@ -595,21 +595,85 @@ Not necessarily wrong, but typical interpretation assumes:
 \end{frame}
 
 \begin{frame}[fragile]{Diagnostic: prediction}
-  <<eval=FALSE>>=
-  pred2 <- predict(lm2, se.fit = TRUE, interval = "prediction")
-    cbind(Ans[Ans$distri==2,], pred2)
-    plot(Ans[Ans$distri==2,"y"], lm2$fitted.values )
+  <<>>=
+  pred2 <- predict(lm2, se.fit = TRUE, interval = "confidence")
+  pred2 <- cbind(Ans[Ans$distri==2,], pred2)
+  @
+
+\pause
+  <<pred2, dev='tikz', echo=FALSE>>=
+  setPar()
+  plot(pred2$x, pred2$y, ylim=c(0,12), col='red', pch=16, xlab="x", ylab="y")
+  lines(pred2$x, pred2$fit.fit)
+  arrows(x0=pred2$x, y0=pred2$fit.lwr, y1=pred2$fit.upr,
+         code=3, angle=90)
+  legend(x = "bottomright", legend = c("Data", "95\\% Prediction"), col = c("red", "black"), lty = c(NA,1),
+         pch=c(16,NA))
   @
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Practice lm() with parasites}
+
+<<echo=FALSE, eval=FALSE>>=
+  set.seed(123)
+  ns <- 135
+  x2 <- sample(x = 1:3, size = ns, replace = TRUE)
+  x1 <- rnorm(ns, 0, 1) + c(-1,0,1)[x2]
+  x3 <- rnorm(ns, 5, 0.1)#no effect
+  x4 <- sample(x=0:1, size=ns, replace=TRUE)#unobserved
+  y <- 2 + 0.3*x1 + 0.5*(x2/2)+ x4 + rnorm(ns, sd = 0.7)
+  lamb <- exp(y)
+  obs <- abs(sapply(X = lamb, FUN = function(x) {rpois(n = 1, lambda = x)}) + rnorm(ns, sd=0.5))
+
+para <- data.frame(Parasite_Mass = obs, Individual_Size = x1 +6, Location = c("A","B","C")[x2], Fur_Darkness = x3)
+
+plot(para$Parasite_Mass, x=para$Individual_Size)
+summary(glm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para, family="quasipoisson"))
+
+summary(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para))
+hist(resid(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para)))
+write.csv(x = para, file = "Para.csv", row.names = FALSE)
+@
+  
+  \begin{alertblock}{What explains variation in parasitic load?}
+  You collected ecto-parasites on some furry large mammals at three locations. Parasites break easily when we collect them and are impossible to count, so we decide to measure parasitic load as their mass. \textbf{Why do some mammals have larger parasitic load?} \pause
+    \begin{itemize}
+      \item Load the \texttt{Para.csv} data (don't forget: str(), summary(), plot()\dots)
+      \item Model \verb+Parasite_Mass+ using \texttt{lm()}
+      \item Find what variables predict \verb+Parasite_Mass+
+      \item How good are your models? Assumptions? Prediction?
+      \item What biological interpretation can you imagine?
+      \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bonus fun}
 \begin{frame}{Extra exercises}
 
+<<echo=FALSE, eval=FALSE>>=
+set.seed(123)
+ns <- 35
+x1 <- runif(n = ns, min = 0,max = 1)
+x2 <- 1-x1 + rnorm(ns, 0, 0.001)
+x3 <- x2/2
+
+y <- x1 + rnorm(ns, sd = 0.7)
+
+summary(lm(y ~ x1 + x2))
+summary(lm(y ~ x2 + x3))
+
+Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
+write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
+@
+
 \begin{alertblock}{Linear models}
   \begin{enumerate}
-    \item 
+    \item Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3. Something is weird, what is going on? What to do?
+    \item For model that can be fitted with t.test, aov, and lm, is one of the function faster?
+    \item Write your own code to obtain a prediction from a lm (that is, a simpler version of the predict function), with confidence interval. (extra toughness: do it using the matrix formulation of the analytical solution to a linear model)
   \end{enumerate}
 \end{alertblock}
 \end{frame}
