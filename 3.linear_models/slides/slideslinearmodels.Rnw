@@ -325,10 +325,6 @@ getwd()
 setwd()
 @
 
-<<echo=FALSE>>=
-setwd(dir = "~/Documents/GitHub/Rcode-Stats-Bubbles/3.linear_models/")
-@
-
 <<a1>>=
 dat.behav <- read.csv(file = "datbehav.csv") # path to file
 @
@@ -464,14 +460,106 @@ anova(fitlm)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Linear models in details}
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  
+  <<lmprinc, echo=FALSE, dev='tikz'>>=
+    setPar()
+    set.seed(123)
+    x <- rnorm(20)
+    y <- 1 + x + rnorm(20)
+    plot(x, y, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}")
+    lm0 <- lm(y~x)
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    
+    arrows(x0 = x, y0=y, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+  @ 
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  \vspace{1cm}
+\textbf{In R:}
+<<eval=FALSE>>=
+  lm(response ~ 1 + predictor1 + predictor2, data=data) 
+    # equivalent to
+  lm(response ~ predictor1 + predictor2, data=data) 
+@
+\begin{itemize}
+  \item Intercept can be explicit or implicit
+  \item Can remove intercept with \texttt{\dots $\sim $ 0 + \dots}
+  \item Error is implicit
+  \item Feed the option \texttt{data=} to keep code short, reliable and flexible
+  \item Order of predictors do not matter 
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}[fragile]{Interpretation}
+
   <<>>=
     Ans <- read.csv(file = "Anscombe.csv")
+  @
+  
+  <<eval=FALSE>>=
+    lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
+    summary(lm1)
+    plot(Ans$x[Ans$distri==1], Ans$y[Ans$distri==1],
+         xlim=c(0,15), ylim=c(0,12))
+    abline(lm1)  
   @
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Interpretation}
+
+ \begin{alertblock}{lm vs. plot}
+ \begin{itemize}
+   \item Fit a linear model $y \sim x$for each of the four ``distri"
+   \item Plot the relationship  $ y \sim x $ for each of the four ``distri"
+   \item Can we trust these models? For what? \textit{\tiny I expect more than ``it's all bullshit"}
+  \end{itemize}
+ \end{alertblock}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{General approach}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
+
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    
+    \node (che) at (0,-5) {\textbf{5. Diagnostic, check assumptions, prediction}};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}{Linear model basic assumptions}
+Not necessarily wrong, but typical interpretation assumes:
  \begin{block}{}
      \begin{itemize}[<+->]
       \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
@@ -482,6 +570,36 @@ anova(fitlm)
        \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
      \end{itemize}
  \end{block}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Diagnostic: summary and plot}
+  <<>>=
+   lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
+   lm2 <- lm(y ~ x , data=Ans[Ans$distri==2,])
+  @
+  
+  
+  <<eval=FALSE>>=
+   summary(lm1) 
+   par(mfrow=c(2,2)) 
+   plot(lm1)
+  @
+  
+  <<eval=FALSE>>=
+    summary(lm2) 
+   plot(lm2)
+    par(mfrow=c(1,1))
+  @
+
+\end{frame}
+
+\begin{frame}[fragile]{Diagnostic: prediction}
+  <<eval=FALSE>>=
+  pred2 <- predict(lm2, se.fit = TRUE, interval = "prediction")
+    cbind(Ans[Ans$distri==2,], pred2)
+    plot(Ans[Ans$distri==2,"y"], lm2$fitted.values )
+  @
 \end{frame}
 %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

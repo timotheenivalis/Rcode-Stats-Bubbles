@@ -412,8 +412,6 @@ Load data:
 \end{kframe}
 \end{knitrout}
 
-
-
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -470,7 +468,7 @@ mean of x mean of y
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-11-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-10-1} 
 
 \end{knitrout}
 \end{frame}
@@ -502,7 +500,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-13-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-12-1} 
 
 \end{knitrout}
 \end{frame}
@@ -546,7 +544,7 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-15-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-14-1} 
 
 \end{knitrout}
 \end{frame}
@@ -582,22 +580,109 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Linear models in details}
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc-1} 
+
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  \vspace{1cm}
+\textbf{In R:}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{lm}\hlstd{(response} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor1} \hlopt{+} \hlstd{predictor2,} \hlkwc{data}\hlstd{=data)}
+    \hlcom{# equivalent to}
+  \hlkwd{lm}\hlstd{(response} \hlopt{~} \hlstd{predictor1} \hlopt{+} \hlstd{predictor2,} \hlkwc{data}\hlstd{=data)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{itemize}
+  \item Intercept can be explicit or implicit
+  \item Can remove intercept with \texttt{\dots $\sim $ 0 + \dots}
+  \item Error is implicit
+  \item Feed the option \texttt{data=} to keep code short, reliable and flexible
+  \item Order of predictors do not matter 
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}[fragile]{Interpretation}
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlstd{Ans} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"Anscombe.csv"}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{Warning in file(file, "{}rt"{}): cannot open file 'Anscombe.csv': No such file or directory}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error in file(file, "{}rt"{}): cannot open the connection}}\end{kframe}
+\end{kframe}
+\end{knitrout}
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{lm1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x ,} \hlkwc{data}\hlstd{=Ans[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{1}\hlstd{,])}
+  \hlkwd{summary}\hlstd{(lm1)}
+  \hlkwd{plot}\hlstd{(Ans}\hlopt{$}\hlstd{x[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{1}\hlstd{], Ans}\hlopt{$}\hlstd{y[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{1}\hlstd{],}
+       \hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{15}\hlstd{),} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{12}\hlstd{))}
+  \hlkwd{abline}\hlstd{(lm1)}
+\end{alltt}
+\end{kframe}
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Interpretation}
+
+ \begin{alertblock}{lm vs. plot}
+ \begin{itemize}
+   \item Fit a linear model $y \sim x$for each of the four ``distri"
+   \item Plot the relationship  $ y \sim x $ for each of the four ``distri"
+   \item Can we trust these models? For what? \textit{\tiny I expect more than ``it's all bullshit"}
+  \end{itemize}
+ \end{alertblock}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{General approach}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
+
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    
+    \node (che) at (0,-5) {\textbf{5. Diagnostic, check assumptions, prediction}};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}{Linear model basic assumptions}
+Not necessarily wrong, but typical interpretation assumes:
  \begin{block}{}
      \begin{itemize}[<+->]
       \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
@@ -611,6 +696,33 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Diagnostic}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+ \hlstd{lm1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x ,} \hlkwc{data}\hlstd{=Ans[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{1}\hlstd{,])}
+ \hlstd{lm2} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x ,} \hlkwc{data}\hlstd{=Ans[Ans}\hlopt{$}\hlstd{distri}\hlopt{==}\hlnum{2}\hlstd{,])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{summary}\hlstd{(lm1)}
+  \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+ \hlkwd{plot}\hlstd{(lm1)}
+ \hlkwd{summary}\hlstd{(lm2)}
+ \hlkwd{plot}\hlstd{(lm2)}
+  \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bonus fun}
 \begin{frame}{Extra exercises}
 
