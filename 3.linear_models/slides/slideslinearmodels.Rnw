@@ -21,7 +21,7 @@
 \title[\textbf{Linear models}]{Statistical inference and linear models}
 \date{\today}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
 <<Plot Options, echo=FALSE, message=FALSE>>=
@@ -370,7 +370,11 @@ arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), 
 \end{frame}
 %%%%%%%%%%
 
-\begin{frame}[fragile]{ANOVA}
+\begin{frame}[fragile]{ANOVA}  \begin{enumerate}
+    \item What is the fastest way to get row averages in a data-frame?
+    \item Create a function called colVars, like colMeans but for variance
+    \item Create nice plots to visualize iris data (ideally journal-quality)
+  \end{enumerate}
 
 
 <<>>=
@@ -668,6 +672,14 @@ summary(lm(y ~ x2 + x3))
 Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
 write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 @
+
+\begin{alertblock}{General R coding}
+  \begin{enumerate}
+    \item What is the fastest way to get row averages in a data-frame?
+    \item Create a function called colVars, like colMeans but for variance
+    \item Create nice plots to visualize iris data (ideally journal-quality)
+  \end{enumerate}
+\end{alertblock}
 
 \begin{alertblock}{Linear models}
   \begin{enumerate}
