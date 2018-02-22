@@ -7,6 +7,6 @@ You can get the slides here [https://github.com/timotheenivalis/Rcode-Stats-Bubb
 
 Some exercises require the datasets present in the folder [https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/3.linear_models/DataSets](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/3.linear_models/DataSets).
 
-You can download a zip version of this folder at [https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/3.linear_models/DataSets.zip](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/3.linear_models/DataSets.zip).
+You can download a zip version containing data and slides here  [https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/3.linear_models/DataSets_Slides.zip](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/3.linear_models/DataSets_Slides.zip).
 
 If needed I will send them by email during the workshop or circulate them on USB.
