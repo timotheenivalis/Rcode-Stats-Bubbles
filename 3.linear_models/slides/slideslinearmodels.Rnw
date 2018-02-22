@@ -280,7 +280,7 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
 \end{exampleblock}
 
 \pause
-\textbf{NB: Focus on $p$-value criticized, but common and they not more evil than other misused statistics!}
+\textbf{NB: Focus on $p$-value criticized, but common and they are no more evil than other misused statistics!}
 \end{frame}
 %%%%%%%%%%%
 
