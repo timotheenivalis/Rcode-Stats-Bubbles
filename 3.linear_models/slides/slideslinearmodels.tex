@@ -307,6 +307,8 @@ Less uncertainty with
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
+\textbf{How would you visualize these two vectors?}
 \end{frame}
 %%%%%%%%%%
 \begin{frame}[fragile]{When do we know it is different?}
@@ -339,7 +341,7 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{By the way, what are these p-values?}%focus on p-value criticized
+\begin{frame}[fragile]{By the way, what are these p-values?}%focus on p-value criticized
 
 \textit{Probability for a summary statistic to be greater or equal to the observed summary statistic, \textbf{when the null-hypothesis of a given statistical model is true.}}
 
@@ -352,9 +354,18 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
     \item \dots hence proportion(significance under $H_0$) = significance threshold
   \end{itemize}
 \end{exampleblock}
+\pause
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{hist}\hlstd{(} \hlkwd{runif}\hlstd{(}\hlkwc{n} \hlstd{=} \hlnum{10000}\hlstd{,} \hlkwc{min} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{max}\hlstd{=}\hlnum{1}\hlstd{) )}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \pause
-\textbf{NB: Focus on $p$-value criticized, but common and they not more evil than other misused statistics!}
+\textbf{NB: Focus on $p$-value criticized, but common and they are no more evil than other misused statistics!}
 \end{frame}
 %%%%%%%%%%%
 
@@ -369,7 +380,7 @@ Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{l
 \end{kframe}
 \end{knitrout}
 
-What if variance are different by chance only?
+What if variances are different by chance only?
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -468,18 +479,13 @@ mean of x mean of y
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-10-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-11-1} 
 
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%
 
-\begin{frame}[fragile]{ANOVA}  \begin{enumerate}
-    \item What is the fastest way to get row averages in a data-frame?
-    \item Create a function called colVars, like colMeans but for variance
-    \item Create nice plots to visualize iris data (ideally journal-quality)
-  \end{enumerate}
-
+\begin{frame}[fragile]{ANOVA} 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -504,7 +510,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-12-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-13-1} 
 
 \end{knitrout}
 \end{frame}
@@ -548,7 +554,7 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-15-1} 
 
 \end{knitrout}
 \end{frame}
@@ -648,7 +654,7 @@ F-statistic: 10.73 on 1 and 33 DF,  p-value: 0.002485
 
  \begin{alertblock}{lm vs. plot}
  \begin{itemize}
-   \item Fit a linear model $y \sim x$for each of the four ``distri"
+   \item Fit a linear model $y \sim x $ for each of the four ``distri"
    \item Plot the relationship  $ y \sim x $ for each of the four ``distri"
    \item Can we trust these models? For what? \textit{\tiny I expect more than ``it's all bullshit"}
   \end{itemize}
