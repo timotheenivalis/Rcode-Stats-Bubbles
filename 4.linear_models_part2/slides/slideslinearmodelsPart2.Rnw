@@ -1,0 +1,697 @@
+\documentclass[10pt]{beamer}%
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+
+\usepackage[utf8]{inputenc}%
+
+% graphics
+%% Figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{xcolor}%for color mixing
+
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
+\usepackage{graphicx}
+
+\usepackage{tikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
+\title[\textbf{Linear models}]{Statistical inference and linear models}
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+<<Plot Options, echo=FALSE, message=FALSE>>=
+#load(file = ".RData")
+opts_knit$set(width=60)
+opts_chunk$set(comment=NA, fig.width=8, fig.height=6, out.width='0.8\\textwidth',
+               out.height='0.6\\textwidth',background='#D7DDEB')
+
+
+szgr <- 2
+szax <- 1.3
+marr <- c(4, 4, 1, 1) + 0.1
+setPar<-function(){
+par(las=1,mar=marr, cex=szgr, cex.lab=szax , cex.axis=szax, lwd=2 ,pch=1, las=1)
+}
+setPar()
+@
+
+
+\begin{frame}
+\maketitle	
+\end{frame}
+%%%%%%%%%%%
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{}
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+  \end{frame}
+} 
+
+\begin{frame}{If you get bored}
+  \begin{itemize}
+    \item Go to the last slide for bonus exercises
+    \item Work on code for your research and ask question during exercise time
+    \item But try and keep an eye out, just in case
+  \end{itemize}
+  
+  \begin{center}
+    \includegraphics[height=0.5\textheight]{Figures/too-easy-whats-next.jpg}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Disclaimer}
+  \begin{itemize}
+    \item Assume you got lectures about statistics and
+       \begin{itemize}
+        \item know why we need statistics
+        \item have heard of the general philosophy
+       \end{itemize}
+    \item We may simplify to focus on practical aspects
+    \item Correct us if we say something completely awful
+  \end{itemize}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\section{Statistical inference}%very general, still simplistic
+
+\begin{frame}{General approach}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
+    \pause
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
+    \pause
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
+    \pause
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    \pause
+    
+    \node (che) at (0,-5) {5. Diagnostic, check assumptions, prediction};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \pause
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Reminder t.test}
+  
+  \pause
+  <<>>=
+    data("iris")
+  @
+
+  <<eval=FALSE>>=
+    str(iris)
+    plot(iris)
+  @
+  
+  \begin{enumerate}
+    \item \color{red}{Scientific question}: Are the taxa "setosa" and "versicolor" different species?
+  \pause
+    \item Model and stat question:
+      \begin{itemize}
+        \item Model:
+          \begin{itemize}
+            \item There is an intrinsic/expected sepal length value for a species; an individual value is the sum of this expectation and a random Gaussian deviation.
+            \item $y_i = \mu_{species_i} + \epsilon_i$ with  $\epsilon \sim N(0,\sigma^2)$
+            \item t-test
+          \end{itemize}
+        \pause
+        \item Statistical question: 
+          \begin{itemize}
+            \item Does sepal length \textbf{differ significantly} between the two taxa \textbf{in our sample}?
+            \item Is the observed difference between taxa likely if both taxa have the same intrinsic/expected value?
+          \end{itemize}
+        \end{itemize}
+      \item Data collection
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Reminder t.test}
+    One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
+  <<eval=TRUE>>=
+    t.test(x = iris$Sepal.Length[iris$Species == "setosa"],
+          y = iris$Sepal.Length[iris$Species == "versicolor"])
+  @
+  
+\end{frame}
+%%%%%%%%%%%
+
+% \begin{frame}[fragile]{Reminder t.test: Are they different?}
+% 
+%   <<boxplot, fig.width=5, fig.height=5, out.width='0.5\\textwidth', eval=FALSE>>=
+%   boxplot(Sepal.Length ~ Species, 
+%           data = iris[iris$Species %in% c("setosa","versicolor"),],
+%           drop = TRUE, ylab="Sepal length", xlab="Species")
+%   @
+% \begin{columns}
+% \begin{column}{0.5\textwidth}
+% <<boxplot2, fig.width=5, fig.height=5, out.width='0.9\\textwidth', echo=FALSE>>=
+%   boxplot(Sepal.Length ~ Species, 
+%           data = iris[iris$Species %in% c("setosa","versicolor"),],
+%           drop = TRUE, ylab="Sepal length", xlab="Species")
+%   @
+% \end{column}
+% \begin{column}{0.5\textwidth}
+%   \begin{itemize}
+%     \item Means: 5.006 vs. 5.936
+%     \item Standard deviation: 0.35 and 0.52
+%     \item Standard error (SD/ $\sqrt n$): 0.05 and 0.07
+%   \end{itemize}
+% \end{column}
+% \end{columns}
+% \end{frame}
+% %%%%%%%%%%%
+
+\begin{frame}[fragile]{When do we know it is different?}
+
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item Statistical estimation
+  \begin{itemize}
+    \item a Estimation
+      \begin{itemize}
+        \item Cannot know true difference $\mu_{species_1} - \mu_{species_2}$
+        \item Estimated difference $= \color{red}{\text{Mean}_1 - \text{Mean}_2 }$
+        \item Difference contains random variation
+      \end{itemize}
+    \item b Quantify uncertainty / Statistical significance
+      \begin{itemize}
+        \item $
+      t = \frac{\color{red}{\text{Mean}_1 - \text{Mean}_2}}{\text{\color{orange}Variation}}
+      \frac{\sqrt{{\text{\color{blue}{Sample Size}}}}}{\sqrt{2}}
+      $
+        \item We know exactly how t is distributed when $\mu_{species_1} - \mu_{species_2} = 0$
+        \item Hence we know probability of $\geq t$ if $\mu_{species_1} - \mu_{species_2} = 0$ ($p$-value)
+        \item Can derive confidence interval and standard error
+      \end{itemize}
+  \end{itemize}
+\end{enumerate}
+
+\pause
+Less uncertainty with
+  \begin{itemize}
+    \item \color{red}{Larger absolute difference}
+    \item \color{orange}{Smaller variability}
+    \item \color{blue}{Larger sample size}
+  \end{itemize}
+
+
+\end{frame}
+%%%%%%%%%%%
+  
+\begin{frame}[fragile]{When do we know it is different? Simulations}
+\pause
+\textbf{\color{red}{1. Larger absolute difference}}
+<<>>=
+nbsim <- 1000
+pdistri_large <- vector(length = nbsim)
+pdistri_small <- vector(length = nbsim)
+for (i in 1:nbsim)
+  {
+  x1 <- rnorm(n = 10, mean = 2, sd = 1)
+  x2 <- rnorm(n = 10, mean = 4, sd = 1) #large diff
+  x3 <- rnorm(n = 10, mean = 2.5, sd = 1) #small diff
+  out_large <- t.test(x1, x2)
+  out_small <- t.test(x1, x3)
+  pdistri_large[i]<-out_large$p.value
+  pdistri_small[i]<-out_small$p.value
+}
+@
+
+\textbf{How would you visualize these two vectors?}
+\end{frame}
+%%%%%%%%%%
+\begin{frame}[fragile]{When do we know it is different?}
+\centering
+<<comphist1, dev='pdf', fig.width=14, out.height='0.5\\textheight'>>=
+par(mfrow=c(1,2), cex=2)
+hist(pdistri_large, xlim=c(0,1),
+     main=paste("Prop signif=",mean(pdistri_large<0.05)))
+hist(pdistri_small, xlim=c(0,1),
+     main=paste("Prop signif=",mean(pdistri_small<0.05)))
+par(mfrow=c(1,1))
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{When do we know it is different? Try it!}
+
+\begin{alertblock}{Exercise}
+Check the effect of {\color{orange}{smaller variability}} and/or {\color{blue}{larger sample size}}.
+\end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{By the way, what are these p-values?}%focus on p-value criticized
+
+\textit{Probability for a summary statistic to be greater or equal to the observed summary statistic, \textbf{when the null-hypothesis of a given statistical model is true.}}
+
+\pause
+
+\begin{exampleblock}{Properties}
+  \begin{itemize}
+    \item Depends on the null-hypothesis ($H_0$) of a given model with assumptions
+    \item Uniform distribution under $H_0$ \dots
+    \item \dots hence proportion(significance under $H_0$) = significance threshold
+  \end{itemize}
+\end{exampleblock}
+\pause
+
+<<eval=FALSE>>=
+  hist( runif(n = 10000, min = 0, max=1) )
+@
+
+\pause
+\textbf{NB: Focus on $p$-value criticized, but common and they are no more evil than other misused statistics!}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{T-test exercise: p-values and simulations}
+
+<<eval=FALSE>>=
+t.test(x = ..., y=...., var.equal = TRUE)
+t.test(x = ..., y=...., var.equal = FALSE)
+@
+
+What if variances are different by chance only?
+<<>>=
+set.seed(1234)
+var(rnorm(20, mean = 0, sd = 1))
+var(rnorm(20, mean = 0, sd = 1))
+@
+
+\begin{alertblock}{Exercise}
+  What option is more correct for var.equal?
+\end{alertblock}
+
+\end{frame}
+%%%%%%%%%%%
+\section{t-test, ANOVA, regression: all is one, one is all}
+
+\begin{frame}[fragile]{A small example}
+
+Animal behavior in response to weather
+
+<<a0,echo=FALSE, results='hide', eval=FALSE>>=
+set.seed(125)
+weather <- c(rep("sunny", 30), rep("rainy", 5))
+activity <- 5 + rnorm(35, 0,1) + 1*(weather=="rainy")
+
+dat.behav <- data.frame(weather=weather, activity = activity)
+write.csv(dat.behav, file = "datbehav.csv", row.names = FALSE)
+@
+
+Load data:
+<<eval=FALSE>>=
+getwd()
+setwd()
+@
+
+<<a1>>=
+dat.behav <- read.csv(file = "datbehav.csv") # path to file
+@
+
+\pause
+STEP 1: have a look at your data
+<<eval=FALSE>>=
+str(dat.behav)
+summary(dat.behav)
+plot(dat.behav)
+@
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{t-test}
+<<>>=
+
+fitstudent <- t.test(x = dat.behav$activity[dat.behav$weather==
+                                              "rainy"],
+                     y = dat.behav$activity[dat.behav$weather==
+                                              "sunny"],
+                     var.equal = TRUE)
+print(fitstudent)
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{t-test, graphically}
+\textbf{Difference between means}
+\centering
+<<echo=FALSE>>=
+plot(x=c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.02),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.02)),
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+arrows(x0 = 1.5, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]),
+       y1=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=3, col = "dark red", lwd=5)
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5)
+@
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{ANOVA} 
+
+<<>>=
+
+fitanova <- aov(data = dat.behav, formula = activity ~ weather)
+summary(fitanova)
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{ANOVA, graphically}
+\textbf{Variance decomposition}
+\centering
+<<echo=FALSE>>=
+xpos <- c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.06),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.06))
+plot(x=xpos,
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5, lty=2)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5, lty=2)
+arrows(x0=0.5, x1=2.5, y0=mean(dat.behav$activity), code=0, col = "blue", lwd=5, lty=2)
+
+arrows(x0 =xpos, y0=c(rep(mean(dat.behav$activity[dat.behav$weather=="sunny"]), times=length(dat.behav$activity[dat.behav$weather=="sunny"])), rep(mean(dat.behav$activity[dat.behav$weather=="rainy"]), times=length(dat.behav$activity[dat.behav$weather=="rainy"]))),
+       y1=dat.behav$activity, code=0, col="dark red")
+arrows(x0=c(1,2), y0=rep(mean(dat.behav$activity), times=2),
+       y1=c(mean(dat.behav$activity[dat.behav$weather=="sunny"]),
+        mean(dat.behav$activity[dat.behav$weather=="rainy"])),
+       col="dark blue", lwd=8, code=0)
+
+@
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Linear regression}
+
+<<>>=
+fitlm <- lm(data = dat.behav, formula = activity ~ weather)
+summary(fitlm)
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Regression, graphically}
+\textbf{Rate of change}
+\centering
+<<echo=FALSE>>=
+plot(x=c(rnorm(sum(dat.behav$weather=="sunny"), mean = 1, sd = 0.02),
+         rnorm(sum(dat.behav$weather=="rainy"), mean = 2, sd = 0.02)),
+     y =dat.behav$activity,
+     ylim=c(0,max(dat.behav$activity)), xaxt="n", xlim=c(0.5, 2.5), 
+     xlab="Weather", ylab="activity", pch=16, cex=2, col=rgb(1,0,0,0.5))
+axis(side = 1, at = c(1,2), labels = c("sunny", "rainy"))
+arrows(x0=0.7, x1=1.3, y0=mean(dat.behav$activity[dat.behav$weather=="sunny"]), code=0, col = "red", lwd=5)
+arrows(x0=1.7, x1=2.3, y0=mean(dat.behav$activity[dat.behav$weather=="rainy"]), code=0, col = "red", lwd=5)
+abline(a = coef(fitlm)[1]+2*coef(fitlm)[2], b=-coef(fitlm)[2], lwd=5, col="dark red")
+@
+\end{frame}
+%%%%%%%%%%
+
+
+\begin{frame}[fragile]{NB: aov() vs. anova()}
+
+<<eval=FALSE>>=
+aov(data = dat.behav, formula = activity ~ weather)
+anova(fitlm)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{All is one\dots}
+\pause
+  \begin{block}{\dots but \texttt{lm()} rules!}
+    \begin{itemize}
+      \item t-test, ANOVA, regression and others can be mathematically equivalent
+      \item In R, \texttt{lm()} and related functions can do them all\dots
+      \item \dots and much more!
+    \end{itemize}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear models in details}
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  
+  <<lmprinc, echo=FALSE, dev='tikz'>>=
+    setPar()
+    set.seed(123)
+    x <- rnorm(20)
+    y <- 1 + x + rnorm(20)
+    plot(x, y, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}")
+    lm0 <- lm(y~x)
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    
+    arrows(x0 = x, y0=y, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+  @ 
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+  \vspace{1cm}
+\textbf{In R:}
+<<eval=FALSE>>=
+  lm(response ~ 1 + predictor1 + predictor2, data=data) 
+    # equivalent to
+  lm(response ~ predictor1 + predictor2, data=data) 
+@
+\begin{itemize}
+  \item Intercept can be explicit or implicit
+  \item Can remove intercept with \texttt{\dots $\sim $ 0 + \dots}
+  \item Error is implicit
+  \item Feed the option \texttt{data=} to keep code short, reliable and flexible
+  \item Order of predictors do not matter 
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Interpretation}
+
+  <<>>=
+    Ans <- read.csv(file = "Anscombe.csv")
+  @
+  
+  <<eval=FALSE>>=
+    lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
+    summary(lm1)
+    plot(Ans$x[Ans$distri==1], Ans$y[Ans$distri==1],
+         xlim=c(0,15), ylim=c(0,12))
+    abline(lm1)  
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Interpretation}
+
+ \begin{alertblock}{lm vs. plot}
+ \begin{itemize}
+   \item Fit a linear model $y \sim x $ for each of the four ``distri"
+   \item Plot the relationship  $ y \sim x $ for each of the four ``distri"
+   \item Can we trust these models? For what? \textit{\tiny I expect more than ``it's all bullshit"}
+  \end{itemize}
+ \end{alertblock}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{General approach}
+
+\begin{center}
+  \begin{tikzpicture}
+    \node (sq) at (0,-1) {\color{red}{1. Scientific question}};
+    \node (mo) at (0,-2) {2. Model and Statistical question};
+    \draw[->, thick] (sq)--(mo);
+    \node (dac) at (6,-2) {\color{red}{3. Data collection}};
+    \draw[<->, thick] (mo)--(dac);
+
+    \node (est) at (0,-3) {4. Estimation};
+        \draw[->, thick] (mo)--(est);
+    \node (unc) at (0,-3.5) {4.b Uncertainty and statistical significance};
+    
+    \node (che) at (0,-5) {\textbf{5. Diagnostic, check assumptions, prediction}};
+        \draw[->, thick] (unc)--(che);
+    \draw[->, thick] (che.west) to [out=150, in=210] (mo.west);
+
+    \node (int) at (0,-6) {\color{red}{6. Interpret and think about the biology}};
+        \draw[->, thick] (che)--(int);
+
+  \draw[rounded corners, color=blue] (-4.5,-1.5) rectangle (4,-5.5);
+  \node[anchor=north west] (r) at (-4.5,-1.5) {\includegraphics[width=0.1\textwidth]{Figures/r}};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Linear model basic assumptions}
+Not necessarily wrong, but typical interpretation assumes:
+ \begin{block}{}
+     \begin{itemize}[<+->]
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
+      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
+       \item {\color{red!20!black}{Little error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
+       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
+       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \end{itemize}
+ \end{block}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Diagnostic: summary and plot}
+  <<>>=
+   lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
+   lm2 <- lm(y ~ x , data=Ans[Ans$distri==2,])
+  @
+  
+  
+  <<eval=FALSE>>=
+   summary(lm1) 
+   par(mfrow=c(2,2)) 
+   plot(lm1)
+  @
+  
+  <<eval=FALSE>>=
+    summary(lm2) 
+   plot(lm2)
+    par(mfrow=c(1,1))
+  @
+
+\end{frame}
+
+\begin{frame}[fragile]{Diagnostic: prediction}
+  <<>>=
+  pred2 <- predict(lm2, se.fit = TRUE, interval = "confidence")
+  pred2 <- cbind(Ans[Ans$distri==2,], pred2)
+  @
+
+\pause
+  <<pred2, dev='tikz', echo=FALSE>>=
+  setPar()
+  plot(pred2$x, pred2$y, ylim=c(0,12), col='red', pch=16, xlab="x", ylab="y")
+  lines(pred2$x, pred2$fit.fit)
+  arrows(x0=pred2$x, y0=pred2$fit.lwr, y1=pred2$fit.upr,
+         code=3, angle=90)
+  legend(x = "bottomright", legend = c("Data", "95\\% Prediction"), col = c("red", "black"), lty = c(NA,1),
+         pch=c(16,NA))
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Practice lm() with parasites}
+
+<<echo=FALSE, eval=FALSE>>=
+  set.seed(123)
+  ns <- 135
+  x2 <- sample(x = 1:3, size = ns, replace = TRUE)
+  x1 <- rnorm(ns, 0, 1) + c(-1,0,1)[x2]
+  x3 <- rnorm(ns, 5, 0.1)#no effect
+  x4 <- sample(x=0:1, size=ns, replace=TRUE)#unobserved
+  y <- 2 + 0.3*x1 + 0.5*(x2/2)+ x4 + rnorm(ns, sd = 0.7)
+  lamb <- exp(y)
+  obs <- abs(sapply(X = lamb, FUN = function(x) {rpois(n = 1, lambda = x)}) + rnorm(ns, sd=0.5))
+
+para <- data.frame(Parasite_Mass = obs, Individual_Size = x1 +6, Location = c("A","B","C")[x2], Fur_Darkness = x3)
+
+plot(para$Parasite_Mass, x=para$Individual_Size)
+summary(glm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para, family="quasipoisson"))
+
+summary(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para))
+hist(resid(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para)))
+write.csv(x = para, file = "Para.csv", row.names = FALSE)
+@
+  
+  \begin{alertblock}{What explains variation in parasitic load?}
+  You collected ecto-parasites on some furry large mammals at three locations. Parasites break easily when we collect them and are impossible to count, so we decide to measure parasitic load as their mass. \textbf{Why do some mammals have larger parasitic load?} \pause
+    \begin{itemize}
+      \item Load the \texttt{Para.csv} data (don't forget: str(), summary(), plot()\dots)
+      \item Model \verb+Parasite_Mass+ using \texttt{lm()}
+      \item Find what variables predict \verb+Parasite_Mass+
+      \item How good are your models? Assumptions? Prediction?
+      \item What biological interpretation can you imagine?
+      \end{itemize}
+  \end{alertblock}
+  
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bonus fun}
+\begin{frame}{Extra exercises}
+
+<<echo=FALSE, eval=FALSE>>=
+set.seed(123)
+ns <- 35
+x1 <- runif(n = ns, min = 0,max = 1)
+x2 <- 1-x1 + rnorm(ns, 0, 0.001)
+x3 <- x2/2
+
+y <- x1 + rnorm(ns, sd = 0.7)
+
+summary(lm(y ~ x1 + x2))
+summary(lm(y ~ x2 + x3))
+
+Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
+write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
+@
+
+\begin{alertblock}{General R coding}
+  \begin{enumerate}
+    \item What is the fastest way to get row averages in a data-frame?
+    \item Create a function called colVars, like colMeans but for variance
+    \item Create nice plots to visualize iris data (ideally journal-quality)
+  \end{enumerate}
+\end{alertblock}
+
+\begin{alertblock}{Linear models}
+  \begin{enumerate}
+    \item Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3. Something is weird, what is going on? What to do?
+    \item For model that can be fitted with t.test, aov, and lm, is one of the function faster?
+    \item Write your own code to obtain a prediction from a lm (that is, a simpler version of the predict function), with confidence interval. (extra toughness: do it using the matrix formulation of the analytical solution to a linear model)
+  \end{enumerate}
+\end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+
+\end{document}
