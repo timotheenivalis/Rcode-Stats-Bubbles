@@ -101,7 +101,7 @@ setPar()
 %%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Checks and prediction}
+\section{Diagnostics}
 
 \begin{frame}[fragile]{Why we need checks: summary(lm) isn't enough}
 
@@ -258,14 +258,88 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
       \item Predictions: range and biological meaning
     \end{itemize}
   \end{exampleblock}
+  
+  
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Fix?}
+  <<eval=FALSE>>=
+  lm(obs ~ 1 + predictor , data=forprediction)
+  @
+  \pause
+
+  <<eval=FALSE>>=
+  m1 <- lm(obs ~ 1 + predictor + I(predictor^2), data=forprediction)
+  plot(m1)
+  @
+
+  How about prediction? (abline(m1) won't work here)
+\end{frame}
+%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Introduction to prediction}
+
+  <<>>=
+  m1 <- lm(obs ~ 1 + predictor + I(predictor^2), data=forprediction)
+  coef(m1)
+  @
+  
+  \begin{alertblock}{Small exercise}
+    Use regression coefficients to predict "obs" from "predictor", and add a prediction line on the plot obs/predictor.\\
+    Is the fit satisfactory?
+  \end{alertblock}
+\end{frame}
+%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Introduction to prediction}
+
+  <<echo=FALSE>>=
+  xx <- seq(from=0, to = 10, length.out = 100)  
+  predxx <- coef(m1)[1] + xx * coef(m1)[2] + (xx^2) * coef(m1)[3]
+  @
+  
+  <<echo=FALSE>>=
+  plot(x=forprediction$predictor, y=forprediction$obs, xlab="predictor", ylab="obs")
+  lines(x = xx, y=predxx, col="red", lwd=3)
+  @
+\end{frame}
+%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{A puzzling but simple problem: Over-fit and collinearity}
+
+\begin{frame}[fragile]{Over-fit and collinearity}
+\begin{alertblock}{Small exercise}
+Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something is weird, what is going on? What to do?
+\end{alertblock}
+  
+  <<echo=FALSE, eval=FALSE>>=
+set.seed(123)
+ns <- 35
+x1 <- runif(n = ns, min = 0,max = 1)
+x2 <- 1-x1 + rnorm(ns, 0, 0.001)
+x3 <- x2/2
+
+y <- x1 + rnorm(ns, sd = 0.7)
+
+summary(lm(y ~ x1 + x2))
+summary(lm(y ~ x2 + x3))
+
+Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
+write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
+@
+  
+  <<echo=FALSE>>=
+  cdata <- read.csv(file = "Cdata.csv")
+  summary(lm(y ~ x1 + x2, data=cdata))
+  summary(lm(y ~ x2 + x3, data=cdata))
+@
+
 \end{frame}
 %%%%%%%%%%%
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+\section{}
 
 \begin{frame}[fragile]{Practice lm() with parasites}
 
@@ -351,21 +425,7 @@ Not necessarily wrong, but typical interpretation assumes:
 \section{Bonus fun}
 \begin{frame}{Extra exercises}
 
-<<echo=FALSE, eval=FALSE>>=
-set.seed(123)
-ns <- 35
-x1 <- runif(n = ns, min = 0,max = 1)
-x2 <- 1-x1 + rnorm(ns, 0, 0.001)
-x3 <- x2/2
 
-y <- x1 + rnorm(ns, sd = 0.7)
-
-summary(lm(y ~ x1 + x2))
-summary(lm(y ~ x2 + x3))
-
-Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
-write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
-@
 
 \begin{alertblock}{General R coding}
   \begin{enumerate}
