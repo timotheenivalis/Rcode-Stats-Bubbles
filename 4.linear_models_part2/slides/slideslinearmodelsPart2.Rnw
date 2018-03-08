@@ -28,7 +28,7 @@
 #load(file = ".RData")
 opts_knit$set(width=60)
 opts_chunk$set(comment=NA, fig.width=8, fig.height=6, out.width='0.8\\textwidth',
-               out.height='0.6\\textwidth',background='#D7DDEB')
+               out.height='0.6\\textwidth',background='#D7DDEB', size="small")
 
 
 szgr <- 2
@@ -86,8 +86,6 @@ setPar()
 \textbf{In R:}
 <<eval=FALSE>>=
   lm(response ~ 1 + predictor1 + predictor2, data=data) 
-    # equivalent to
-  lm(response ~ predictor1 + predictor2, data=data) 
 @
 \begin{itemize}
   \item Intercept can be explicit or implicit
@@ -280,6 +278,9 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
 %%%%%%%%%%
 
 \begin{frame}[fragile]{Fix?}
+
+Plot suggests a quadratic relationship
+
   <<eval=FALSE>>=
   lm(obs ~ 1 + predictor , data=forprediction)
   @
@@ -290,7 +291,7 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
   plot(m1)
   @
 
-  How about prediction? (abline(m1) won't work here)
+  How about prediction? (abline(m1) won't work here because not straight line)
 \end{frame}
 %%%%%%%%%%%%
 
@@ -301,9 +302,13 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
   coef(m1)
   @
   
-  \begin{alertblock}{Small exercise}
-    Use regression coefficients to predict "obs" from "predictor", and add a prediction line on the plot obs/predictor.\\
+  \begin{alertblock}{Exercise}
+    \begin{enumerate}
+      \item Write mathematically the relationship between obs and predictor
+      \item Input regression coefficients in there to predict "obs" from "predictor"
+      \item Add a prediction line on the plot obs/predictor
     Is the fit satisfactory?
+    \end{enumerate}
   \end{alertblock}
 \end{frame}
 %%%%%%%%%%%%
@@ -311,10 +316,10 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
 \begin{frame}[fragile]{Introduction to prediction}
 
   <<echo=FALSE>>=
-  xx <- seq(from=0, to = 10, length.out = 100)  
+  xx <- seq(from=0, to = 10, length.out = 100)
   predxx <- coef(m1)[1] + xx * coef(m1)[2] + (xx^2) * coef(m1)[3]
   @
-  
+
   <<echo=FALSE>>=
   plot(x=forprediction$predictor, y=forprediction$obs, xlab="predictor", ylab="obs")
   lines(x = xx, y=predxx, col="red", lwd=3)
@@ -335,7 +340,7 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
 \begin{alertblock}{Small exercise}
 Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something is weird, what is going on? What to do?
 \end{alertblock}
-  
+
   <<echo=FALSE, eval=FALSE>>=
 set.seed(123)
 ns <- 35
@@ -351,7 +356,7 @@ summary(lm(y ~ x2 + x3))
 Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
 write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 @
-  
+
   <<echo=FALSE, eval=FALSE>>=
   cdata <- read.csv(file = "Cdata.csv")
   summary(lm(y ~ x1 + x2, data=cdata))
@@ -367,16 +372,21 @@ write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 
 <<echo=FALSE>>=
 set.seed(123)
-x <- 2+rnorm(100)  
+x <- 2+rnorm(100)
 y <- 1 + x + rnorm(100)
 obs <- exp(y)
+
+write.csv(data.frame(obs = obs, x=x), row.names = FALSE, file = "htrsdt.csv")
+htrsdt <- read.csv("htrsdt.csv")
 @
 
+Load the dataset \texttt{htrsdt.csv}.
+
 <<eval=FALSE>>=
-plot(x, obs, ylim = c(-20, max(obs)))
-abline(lm(obs ~ x))
-summary(lm(obs ~ x))
-plot(lm(obs ~ x))
+plot(htrsdt$x, htrsdt$obs, ylim = c(-20, max(obs)))
+abline(lm(obs ~ x, data=htrsdt))
+summary(lm(obs ~ x, data=htrsdt))
+plot(lm(obs ~ x, data=htrsdt))
 @
 \end{frame}
 %%%%%%%%%%%
@@ -386,10 +396,19 @@ plot(lm(obs ~ x))
 
 Make a prediction over the range of x, with prediction interval
 \pause
+"By-hand"
+<<eval=FALSE>>=
+lmhtrsdt <- lm(obs ~ x, data=htrsdt)
+x <- seq(from=min(x), to=max(x), length.out = 100)
+predhtrsdt <- coef(lmhtrsdt)[1] + x * coef(lmhtrsdt)[2]
+@
+
+\pause
+Function predict
 <<>>=
-Xnewdata <- data.frame(x=seq(from=min(x), to=max(x), 
+Xnewdata <- data.frame(x=seq(from=min(x), to=max(x),
                              length.out = 100))
-Xpred <- predict(object = lm(obs ~ x), newdata = Xnewdata, 
+Xpred <- predict(object =  lm(obs ~ x, data=htrsdt), newdata = Xnewdata,
                  se.fit = TRUE, interval = "prediction")
 @
 \pause
@@ -408,21 +427,21 @@ head(Xnewdata)
 
 <<eval=TRUE, fig.width=10, out.height='0.6\\textheight'>>=
 plot(x, obs, ylim = c(-100, max(obs)))
-lines(Xnewdata$x, Xnewdata$fit.fit, col="red")
-lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2)
-lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2)
+lines(Xnewdata$x, Xnewdata$fit.fit, col="red", lwd=3)
+lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2, lwd=3)
+lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2, lwd=3)
 @
 
 \end{frame}
 %%%%%%%%%%%
-
+%
 \begin{frame}[fragile]{Exponential data: confidence}
 
 \textbf{Prediction interval:} Where the model predicts new data would be sampled, including variation unrelated to predictor\\
 \pause
 \textbf{Confidence interval:} Where your model predicts the MEAN new data would be sampled; or where is the true relationship with predictor
 <<>>=
-Xconf <- predict(object = lm(obs ~ x), newdata = Xnewdata, 
+Xconf <- predict(object = lm(obs ~ x), newdata = Xnewdata,
                  se.fit = TRUE, interval = "confidence")
 Xnewdata[,c("conf.lwr", "conf.upr")] <-  Xconf$fit[,2:3]
 @
@@ -434,25 +453,41 @@ Xnewdata[,c("conf.lwr", "conf.upr")] <-  Xconf$fit[,2:3]
 
 <<eval=TRUE, fig.width=10, out.height='0.6\\textheight'>>=
 plot(x, obs, ylim = c(-100, max(obs)))
-lines(Xnewdata$x, Xnewdata$fit.fit, col="red")
-lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2)
-lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2)
-lines(Xnewdata$x, Xnewdata$conf.lwr, col="blue", lty=2)
-lines(Xnewdata$x, Xnewdata$conf.upr, col="blue", lty=2)
+lines(Xnewdata$x, Xnewdata$fit.fit, col="red", lwd=3)
+lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2, lwd=3)
+lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2, lwd=3)
+lines(Xnewdata$x, Xnewdata$conf.lwr, col="blue", lty=2, lwd=3)
+lines(Xnewdata$x, Xnewdata$conf.upr, col="blue", lty=2, lwd=3)
 @
 
 \end{frame}
 %%%%%%%%%%
+%
+\begin{frame}[fragile]{Exponential data: fix}
+\begin{block}{Model sufficient to show positive relationship\dots BUT}
+  \begin{itemize}
+    \item no negative values should exist
+    \item too many outliers
+    \item too much uncertainty on the left\dots
+  \end{itemize}
+\end{block}
+
+\begin{block}{Consequences:}
+\begin{itemize}
+\item impossible to understand the biological mechanism
+\item impossible to predict future observations
+\end{itemize}
+\end{block}
+
+What to do?
+\end{frame}
+%%%%%%%%%%M
 
 \begin{frame}[fragile]{Exponential data: fix}
-Model is very wrong: no negative values can exist, too many outliers, too much uncertainty on the left\dots \\
 
-What would you suggest?
-\pause
 Log-transform
-<<>>=
-plot(x, log(obs))
-abline(lm(log(obs) ~ x))
+<<eval=FALSE>>=
+plot(x, log(obs)); abline(lm(log(obs) ~ x))
 summary(lm(log(obs) ~ x))
 plot(lm(log(obs) ~ x))
 @
@@ -469,6 +504,19 @@ obs <- exp(y)
 \end{frame}
 %%%%%%%%%%M
 
+\begin{frame}[fragile]{Exponential data: other fix}
+Non-parametric statistics:\\ 
+Rank observations, do greater ranks go together?\\ \pause
+Case of two continuous variable: Spearman's rank correlation
+\pause
+<<>>=
+cor.test(x = x, y = obs, method = "spearman")
+@
+\pause
+Significant positive correlation confirmed, BUT, no biological mechanism, little predictive power.
+
+\end{frame}
+%%%%%%%%%%%
 
 \begin{frame}[fragile]{Practice lm() with parasites}
 
@@ -513,57 +561,54 @@ write.csv(x = para, file = "Para.csv", row.names = FALSE)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Cures}
-
-
-\begin{frame}{Multiple regression}
-  
-\end{frame}
-%%%%%%%%%%%
-
-
-
-\begin{frame}{Transformations}
-
-\end{frame}
-%%%%%%%%%%%
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Linear model basic assumptions}
 Not necessarily wrong, but typical interpretation assumes:
  \begin{block}{}
-     \begin{itemize}[<+->]
-      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
-      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
-       \item {\color{red!20!black}{Measurement error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
-       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
-       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
-       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \begin{itemize}
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)
+      \item Predictor not perfectly correlated 
+       \item {\color{red!20!black}{Measurement error in predictors}}
+       \item {\color{red!50!black}{Gaussian error distribution}}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}
+       \item {\color{red!99!black}{Independence of error}}
      \end{itemize}
  \end{block}
-\end{frame}
-%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section*{Feedback wanted!}
-
-\begin{frame}{What do you want to learn about?}
-
-\begin{alertblock}{Topics}
-  \begin{itemize}
-    \item 
+ 
+ \pause
+ \begin{exampleblock}{TEASER: The most difficult problems are the reason for}
+  \begin{itemize}[<+->]
+    \item Multiple regression
+    \item Generalized Linear Models
+    \item (Generalized) Linear Mixed Models
+    \item Non-linear models
   \end{itemize}
-\end{alertblock}
+ \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+\section{If time permits: multiple regression}
+
+\begin{frame}{Improvisation}
 
 \end{frame}
 %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \section*{Feedback wanted!}
+% 
+% \begin{frame}{What do you want to learn about?}
+% 
+% \begin{alertblock}{Topics}
+%   \begin{itemize}
+%     \item 
+%   \end{itemize}
+% \end{alertblock}
+% 
+% \end{frame}
+% %%%%%%%%%%%
 
 
 \end{document}

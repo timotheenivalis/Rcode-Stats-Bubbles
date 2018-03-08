@@ -100,7 +100,7 @@
 \begin{frame}[fragile]{A simple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
   
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc-1} 
 
@@ -112,12 +112,10 @@
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
   \vspace{1cm}
 \textbf{In R:}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlkwd{lm}\hlstd{(response} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor1} \hlopt{+} \hlstd{predictor2,} \hlkwc{data}\hlstd{=data)}
-    \hlcom{# equivalent to}
-  \hlkwd{lm}\hlstd{(response} \hlopt{~} \hlstd{predictor1} \hlopt{+} \hlstd{predictor2,} \hlkwc{data}\hlstd{=data)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -137,7 +135,7 @@
 
 \begin{frame}[fragile]{Why we need checks: summary(lm) isn't enough}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlstd{Ans} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"Anscombe.csv"}\hlstd{)}
@@ -145,7 +143,7 @@
 \end{kframe}
 \end{knitrout}
   
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/anscombe-1} 
 
@@ -201,7 +199,7 @@ Not necessarily wrong, but typical interpretation assumes:
   
 
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
  \hlstd{forprediction} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"forprediction.csv"}\hlstd{)}
@@ -211,7 +209,7 @@ Not necessarily wrong, but typical interpretation assumes:
   Does "predictor" predict "obs"? 
  \pause
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor,} \hlkwc{data}\hlstd{=forprediction) )}
@@ -223,7 +221,7 @@ Not necessarily wrong, but typical interpretation assumes:
 
 \begin{frame}[fragile]{Why we need checks: missing a relationship}
   Does "predictor" predict "obs"? Apparently not:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor,} \hlkwc{data}\hlstd{=forprediction) )}
@@ -255,7 +253,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 
 \begin{frame}[fragile]{Why we need checks: missing a relationship}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/plot0-1} 
 
@@ -265,7 +263,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 %%%%%%%%%%%
 
 \begin{frame}[fragile]{How to check?}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{m0} \hlkwb{<-} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor,} \hlkwc{data}\hlstd{=forprediction)}
@@ -298,7 +296,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 
 
 \begin{frame}[fragile]{How to check?}
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
@@ -316,7 +314,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 
 \begin{frame}[fragile]{How to check?}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{m0} \hlkwb{<-} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor,} \hlkwc{data}\hlstd{=forprediction)}
@@ -324,7 +322,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \end{kframe}
 \end{knitrout}
     \centering
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
     \hlkwd{setPar}\hlstd{()}
@@ -360,7 +358,10 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 %%%%%%%%%%
 
 \begin{frame}[fragile]{Fix?}
-\begin{knitrout}
+
+Plot suggests a quadratic relationship
+
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor ,} \hlkwc{data}\hlstd{=forprediction)}
@@ -369,7 +370,7 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \end{knitrout}
   \pause
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor} \hlopt{+} \hlkwd{I}\hlstd{(predictor}\hlopt{^}\hlnum{2}\hlstd{),} \hlkwc{data}\hlstd{=forprediction)}
@@ -378,13 +379,13 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \end{kframe}
 \end{knitrout}
 
-  How about prediction? (abline(m1) won't work here)
+  How about prediction? (abline(m1) won't work here because not straight line)
 \end{frame}
 %%%%%%%%%%%%
 
 \begin{frame}[fragile]{Introduction to prediction}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{predictor} \hlopt{+} \hlkwd{I}\hlstd{(predictor}\hlopt{^}\hlnum{2}\hlstd{),} \hlkwc{data}\hlstd{=forprediction)}
@@ -397,9 +398,13 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \end{kframe}
 \end{knitrout}
   
-  \begin{alertblock}{Small exercise}
-    Use regression coefficients to predict "obs" from "predictor", and add a prediction line on the plot obs/predictor.\\
+  \begin{alertblock}{Exercise}
+    \begin{enumerate}
+      \item Write mathematically the relationship between obs and predictor
+      \item Input regression coefficients in there to predict "obs" from "predictor"
+      \item Add a prediction line on the plot obs/predictor
     Is the fit satisfactory?
+    \end{enumerate}
   \end{alertblock}
 \end{frame}
 %%%%%%%%%%%%
@@ -407,8 +412,8 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \begin{frame}[fragile]{Introduction to prediction}
 
 
-  
-\begin{knitrout}
+
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-14-1} 
 
@@ -429,9 +434,9 @@ F-statistic: 0.1459 on 1 and 98 DF,  p-value: 0.7033
 \begin{alertblock}{Small exercise}
 Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something is weird, what is going on? What to do?
 \end{alertblock}
-  
 
-  
+
+
 
 
 \end{frame}
@@ -443,13 +448,15 @@ Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something
 
 
 
-\begin{knitrout}
+Load the dataset \texttt{htrsdt.csv}.
+
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(x, obs,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{20}\hlstd{,} \hlkwd{max}\hlstd{(obs)))}
-\hlkwd{abline}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x))}
-\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x))}
-\hlkwd{plot}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x))}
+\hlkwd{plot}\hlstd{(htrsdt}\hlopt{$}\hlstd{x, htrsdt}\hlopt{$}\hlstd{obs,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{20}\hlstd{,} \hlkwd{max}\hlstd{(obs)))}
+\hlkwd{abline}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x,} \hlkwc{data}\hlstd{=htrsdt))}
+\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x,} \hlkwc{data}\hlstd{=htrsdt))}
+\hlkwd{plot}\hlstd{(}\hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x,} \hlkwc{data}\hlstd{=htrsdt))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -461,18 +468,31 @@ Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something
 
 Make a prediction over the range of x, with prediction interval
 \pause
-\begin{knitrout}
+"By-hand"
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{lmhtrsdt} \hlkwb{<-} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x,} \hlkwc{data}\hlstd{=htrsdt)}
+\hlstd{x} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from}\hlstd{=}\hlkwd{min}\hlstd{(x),} \hlkwc{to}\hlstd{=}\hlkwd{max}\hlstd{(x),} \hlkwc{length.out} \hlstd{=} \hlnum{100}\hlstd{)}
+\hlstd{predhtrsdt} \hlkwb{<-} \hlkwd{coef}\hlstd{(lmhtrsdt)[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{x} \hlopt{*} \hlkwd{coef}\hlstd{(lmhtrsdt)[}\hlnum{2}\hlstd{]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\pause
+Function predict
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Xnewdata} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x}\hlstd{=}\hlkwd{seq}\hlstd{(}\hlkwc{from}\hlstd{=}\hlkwd{min}\hlstd{(x),} \hlkwc{to}\hlstd{=}\hlkwd{max}\hlstd{(x),}
                              \hlkwc{length.out} \hlstd{=} \hlnum{100}\hlstd{))}
-\hlstd{Xpred} \hlkwb{<-} \hlkwd{predict}\hlstd{(}\hlkwc{object} \hlstd{=} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x),} \hlkwc{newdata} \hlstd{= Xnewdata,}
+\hlstd{Xpred} \hlkwb{<-} \hlkwd{predict}\hlstd{(}\hlkwc{object} \hlstd{=}  \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x,} \hlkwc{data}\hlstd{=htrsdt),} \hlkwc{newdata} \hlstd{= Xnewdata,}
                  \hlkwc{se.fit} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{interval} \hlstd{=} \hlstr{"prediction"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 \pause
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Xnewdata} \hlkwb{<-} \hlkwd{cbind}\hlstd{(Xnewdata, Xpred)}
@@ -480,7 +500,7 @@ Make a prediction over the range of x, with prediction interval
 \end{kframe}
 \end{knitrout}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{head}\hlstd{(Xnewdata)}
@@ -493,28 +513,28 @@ Make a prediction over the range of x, with prediction interval
 
 \begin{frame}[fragile]{Exponential data: prediction}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{plot}\hlstd{(x, obs,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{100}\hlstd{,} \hlkwd{max}\hlstd{(obs)))}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.fit,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.upr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.fit,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.upr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-22-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-23-1} 
 
 \end{knitrout}
 
 \end{frame}
 %%%%%%%%%%%
-
+%
 \begin{frame}[fragile]{Exponential data: confidence}
 
 \textbf{Prediction interval:} Where the model predicts new data would be sampled, including variation unrelated to predictor\\
 \pause
 \textbf{Confidence interval:} Where your model predicts the MEAN new data would be sampled; or where is the true relationship with predictor
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{Xconf} \hlkwb{<-} \hlkwd{predict}\hlstd{(}\hlkwc{object} \hlstd{=} \hlkwd{lm}\hlstd{(obs} \hlopt{~} \hlstd{x),} \hlkwc{newdata} \hlstd{= Xnewdata,}
@@ -529,76 +549,60 @@ Make a prediction over the range of x, with prediction interval
 %%%%%%%%%%%
 \begin{frame}[fragile]{Exponential data: confidence}
 
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{plot}\hlstd{(x, obs,} \hlkwc{ylim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{100}\hlstd{,} \hlkwd{max}\hlstd{(obs)))}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.fit,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.upr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{conf.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{conf.upr,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.fit,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.upr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{conf.lwr,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{conf.upr,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-24-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-25-1} 
 
 \end{knitrout}
 
 \end{frame}
 %%%%%%%%%%
+%
+\begin{frame}[fragile]{Exponential data: fix}
+\begin{block}{Model sufficient to show positive relationship\dots BUT}
+  \begin{itemize}
+    \item no negative values should exist
+    \item too many outliers
+    \item too much uncertainty on the left\dots
+  \end{itemize}
+\end{block}
+
+\begin{block}{Consequences:}
+\begin{itemize}
+\item impossible to understand the biological mechanism
+\item impossible to predict future observations
+\end{itemize}
+\end{block}
+
+What to do?
+\end{frame}
+%%%%%%%%%%M
 
 \begin{frame}[fragile]{Exponential data: fix}
-What would you suggest?
-\pause
+
 Log-transform
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(x,} \hlkwd{log}\hlstd{(obs))}
-\hlkwd{abline}\hlstd{(}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(obs)} \hlopt{~} \hlstd{x))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-25-1} 
-\begin{kframe}\begin{alltt}
+\hlkwd{plot}\hlstd{(x,} \hlkwd{log}\hlstd{(obs));} \hlkwd{abline}\hlstd{(}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(obs)} \hlopt{~} \hlstd{x))}
 \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(obs)} \hlopt{~} \hlstd{x))}
-\end{alltt}
-\begin{verbatim}
-
-Call:
-lm(formula = log(obs) ~ x)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--1.9073 -0.6835 -0.0875  0.5806  3.2904 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   1.0021     0.2436   4.114  8.1e-05 ***
-x             0.9475     0.1069   8.865  3.5e-14 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.9707 on 98 degrees of freedom
-Multiple R-squared:  0.4451,	Adjusted R-squared:  0.4394 
-F-statistic:  78.6 on 1 and 98 DF,  p-value: 3.497e-14
-\end{verbatim}
-\begin{alltt}
 \hlkwd{plot}\hlstd{(}\hlkwd{lm}\hlstd{(}\hlkwd{log}\hlstd{(obs)} \hlopt{~} \hlstd{x))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-25-2} 
-
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-25-3} 
-
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-25-4} 
-
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-25-5} 
-
 \end{knitrout}
 
 \pause
 By the way, the simulation process:
-\begin{knitrout}
+\begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
@@ -612,6 +616,34 @@ By the way, the simulation process:
 \end{frame}
 %%%%%%%%%%M
 
+\begin{frame}[fragile]{Exponential data: other fix}
+Non-parametric statistics:\\ 
+Rank observations, do greater ranks go together?\\ \pause
+Case of two continuous variable: Spearman's rank correlation
+\pause
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{cor.test}\hlstd{(}\hlkwc{x} \hlstd{= x,} \hlkwc{y} \hlstd{= obs,} \hlkwc{method} \hlstd{=} \hlstr{"spearman"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+
+	Spearman's rank correlation rho
+
+data:  x and obs
+S = 60622, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.6362316 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\pause
+Significant positive correlation confirmed, BUT, no biological mechanism, little predictive power.
+
+\end{frame}
+%%%%%%%%%%%
 
 \begin{frame}[fragile]{Practice lm() with parasites}
 
@@ -636,57 +668,54 @@ By the way, the simulation process:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Cures}
-
-
-\begin{frame}{Multiple regression}
-  
-\end{frame}
-%%%%%%%%%%%
-
-
-
-\begin{frame}{Transformations}
-
-\end{frame}
-%%%%%%%%%%%
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Linear model basic assumptions}
 Not necessarily wrong, but typical interpretation assumes:
  \begin{block}{}
-     \begin{itemize}[<+->]
-      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
-      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
-       \item {\color{red!20!black}{Measurement error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
-       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
-       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
-       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \begin{itemize}
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)
+      \item Predictor not perfectly correlated 
+       \item {\color{red!20!black}{Measurement error in predictors}}
+       \item {\color{red!50!black}{Gaussian error distribution}}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}
+       \item {\color{red!99!black}{Independence of error}}
      \end{itemize}
  \end{block}
-\end{frame}
-%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section*{Feedback wanted!}
-
-\begin{frame}{What do you want to learn about?}
-
-\begin{alertblock}{Topics}
-  \begin{itemize}
-    \item 
+ 
+ \pause
+ \begin{exampleblock}{TEASER: The most difficult problems are the reason for}
+  \begin{itemize}[<+->]
+    \item Multiple regression
+    \item Generalized Linear Models
+    \item (Generalized) Linear Mixed Models
+    \item Non-linear models
   \end{itemize}
-\end{alertblock}
+ \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+\section{If time permits: multiple regression}
+
+\begin{frame}{Improvisation}
 
 \end{frame}
 %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \section*{Feedback wanted!}
+% 
+% \begin{frame}{What do you want to learn about?}
+% 
+% \begin{alertblock}{Topics}
+%   \begin{itemize}
+%     \item 
+%   \end{itemize}
+% \end{alertblock}
+% 
+% \end{frame}
+% %%%%%%%%%%%
 
 
 \end{document}
