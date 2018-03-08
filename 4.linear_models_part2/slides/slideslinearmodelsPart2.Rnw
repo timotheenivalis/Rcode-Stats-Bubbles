@@ -165,6 +165,22 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Linear model basic assumptions}
+Not necessarily wrong, but typical interpretation assumes:
+ \begin{block}{}
+     \begin{itemize}[<+->]
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless; e.g. static allometry}
+      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
+       \item {\color{red!20!black}{Measurement error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
+       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
+       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \end{itemize}
+ \end{block}
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}[fragile]{Why we need checks: missing a relationship}
   
   <<echo=FALSE, eval=FALSE>>=
@@ -307,6 +323,12 @@ abline(m0, col="red", lwd=3) #simple prediction, without SE
 %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{Figures/brain.jpg}
+  \end{center}
+\end{frame}
+
 \section{A puzzling but simple problem: Over-fit and collinearity}
 
 \begin{frame}[fragile]{Over-fit and collinearity}
@@ -330,7 +352,7 @@ Cdata <- data.frame(y = y, x1=x1, x2=x2, x3 = x3)
 write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 @
   
-  <<echo=FALSE>>=
+  <<echo=FALSE, eval=FALSE>>=
   cdata <- read.csv(file = "Cdata.csv")
   summary(lm(y ~ x1 + x2, data=cdata))
   summary(lm(y ~ x2 + x3, data=cdata))
@@ -339,7 +361,114 @@ write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 \end{frame}
 %%%%%%%%%%%
 
-\section{}
+\section{Heteroschedasticity: the spooky word}
+
+\begin{frame}[fragile]{Exponential data}
+
+<<echo=FALSE>>=
+set.seed(123)
+x <- 2+rnorm(100)  
+y <- 1 + x + rnorm(100)
+obs <- exp(y)
+@
+
+<<eval=FALSE>>=
+plot(x, obs, ylim = c(-20, max(obs)))
+abline(lm(obs ~ x))
+summary(lm(obs ~ x))
+plot(lm(obs ~ x))
+@
+\end{frame}
+%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Exponential data: prediction}
+
+Make a prediction over the range of x, with prediction interval
+\pause
+<<>>=
+Xnewdata <- data.frame(x=seq(from=min(x), to=max(x), 
+                             length.out = 100))
+Xpred <- predict(object = lm(obs ~ x), newdata = Xnewdata, 
+                 se.fit = TRUE, interval = "prediction")
+@
+\pause
+<<>>=
+Xnewdata <- cbind(Xnewdata, Xpred)
+@
+
+<<eval=FALSE>>=
+head(Xnewdata)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Exponential data: prediction}
+
+<<eval=TRUE, fig.width=10, out.height='0.6\\textheight'>>=
+plot(x, obs, ylim = c(-100, max(obs)))
+lines(Xnewdata$x, Xnewdata$fit.fit, col="red")
+lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2)
+lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2)
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Exponential data: confidence}
+
+\textbf{Prediction interval:} Where the model predicts new data would be sampled, including variation unrelated to predictor\\
+\pause
+\textbf{Confidence interval:} Where your model predicts the MEAN new data would be sampled; or where is the true relationship with predictor
+<<>>=
+Xconf <- predict(object = lm(obs ~ x), newdata = Xnewdata, 
+                 se.fit = TRUE, interval = "confidence")
+Xnewdata[,c("conf.lwr", "conf.upr")] <-  Xconf$fit[,2:3]
+@
+
+
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}[fragile]{Exponential data: confidence}
+
+<<eval=TRUE, fig.width=10, out.height='0.6\\textheight'>>=
+plot(x, obs, ylim = c(-100, max(obs)))
+lines(Xnewdata$x, Xnewdata$fit.fit, col="red")
+lines(Xnewdata$x, Xnewdata$fit.lwr, col="red", lty=2)
+lines(Xnewdata$x, Xnewdata$fit.upr, col="red", lty=2)
+lines(Xnewdata$x, Xnewdata$conf.lwr, col="blue", lty=2)
+lines(Xnewdata$x, Xnewdata$conf.upr, col="blue", lty=2)
+@
+
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Exponential data: fix}
+Model is very wrong: no negative values can exist, too many outliers, too much uncertainty on the left\dots \\
+
+What would you suggest?
+\pause
+Log-transform
+<<>>=
+plot(x, log(obs))
+abline(lm(log(obs) ~ x))
+summary(lm(log(obs) ~ x))
+plot(lm(log(obs) ~ x))
+@
+
+\pause
+By the way, the simulation process:
+<<echo=TRUE, eval=FALSE>>=
+set.seed(123)
+x <- 2+rnorm(100)  
+y <- 1 + x + rnorm(100)
+obs <- exp(y)
+@
+
+\end{frame}
+%%%%%%%%%%M
+
 
 \begin{frame}[fragile]{Practice lm() with parasites}
 
@@ -422,29 +551,6 @@ Not necessarily wrong, but typical interpretation assumes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Bonus fun}
-\begin{frame}{Extra exercises}
-
-
-
-\begin{alertblock}{General R coding}
-  \begin{enumerate}
-    \item What is the fastest way to get row averages in a data-frame?
-    \item Create a function called colVars, like colMeans but for variance
-    \item Create nice plots to visualize iris data (ideally journal-quality)
-  \end{enumerate}
-\end{alertblock}
-
-\begin{alertblock}{Linear models}
-  \begin{enumerate}
-    \item Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3. Something is weird, what is going on? What to do?
-    \item For model that can be fitted with t.test, aov, and lm, is one of the function faster?
-    \item Write your own code to obtain a prediction from a lm (that is, a simpler version of the predict function), with confidence interval. (extra toughness: do it using the matrix formulation of the analytical solution to a linear model)
-  \end{enumerate}
-\end{alertblock}
-\end{frame}
-%%%%%%%%%%%
-
 
 \section*{Feedback wanted!}
 
