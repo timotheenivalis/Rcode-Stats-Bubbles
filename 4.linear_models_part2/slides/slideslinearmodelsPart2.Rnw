@@ -18,7 +18,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
-\title[\textbf{Linear models}]{Statistical inference and linear models}
+\title[\textbf{Linear models 2:}]{What on earth is going on with my linear models??!}
 \date{\today}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ setPar()
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Linear models in details}
+\section{Linear model, reminder}
 
 \begin{frame}[fragile]{A simple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
@@ -100,32 +100,40 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Interpretation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Checks and prediction}
+
+\begin{frame}[fragile]{Why we need checks: summary(lm) isn't enough}
 
   <<>>=
     Ans <- read.csv(file = "Anscombe.csv")
   @
   
-  <<eval=FALSE>>=
+  <<anscombe, eval=TRUE, echo=FALSE>>=
+  par(mfrow=c(2,2))
     lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
-    summary(lm1)
     plot(Ans$x[Ans$distri==1], Ans$y[Ans$distri==1],
-         xlim=c(0,15), ylim=c(0,12))
-    abline(lm1)  
+         xlim=range(Ans$x), ylim=range(Ans$y))
+    abline(lm1, col="red")  
+    
+        lm2 <- lm(y ~ x , data=Ans[Ans$distri==2,])
+    plot(Ans$x[Ans$distri==2], Ans$y[Ans$distri==2],
+         xlim=range(Ans$x), ylim=range(Ans$y))
+    abline(lm2, col="red")  
+    
+        lm3 <- lm(y ~ x , data=Ans[Ans$distri==3,])
+    plot(Ans$x[Ans$distri==3], Ans$y[Ans$distri==3],
+         xlim=range(Ans$x), ylim=range(Ans$y))
+    abline(lm3, col="red")  
+    
+        lm4 <- lm(y ~ x , data=Ans[Ans$distri==4,])
+    plot(Ans$x[Ans$distri==4], Ans$y[Ans$distri==4],
+         xlim=range(Ans$x), ylim=range(Ans$y))
+    abline(lm4, col="red")  
+    
+    
+    par(mfrow=c(1,1))
   @
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{Interpretation}
-
- \begin{alertblock}{lm vs. plot}
- \begin{itemize}
-   \item Fit a linear model $y \sim x $ for each of the four ``distri"
-   \item Plot the relationship  $ y \sim x $ for each of the four ``distri"
-   \item Can we trust these models? For what? \textit{\tiny I expect more than ``it's all bullshit"}
-  \end{itemize}
- \end{alertblock}
-
 \end{frame}
 %%%%%%%%%%%
 
@@ -157,60 +165,107 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{Linear model basic assumptions}
-Not necessarily wrong, but typical interpretation assumes:
- \begin{block}{}
-     \begin{itemize}[<+->]
-      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
-      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
-       \item {\color{red!20!black}{Little error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
-       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
-       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
-       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
-     \end{itemize}
- \end{block}
+\begin{frame}[fragile]{Why we need checks: missing a relationship}
+  
+  <<echo=FALSE, eval=FALSE>>=
+    set.seed(123)
+    pred <- runif(n = 100, 0, 10)
+    obs <- 1 + 1*pred - 0.1*pred^2 + rnorm(100, sd = 0.5) 
+
+    plot(x,obs)  
+  
+    summary(m0 <- lm(obs ~ x))
+    plot(m0)
+    
+    write.csv(x = data.frame(obs=obs, predictor=pred), file = "forprediction.csv", row.names = FALSE)
+  @
+
+  <<>>=
+   forprediction <- read.csv(file = "forprediction.csv")  
+  @
+  Does "predictor" predict "obs"? 
+ \pause
+
+  <<eval=FALSE>>=
+    summary(lm(obs ~ 1 + predictor, data=forprediction) )
+  @
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Diagnostic: summary and plot}
+\begin{frame}[fragile]{Why we need checks: missing a relationship}
+  Does "predictor" predict "obs"? Apparently not:
   <<>>=
-   lm1 <- lm(y ~ x , data=Ans[Ans$distri==1,])
-   lm2 <- lm(y ~ x , data=Ans[Ans$distri==2,])
-  @
-  
-  
-  <<eval=FALSE>>=
-   summary(lm1) 
-   par(mfrow=c(2,2)) 
-   plot(lm1)
-  @
-  
-  <<eval=FALSE>>=
-    summary(lm2) 
-   plot(lm2)
-    par(mfrow=c(1,1))
-  @
-
-\end{frame}
-
-\begin{frame}[fragile]{Diagnostic: prediction}
-  <<>>=
-  pred2 <- predict(lm2, se.fit = TRUE, interval = "confidence")
-  pred2 <- cbind(Ans[Ans$distri==2,], pred2)
-  @
-
-\pause
-  <<pred2, dev='tikz', echo=FALSE>>=
-  setPar()
-  plot(pred2$x, pred2$y, ylim=c(0,12), col='red', pch=16, xlab="x", ylab="y")
-  lines(pred2$x, pred2$fit.fit)
-  arrows(x0=pred2$x, y0=pred2$fit.lwr, y1=pred2$fit.upr,
-         code=3, angle=90)
-  legend(x = "bottomright", legend = c("Data", "95\\% Prediction"), col = c("red", "black"), lty = c(NA,1),
-         pch=c(16,NA))
+    summary(lm(obs ~ 1 + predictor, data=forprediction) )
   @
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Why we need checks: missing a relationship}
+
+<<plot0, dev='tikz',echo=FALSE>>=
+setPar()
+plot(x=forprediction$predictor, y=forprediction$obs, xlab="predictor", ylab="obs")
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to check?}
+  <<>>=
+  m0 <- lm(obs ~ 1 + predictor, data=forprediction) 
+  summary(m0)
+  @
+\end{frame}
+%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{How to check?}
+  <<>>=
+  par(mfrow=c(2,2))
+    plot(m0)
+  par(mfrow=c(1,1))
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to check?}
+
+<<>>=
+m0 <- lm(obs ~ 1 + predictor, data=forprediction)
+@
+    \centering
+<<plot0plusabline, dev='tikz', fig.width=10, out.height='0.6\\textheight'>>=
+    setPar()
+plot(x=forprediction$predictor, y=forprediction$obs, xlab="predictor", ylab="obs")
+abline(m0, col="red", lwd=3) #simple prediction, without SE
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Check checklist}
+  \begin{exampleblock}{}
+    \begin{itemize}
+      \item \textbf{Visualize your data}
+      \item Residual in summary(): are they symmetrical?
+      \item plot(lm):
+        \begin{enumerate}
+          \item trend residual/fitted?
+          \item Normal residuals?
+          \item trend in residual variance?
+          \item outliers?
+        \end{enumerate}
+      \item Predictions: range and biological meaning
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \begin{frame}[fragile]{Practice lm() with parasites}
 
@@ -230,7 +285,8 @@ para <- data.frame(Parasite_Mass = obs, Individual_Size = x1 +6, Location = c("A
 plot(para$Parasite_Mass, x=para$Individual_Size)
 summary(glm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para, family="quasipoisson"))
 
-summary(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para))
+summary(lm(Parasite_Mass ~ Individual_Size, data=para))
+summary(lm(Parasite_Mass ~ Individual_Size+as.factor(Location), data=para))
 hist(resid(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para)))
 write.csv(x = para, file = "Para.csv", row.names = FALSE)
 @
@@ -247,6 +303,49 @@ write.csv(x = para, file = "Para.csv", row.names = FALSE)
   \end{alertblock}
   
 \end{frame}
+%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Cures}
+
+
+\begin{frame}{Multiple regression}
+  
+\end{frame}
+%%%%%%%%%%%
+
+
+
+\begin{frame}{Transformations}
+
+\end{frame}
+%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Linear model basic assumptions}
+Not necessarily wrong, but typical interpretation assumes:
+ \begin{block}{}
+     \begin{itemize}[<+->]
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
+      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
+       \item {\color{red!20!black}{Measurement error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
+       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
+       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \end{itemize}
+ \end{block}
+\end{frame}
+%%%%%%%%%%%
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Bonus fun}
@@ -287,21 +386,13 @@ write.csv(Cdata, file = "Cdata.csv", row.names = FALSE)
 %%%%%%%%%%%
 
 
-\section{Feedback wanted!}
+\section*{Feedback wanted!}
 
 \begin{frame}{What do you want to learn about?}
 
 \begin{alertblock}{Topics}
   \begin{itemize}
     \item 
-  \end{itemize}
-\end{alertblock}
-
-\pause
-
-\begin{alertblock}{Do you like it? What can we improve?}
-  \begin{itemize}
-    \item Is it too fast
   \end{itemize}
 \end{alertblock}
 
