@@ -6,4 +6,4 @@ Navigate the different topics with the folders above, or with the following link
 * 1. [Basic introduction to R](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/1.IntroToR)
 * 2. [Warming-up: the mean](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/2.TheMean)
 * 3. [Statistical inference and linear models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/3.linear_models)
-* 4. What on earth is going on with my linear models \_(*~*)_/ diagnostics, fixes, interpretation (slides to come)
+* 4. [What on earth is going on with my linear models: diagnostics, fixes, interpretation](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/4.linear_models_part2/slides/slideslinearmodelsPart2.pdf)
