@@ -68,7 +68,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
-\title[\textbf{Linear models 2:}]{What on earth is going on with my linear models??!}
+\title[\textbf{Linear models 2:}]{What on earth is going on with my linear models??! Slides with solutions to exercises}
 \date{\today}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -409,24 +409,59 @@ Plot suggests a quadratic relationship
 \end{frame}
 %%%%%%%%%%%%
 
+\begin{frame}[fragile]{Introduction to prediction: solution}
+\textbf{Write mathematically the relationship between obs and predictor}\\
+$$
+\mathrm{obs} = \beta_0 + \beta_1 \mathrm{predictor} + \beta_2 \mathrm{predictor}^2 + \epsilon
+$$
+where the $\beta$ are the coefficients of the linear model, and $\epsilon$ represent residuals.\\
+
+\textbf{Input regression coefficients in there to predict "obs" from "predictor"}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{xx} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{to} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{100}\hlstd{)}
+  \hlstd{predxx} \hlkwb{<-} \hlkwd{coef}\hlstd{(m1)[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{xx} \hlopt{*} \hlkwd{coef}\hlstd{(m1)[}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{(xx}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{*} \hlkwd{coef}\hlstd{(m1)[}\hlnum{3}\hlstd{]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \textbf{Add a prediction line on the plot obs/predictor}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{plot}\hlstd{(}\hlkwc{x}\hlstd{=forprediction}\hlopt{$}\hlstd{predictor,} \hlkwc{y}\hlstd{=forprediction}\hlopt{$}\hlstd{obs,} \hlkwc{xlab}\hlstd{=}\hlstr{"predictor"}\hlstd{,}
+   \hlkwc{ylab}\hlstd{=}\hlstr{"obs"}\hlstd{)}
+  \hlkwd{lines}\hlstd{(}\hlkwc{x} \hlstd{= xx,} \hlkwc{y}\hlstd{=predxx,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+The fit looks pretty good.
+
+\end{frame}
+%%%%%%%%%%%
+
 \begin{frame}[fragile]{Introduction to prediction}
 
 
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-14-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-16-1} 
 
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}
+\begin{frame}{Relaxation slide}
   \begin{center}
     \includegraphics[width=0.5\textwidth]{Figures/brain.jpg}
   \end{center}
+  This is a snow vole, I used to spend time squeezing them in Switzerland. They gave me a diploma for that.
 \end{frame}
+%%%%%%%%%%%
 
 \section{A puzzling but simple problem: Over-fit and collinearity}
 
@@ -438,6 +473,33 @@ Load Cdata.csv, fit models of y predited by x1 and x2, or x2 and x3.\\ Something
 
 
 
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Over-fit and collinearity: Solution}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{cdata} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"Cdata.csv"}\hlstd{)}
+\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2,} \hlkwc{data}\hlstd{=cdata))}
+\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x2} \hlopt{+} \hlstd{x3,} \hlkwc{data}\hlstd{=cdata))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+One regression gives NA for the second coefficient, the other regression gives ridiculously large estimates and standard errors. In the former case, the two predictors are perfectly correlated and a regression cannot disentangle their respective effects. In the latter case, they are almost perfectly correlated, there is a tiny bit of information about their independent effects, but not enough to get good estimates. See the correlations:
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{plot}\hlstd{(cdata}\hlopt{$}\hlstd{x1, cdata}\hlopt{$}\hlstd{x2)}
+  \hlkwd{plot}\hlstd{(cdata}\hlopt{$}\hlstd{x2, cdata}\hlopt{$}\hlstd{x3)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+In both cases you should drop one on the two predictors; they contain the same information.
+The models give logical answers and good predictions, but there is nothing to be learned about the independent effects of the two predictors and therefore the models are not biologically interesting.
 
 \end{frame}
 %%%%%%%%%%%
@@ -522,7 +584,7 @@ Function predict
 \hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{fit.upr,} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-23-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-27-1} 
 
 \end{knitrout}
 
@@ -560,7 +622,7 @@ Function predict
 \hlkwd{lines}\hlstd{(Xnewdata}\hlopt{$}\hlstd{x, Xnewdata}\hlopt{$}\hlstd{conf.upr,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-25-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textheight]{figure/unnamed-chunk-29-1} 
 
 \end{knitrout}
 
@@ -644,24 +706,44 @@ Significant positive correlation confirmed, BUT, no biological mechanism, little
 
 \end{frame}
 %%%%%%%%%%%
-
-\begin{frame}[fragile]{Practice lm() with parasites}
-
-
-  
-  \begin{alertblock}{What explains variation in parasitic load?}
-  You collected ecto-parasites on some furry large mammals at three locations. Parasites break easily when we collect them and are impossible to count, so we decide to measure parasitic load as their mass. \textbf{Why do some mammals have larger parasitic load?} \pause
-    \begin{itemize}
-      \item Load the \texttt{Para.csv} data (don't forget: str(), summary(), plot()\dots)
-      \item Model \verb+Parasite_Mass+ using \texttt{lm()}
-      \item Find what variables predict \verb+Parasite_Mass+
-      \item How good are your models? Assumptions? Prediction?
-      \item What biological interpretation can you imagine?
-      \end{itemize}
-  \end{alertblock}
-  
-\end{frame}
-%%%%%%%%%%%
+% 
+% \begin{frame}[fragile]{Practice lm() with parasites}
+% 
+% <<echo=FALSE, eval=FALSE>>=
+%   set.seed(123)
+%   ns <- 135
+%   x2 <- sample(x = 1:3, size = ns, replace = TRUE)
+%   x1 <- rnorm(ns, 0, 1) + c(-1,0,1)[x2]
+%   x3 <- rnorm(ns, 5, 0.1)#no effect
+%   x4 <- sample(x=0:1, size=ns, replace=TRUE)#unobserved
+%   y <- 2 + 0.3*x1 + 0.5*(x2/2)+ x4 + rnorm(ns, sd = 0.7)
+%   lamb <- exp(y)
+%   obs <- abs(sapply(X = lamb, FUN = function(x) {rpois(n = 1, lambda = x)}) + rnorm(ns, sd=0.5))
+% 
+% para <- data.frame(Parasite_Mass = obs, Individual_Size = x1 +6, Location = c("A","B","C")[x2], Fur_Darkness = x3)
+% 
+% plot(para$Parasite_Mass, x=para$Individual_Size)
+% summary(glm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para, family="quasipoisson"))
+% 
+% summary(lm(Parasite_Mass ~ Individual_Size, data=para))
+% summary(lm(Parasite_Mass ~ Individual_Size+as.factor(Location), data=para))
+% hist(resid(lm(Parasite_Mass ~ Individual_Size + as.factor(Location) + Fur_Darkness, data=para)))
+% write.csv(x = para, file = "Para.csv", row.names = FALSE)
+% @
+%   
+%   \begin{alertblock}{What explains variation in parasitic load?}
+%   You collected ecto-parasites on some furry large mammals at three locations. Parasites break easily when we collect them and are impossible to count, so we decide to measure parasitic load as their mass. \textbf{Why do some mammals have larger parasitic load?} \pause
+%     \begin{itemize}
+%       \item Load the \texttt{Para.csv} data (don't forget: str(), summary(), plot()\dots)
+%       \item Model \verb+Parasite_Mass+ using \texttt{lm()}
+%       \item Find what variables predict \verb+Parasite_Mass+
+%       \item How good are your models? Assumptions? Prediction?
+%       \item What biological interpretation can you imagine?
+%       \end{itemize}
+%   \end{alertblock}
+%   
+% \end{frame}
+% %%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -695,11 +777,6 @@ Not necessarily wrong, but typical interpretation assumes:
 \end{frame}
 %%%%%%%%%%%
 
-\section{If time permits: multiple regression}
-
-\begin{frame}{Improvisation}
-
-\end{frame}
 %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
