@@ -42,3 +42,7 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 *-tikzDictionary
+
+#specific folders
+*figure/
+
