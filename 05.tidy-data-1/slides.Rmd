@@ -1,0 +1,205 @@
+---
+title: "Tidy Data"
+author: "Kevin Murray"
+date: "23 March 2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+```
+
+```{r include=F}
+ghg = expand.grid(year=seq(1970, 2010, 1),
+                  site=c("London", "Hawaii")) %>% 
+  mutate(
+    co2ppm = round(350 + 
+                   (year - 1970)*1.2 +
+                   as.numeric(site) * -25 +
+                     rnorm(year, 0, 4))
+    )
+
+plot(co2ppm~year, data=ghg)
+ghg.s = ghg %>%
+    spread(site, co2ppm)
+ghg.y = ghg %>%
+    spread(year, co2ppm)
+```
+
+
+## Data organisation
+
+- Any dataset can be represented many ways
+
+```{r echo=F}
+head(ghg, 3)
+head(ghg.s, 3)
+head(ghg.y)
+```
+
+
+## What's the right format?
+
+- **There is no universally correct format**
+- Many tools in R expect data to be arranged quite specifically
+- The most common form is **tidy data**
+
+# Tidy Data
+
+## What makes data tidy
+
+Tidy Data has:
+
+- Every **variable** in its own **column**
+- Every **observation** on its own **row**
+- Only one kind of data per table (negotiable)
+
+```{r}
+head(ghg)
+```
+
+
+## Variables
+
+- Context dependent!
+- A variable can be
+  - A dimension (e.g. year, species, site)
+  - The kind of measurement (e.g. DBH, height)
+- In the case of our GHG dataset?
+
+```{r}
+head(ghg)
+```
+  
+## Context dependence
+
+- The tidiest form of a dataset is context dependent
+- What if `ghg` had column with temerature?
+
+```{r include=F}
+ghg.temp = ghg %>% 
+  mutate(mean.temp = round(80 +
+                           as.integer(site) * - 70 +
+                           (co2ppm - min(co2ppm)) * 0.1 +
+                           rnorm(co2ppm, 0, 0.6)))
+plot(mean.temp ~ year, data=ghg.temp)
+ghg.temp.m = ghg.temp %>%
+  gather("measure", "value", -c(year, site)) %>% 
+  arrange(site, year)
+```
+
+```{r echo=F}
+head(ghg.temp,3)
+head(ghg.temp.m,3)
+```
+
+# Enough waffling already
+
+## Ok, one more bit
+
+I *highly* reccomend reading the tidy data paper. Searching for "Hadley Wickham Tidy Data Paper" will find it. It's short, and lays out the deeper rationale for this way of organising data, and with more and better examples.
+
+# An aside: packages
+
+## What are packages
+
+- Base R doesn't have everything
+- "Extra" bits are distributed as *packages*
+  - Distibution of code, documentation, sometimes data
+  - E.g. `ggplot2`, `lmer`, `adegenet`
+- Written by anyone, nearly always open source
+
+## How do I get them?
+
+- Normally, with `install.packages()`
+- Downloads package and dependencies
+- On linux, will be source, which might need compiling
+  - Sometimes an `apt-get` of a C/C++ library is needed
+- On OS X/Windows, normally precompiled
+- Extracts and installs, checks if loadable
+
+Try installing the tidyr, dplyr and ggplot2 packages
+
+```{r eval=F, echo=T}
+install.packages("tidyr")
+install.packages(c("ggplot2", "dplyr"))
+```
+
+## CRAN
+
+- Comprehensive R Archive Network
+  - The (main) place R packages live
+  - Search here (via google, preferably) to find
+  - Also hosts documentation
+- Akin to PyPI, Debian's apt, CPAN
+- Nearly all stable, general purpose packages here
+
+## BioConductor
+
+- Because biology is too cool to use CRAN
+- Different package manager (`biocLite`)
+- Needs a one-off setup process
+- Similar documentation standards to CRAN
+- Some packages also on CRAN, prefer BioConductor
+
+Let's set up Bioconductor
+
+```{r eval=F, echo=T}
+source("https://bioconductor.org/biocLite.R")
+# source needed once, use library(BiocInstaller) in future
+biocLite()
+```
+
+
+## How do I get help
+
+- Realistically, Google!
+- Vignettes are a great resource
+- R packages have minimum documentation standards
+- Reference manuals are very detailed
+- `?package::function`/`help(package::function)`
+
+Try running viewing the vignette for dplyr
+```{r eval=F, echo=T}
+vignette("dplyr")
+```
+
+# The tidyverse
+
+The tidy data ecosystem
+
+## General features of tidyverse
+
+- Functions are verbs
+- Take (at least) one dataframe as first argument(s)
+- Then a series of operations
+- Columns selected by name, without quoting
+
+For example, tidyr's `gather()`:
+```{r eval=F, echo=T}
+head(ghg.s)
+gather(ghg.s, "site", "co2", -year)
+```
+
+
+## `tidyr` for tidying data
+
+- Two forms of "untidy" column
+  - Data for variable spread across many columns (wide data)
+  - A column has more than one variable (conjoined data)
+- Two sets of functions to address this
+  - `spread()` and `gather()` for wide data
+  - `separate()`, `extract()`, and `unite()` for conjoined
+  
+## Tidying wide data
+
+- If variable spread across many columns, use `gather()`
+
+```{r}
+head(ghg.s)
+head(gather(ghg.s, "site", "co2", -year))
+```
+
+
+# Tools for maniupulating tidy data

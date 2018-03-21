@@ -1,0 +1,68 @@
+---
+title: "Outline"
+author: "Kevin Murray"
+date: "20 March 2018"
+output: html_document
+---
+
+# Tidy data
+
+- What is tidy data
+  - column: variable
+  - row: observation
+  - table: one type of data/dataset
+  - depends on analysis as to which form(s) are tidy
+
+- Untidy data examples (tidy data paper examples)
+  - Column headers are values, not variable names.
+  - Multiple variables are stored in one column.
+  - Variables are stored in both rows and columns.
+  - Multiple types of observational units are stored in the same table.
+  - A single observational unit is stored in multiple tables
+  
+- Why tidy data
+  - Make life easier in the long run
+  - Most R features expect it
+    - Formulae work better
+    - tidyverse
+    - ggplot
+    - internal plotting
+
+- When to tidy
+  - as early as possible (ideally at collection!)
+
+
+# An aside: packages
+
+- What are packages
+- Why they exist
+- Where to install from & how to
+- Finding documentation
+- Bioconductor
+
+# The tidyverse
+
+- A series of packages to read, create, reformat, manipulate, visualise, and export tidy datasets
+- tidyverse.org -- RTFM, TFM is very useful for once.
+
+## Manipulating tidy datasets
+
+- How to tidy
+  - `gather()` and `spread()`
+  - `extract()` and `separate()`
+- Filtering with `filter()`
+- modifying with `mutate()`
+- Aggregration with `group_by()`
+
+
+# Intro to plotting with ggplot
+
+- The lay of the land that is ggplot
+  - Take data
+  - Define aesthetics
+  - Build plots in layers
+- Common plot types
+  - Scatter
+  - plot of linear model with scatter
+  - histogram
+  - boxplot
