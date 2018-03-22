@@ -6,8 +6,8 @@ output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
+dir.exists("data") || dir.create("data")
 ```
 
 ```{r include=F}
@@ -35,7 +35,7 @@ ghg.y = ghg %>%
 ```{r echo=F}
 head(ghg, 3)
 head(ghg.s, 3)
-head(ghg.y)
+head(ghg.y[,1:8])
 ```
 
 
@@ -98,7 +98,7 @@ head(ghg.temp.m,3)
 
 ## Ok, one more bit
 
-I *highly* reccomend reading the tidy data paper. Searching for "Hadley Wickham Tidy Data Paper" will find it. It's short, and lays out the deeper rationale for this way of organising data, and with more and better examples.
+I *highly* recommend reading the tidy data paper. Searching for "Hadley Wickham Tidy Data Paper" will find it. It's short, and lays out the deeper rationale for this way of organising data, and with more and better examples.
 
 # An aside: packages
 
@@ -121,7 +121,7 @@ I *highly* reccomend reading the tidy data paper. Searching for "Hadley Wickham 
 
 Try installing the tidyr, dplyr and ggplot2 packages
 
-```{r eval=F, echo=T}
+```{r eval=F}
 install.packages("tidyr")
 install.packages(c("ggplot2", "dplyr"))
 ```
@@ -138,14 +138,14 @@ install.packages(c("ggplot2", "dplyr"))
 ## BioConductor
 
 - Because biology is too cool to use CRAN
-- Different package manager (`biocLite`)
+- Different package manager (`biocLite()`)
 - Needs a one-off setup process
 - Similar documentation standards to CRAN
 - Some packages also on CRAN, prefer BioConductor
 
 Let's set up Bioconductor
 
-```{r eval=F, echo=T}
+```{r eval=F}
 source("https://bioconductor.org/biocLite.R")
 # source needed once, use library(BiocInstaller) in future
 biocLite()
@@ -161,9 +161,23 @@ biocLite()
 - `?package::function`/`help(package::function)`
 
 Try running viewing the vignette for dplyr
-```{r eval=F, echo=T}
+```{r eval=F}
 vignette("dplyr")
 ```
+
+## How do I use a package
+
+- The `library()` function
+  - Imports all functions
+  - Loads data, if any
+  - Loads any dependencies
+
+Try loading the `dplyr` package:
+```{r eval=F}
+library(dplyr)
+# also can give a string: library("dplyr")
+```
+
 
 # The tidyverse
 
@@ -175,11 +189,22 @@ The tidy data ecosystem
 - Take (at least) one dataframe as first argument(s)
 - Then a series of operations
 - Columns selected by name, without quoting
+- Additional packages for plotting, lower level computation
 
 For example, tidyr's `gather()`:
-```{r eval=F, echo=T}
+```{r eval=F}
 head(ghg.s)
 gather(ghg.s, "site", "co2", -year)
+```
+
+## Tidyverse documentation
+
+- The tidyverse website (<tidyverse.org>) has great docs
+- Most of today is based on the excelent `vignette("tidy-data")` and `vignette("dplyr")`
+- Hadley Wickham's "R for Data Sciences" book highly recommened (<r4ds.had.co.nz>)
+
+```{r echo=F,out.height="320px",fig.align="center"}
+knitr::include_graphics("http://r4ds.had.co.nz/cover.png")
 ```
 
 
@@ -197,9 +222,71 @@ gather(ghg.s, "site", "co2", -year)
 - If variable spread across many columns, use `gather()`
 
 ```{r}
-head(ghg.s)
-head(gather(ghg.s, "site", "co2", -year))
+str(ghg.s)
+gathered = gather(ghg.s, "site", "co2", -year)
+str(gathered)
+```
+
+## `spread()`
+
+- The reverse of this is `spread()`
+
+```{r}
+str(spread(gathered, site, co2))
+```
+
+## Splitting conjoined columns
+
+```{r include=F}
+con = expand.grid(map=c("BWA", "NGM", "Bowtie"),
+                  sample=paste0("S", 1:6)) %>% 
+  transmute(
+    bam = paste(map, sample, sep="_"),
+    reads = round(rnorm(bam, 1e6,1e5)),
+    reads.mapped = round(rbeta(bam, 10, 3) * reads)
+  )
+```
+
+- `separate()`: split by token (e.g. space, _, /)
+- `extract()`: extract matches in pattern (regex)
+  - Useful if not delimited
+```{r}
+str(con)
+str(separate(con, bam, into=c("mapper", "sample")))
 ```
 
 
 # Tools for maniupulating tidy data
+
+
+## Pipes
+
+- A way of defining *data flow*
+- In unix, `|` (e.g. `cat haystack barn | grep needle`)
+- Gives output of LHS to RHS as input
+- Makes code read in execution order
+
+In R:
+```{r}
+library(dplyr)
+mtcars %>% summary()
+summary(mtcars)
+```
+
+## Pipes in the wild
+
+Don't worry about the verbs, we're about to cover that!
+```{r}
+con %>% 
+  separate(bam, into=c("mapper", "sample")) %>% 
+  filter(sample %in% c("S1", "S2")) %>% 
+  mutate(prop = reads.mapped/reads)
+``` 
+
+## Pipes in the wild
+
+This is identical, but MUCH harder to read
+```{r}
+mutate(filter(separate(con, bam, into=c("mapper", "sample")),
+              sample %in% c("S1", "S2")), prop=reads.mapped / reads)
+```
