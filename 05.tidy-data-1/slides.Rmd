@@ -259,7 +259,7 @@ str(separate(con, bam, into=c("mapper", "sample")))
 # Tools for maniupulating tidy data
 
 
-## Pipes
+## First, some grammar: Pipes
 
 - A way of defining *data flow*
 - In unix, `|` (e.g. `cat haystack barn | grep needle`)
@@ -290,3 +290,68 @@ This is identical, but MUCH harder to read
 mutate(filter(separate(con, bam, into=c("mapper", "sample")),
               sample %in% c("S1", "S2")), prop=reads.mapped / reads)
 ```
+
+
+```{r include=F}
+mpg2 = ggplot2::mpg %>% 
+  select(1:3, cyl, drv) %>% 
+  unique() %>% 
+  as.data.frame()
+```
+
+## `mutate()`: creates a new column
+
+```{r}
+head(mpg2, 2)
+mutate(mpg2, disp_per_cyl = displ/cyl)
+```
+
+## `filter()`: subsets observations
+
+```{r}
+head(mpg2, 2)
+filter(mpg2, drv=="f", displ>2)
+```
+
+## `arrange()`: sorts rows
+
+```{r}
+head(mpg2, 2)
+arrange(mpg2, cyl, desc(displ))
+```
+
+## `select()`: select columns
+
+```{r}
+head(mpg2, 2)
+select(mpg2, manufacturer, 4:5, displ)
+```
+
+## `group_by()` and `summarise()`: aggregate within groups
+
+```{r}
+head(mpg2, 2)
+group_by(mpg2, manufacturer) %>% 
+  summarise(displ.m = mean(displ),
+            displ.sd = sd(displ),
+            max.cyl = max(cyl))
+```
+
+
+## Dplyr tutorial
+
+- Now, we will follow the `dplyr` tutorial/vignette using your data
+  - Read your data in
+  - Make it "tidy", if needed
+  - Add a column with `mutate()`
+  - Subset the data with `filter()`
+  - Sort it with `arrange()`
+- Use the `mpg` dataset if you do not have your own.
+
+```{r eval=F}
+vignette("dplyr")
+```
+
+## TO BE ADDED
+- `readr`'s `read_tsv/csv/delim`
+- `purrr` for split modeling? [(see here)](https://github.com/tidyverse/purrr#usage)
