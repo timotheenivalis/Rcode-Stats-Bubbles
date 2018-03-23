@@ -1,0 +1,400 @@
+---
+title: "Tidy Data"
+author: "Kevin Murray"
+date: "23 March 2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+dir.exists("data") || dir.create("data")
+theme_set(theme_bw())
+```
+
+```{r include=F}
+ghg = expand.grid(year=seq(1970, 2010, 1),
+                  site=c("London", "Hawaii")) %>% 
+  mutate(
+    co2ppm = round(350 + 
+                   (year - 1970)*1.2 +
+                   as.numeric(site) * -25 +
+                     rnorm(year, 0, 4))
+    )
+write_csv(ghg, "data/ghg.csv")
+write_tsv(ghg, "data/ghg.tsv")
+plot(co2ppm~year, data=ghg)
+ghg.s = ghg %>%
+    spread(site, co2ppm)
+ghg.y = ghg %>%
+    spread(year, co2ppm)
+```
+
+
+## Data organisation
+
+- Any data set can be represented many ways
+
+```{r echo=F}
+head(ghg, 3)
+head(ghg.s, 3)
+head(ghg.y[,1:8])
+```
+
+
+## What's the right format?
+
+- **There is no universally correct format**
+- Many tools in R expect data to be arranged quite specifically
+- The most common form is **tidy data**
+
+# Tidy Data
+
+## What makes data tidy
+
+Tidy Data has:
+
+- Every **variable** in its own **column**
+- Every **observation** on its own **row**
+- Only one kind of data per table (negotiable)
+
+```{r}
+head(ghg)
+```
+
+
+## Variables
+
+- Context dependent!
+- A variable can be
+  - A dimension (e.g. year, species, site)
+  - The kind of measurement (e.g. DBH, height)
+- In the case of our GHG data set?
+
+```{r}
+head(ghg)
+```
+  
+## Context dependence
+
+- The tidiest form of a data set is context dependent
+- What if `ghg` had column with temperature?
+
+```{r include=F}
+ghg.temp = ghg %>% 
+  mutate(mean.temp = round(80 +
+                           as.integer(site) * - 70 +
+                           (co2ppm - min(co2ppm)) * 0.1 +
+                           rnorm(co2ppm, 0, 0.6)))
+plot(mean.temp ~ year, data=ghg.temp)
+ghg.temp.m = ghg.temp %>%
+  gather("measure", "value", -c(year, site)) %>% 
+  arrange(site, year)
+```
+
+```{r echo=F}
+head(ghg.temp,3)
+head(ghg.temp.m,3)
+```
+
+# Enough waffling already
+
+## Ok, one more bit
+
+I *highly* recommend reading the tidy data paper. Searching for "Hadley Wickham Tidy Data Paper" will find it. It's short, and lays out the deeper rationale for this way of organising data, and with more and better examples.
+
+# An aside: packages
+
+## What are packages
+
+- Base R doesn't have everything
+- "Extra" bits are distributed as *packages*
+  - Distribution of code, documentation, sometimes data
+  - E.g. `ggplot2`, `lmer`, `adegenet`
+- Written by anyone, nearly always open source
+
+## How do I get them?
+
+- Normally, with `install.packages()`
+- Downloads package and dependencies
+- On Linux, will be source, which might need compiling
+  - Sometimes an `apt-get` of a C/C++ library is needed
+- On OS X/Windows, normally precompiled
+- Extracts and installs, checks if loadable
+
+Try installing the tidyr, dplyr and ggplot2 packages
+
+```{r eval=F}
+install.packages("tidyr")
+install.packages(c("ggplot2", "dplyr"))
+```
+
+## CRAN
+
+- Comprehensive R Archive Network
+  - The (main) place R packages live
+  - Search here (via Google, preferably) to find
+  - Also hosts documentation
+- Akin to PyPI, Debian's apt, CPAN
+- Nearly all stable, general purpose packages here
+
+## BioConductor
+
+- Because biology is too cool to use CRAN
+- Different package manager (`biocLite()`)
+- Needs a one-off setup process
+- Similar documentation standards to CRAN
+- Some packages also on CRAN, prefer BioConductor
+
+Let's set up Bioconductor
+
+```{r eval=F}
+source("https://bioconductor.org/biocLite.R")
+# source needed once, use library(BiocInstaller) in future
+biocLite()
+```
+
+
+## How do I get help
+
+- Realistically, Google!
+- Vignettes are a great resource
+- R packages have minimum documentation standards
+- Reference manuals are very detailed
+- `?package::function`/`help(package::function)`
+
+Try running viewing the vignette for dplyr
+```{r eval=F}
+vignette("dplyr")
+```
+
+## How do I use a package
+
+- The `library()` function
+  - Imports all functions
+  - Loads data, if any
+  - Loads any dependencies
+
+Try loading the `dplyr` package:
+```{r eval=F}
+library(dplyr)
+# also can give a string: library("dplyr")
+```
+
+
+# The tidyverse
+
+The tidy data ecosystem
+
+## General features of tidyverse
+
+- Functions are verbs
+- Take (at least) one dataframe as first argument(s)
+- Then a series of operations
+- Columns selected by name, without quoting
+- Additional packages for plotting, lower level computation
+
+For example, tidyr's `gather()`:
+```{r eval=F}
+head(ghg.s)
+gather(ghg.s, "site", "co2", -year)
+```
+
+## Tidyverse documentation
+
+- The tidyverse website (<tidyverse.org>) has great docs
+- Most of today is based on the excellent `vignette("tidy-data")` and `vignette("dplyr")`
+- Hadley Wickham's "R for Data Sciences" book highly recommend (<r4ds.had.co.nz>)
+
+```{r echo=F,out.height="320px",fig.align="center"}
+knitr::include_graphics("http://r4ds.had.co.nz/cover.png")
+```
+
+
+## `tidyr` for tidying data
+
+- Two forms of "untidy" column
+  - Data for variable spread across many columns (wide data)
+  - A column has more than one variable (conjoined data)
+- Two sets of functions to address this
+  - `spread()` and `gather()` for wide data
+  - `separate()`, `extract()`, and `unite()` for conjoined
+  
+## Tidying wide data
+
+- If variable spread across many columns, use `gather()`
+
+```{r}
+str(ghg.s)
+gathered = gather(ghg.s, "site", "co2", -year)
+str(gathered)
+```
+
+## `spread()`
+
+- The reverse of this is `spread()`
+
+```{r}
+str(spread(gathered, site, co2))
+```
+
+## Splitting conjoined columns
+
+```{r include=F}
+con = expand.grid(map=c("BWA", "NGM", "Bowtie"),
+                  sample=paste0("S", 1:6)) %>% 
+  transmute(
+    bam = paste(map, sample, sep="_"),
+    reads = round(rnorm(bam, 1e6,1e5)),
+    reads.mapped = round(rbeta(bam, 10, 3) * reads)
+  )
+```
+
+- `separate()`: split by token (e.g. space, _, /)
+- `extract()`: extract matches in pattern (regexp)
+  - Useful if not delimited
+```{r}
+str(con)
+str(separate(con, bam, into=c("mapper", "sample")))
+```
+
+
+# Tools for maniupulating tidy data
+
+
+## First, some grammar: Pipes
+
+- A way of defining *data flow*
+- In UNIX, `|` (e.g. `cat haystack barn | grep needle`)
+- Gives output of LHS to RHS as input
+- Makes code read in execution order
+
+In R:
+```{r}
+library(dplyr)
+mtcars %>% summary()
+summary(mtcars)
+```
+
+## Pipes in the wild
+
+Don't worry about the verbs, we're about to cover that!
+```{r}
+con %>% 
+  separate(bam, into=c("mapper", "sample")) %>% 
+  filter(sample %in% c("S1", "S2")) %>% 
+  mutate(prop = reads.mapped/reads)
+``` 
+
+## Pipes in the wild
+
+This is identical, but MUCH harder to read
+```{r}
+mutate(filter(separate(con, bam, into=c("mapper", "sample")),
+              sample %in% c("S1", "S2")), prop=reads.mapped / reads)
+```
+
+
+```{r include=F}
+mpg2 = ggplot2::mpg %>% 
+  select(1:3, cyl, drv) %>% 
+  unique() %>% 
+  as.data.frame()
+```
+
+## `mutate()`: creates a new column
+
+```{r}
+head(mpg2, 2)
+mutate(mpg2, disp_per_cyl = displ/cyl)
+```
+
+## `filter()`: subsets observations
+
+```{r}
+head(mpg2, 2)
+filter(mpg2, drv=="f", displ>2)
+```
+
+## `arrange()`: sorts rows
+
+```{r}
+head(mpg2, 2)
+arrange(mpg2, cyl, desc(displ))
+```
+
+## `select()`: select columns
+
+```{r}
+head(mpg2, 2)
+select(mpg2, manufacturer, 4:5, displ)
+```
+
+## `group_by()` and `summarise()`: aggregate within groups
+
+```{r}
+head(mpg2, 2)
+group_by(mpg2, manufacturer) %>% 
+  summarise(displ.m = mean(displ),
+            displ.sd = sd(displ),
+            max.cyl = max(cyl))
+```
+
+
+## Dplyr tutorial
+
+- Now, we will follow the `dplyr` tutorial/vignette using your data
+  - Read your data in
+  - Make it "tidy", if needed
+  - Add a column with `mutate()`
+  - Subset the data with `filter()`
+  - Sort it with `arrange()`
+- Use the `mpg` data set if you do not have your own.
+
+```{r eval=F}
+vignette("dplyr")
+```
+
+# More Tidyverse
+
+We will cover these next time
+
+## `ggplot2`
+
+- A grammar for graphics
+  - Very nice, flexible graphics
+  - Designed to work on tidy data
+
+```{r fig.align="center", fig.width=6, fig.height=3}
+ggplot(ghg, aes(x=year, y=co2ppm)) +
+  geom_point(aes(colour=site))
+```
+
+
+## `readr`
+
+- New tools for reading tabular data
+  - Faster
+  - Saner defaults
+  - Better control of column types
+
+```{r eval=F}
+df = read_csv("data/ghg.csv")
+# OR, if tab separated
+df = read_tsv("data/ghg.tsv")
+```
+
+## `purrr`
+
+- Tools for functional programming
+  - Not everything can be done with `dplyr`
+  - `purr` helps tidyverse-ify hand-written code
+  
+```{r}
+# Run independent lm per data split by cylinder
+mtcars %>%
+  split(.$cyl) %>% # Split by cyl
+  map(~ lm(mpg ~ wt, data = .)) %>% # run an lm call within cyl class
+  map(summary) %>% # take summary of lm object
+  map_dbl("r.squared") # extract the r2 as a vector across the 3 classes
+```
