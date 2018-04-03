@@ -8,3 +8,4 @@ Navigate the different topics with the folders above, or with the following link
 * 3. [Statistical inference and linear models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/03.linear_models)
 * 4. [What on earth is going on with my linear models: diagnostics, fixes, interpretation](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/04.linear_models_part2)
 * 5. [Keep tidy data, install packages, use dlypr and other tidyverse packages](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/05.tidy-data-1)
+* 6. [Linear models: Multiple regression and interactions](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/06.multiple_regression)
