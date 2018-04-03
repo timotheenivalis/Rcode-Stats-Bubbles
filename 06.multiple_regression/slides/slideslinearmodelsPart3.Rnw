@@ -158,18 +158,63 @@ setPar()
   x <- x[order(x)]
   sex <- c(rep(0, 150), rep(1, 50) )
   y <- 1 + sex * 0.0 + x*0.2 + rnorm(200, 0, 0.5)
-  
-  plot(x[as.logical(sex)],y[as.logical(sex)], col="blue", xlim=c(0,15))
-  points(x[!as.logical(sex)],y[!as.logical(sex)], col="red")
+
 
   masssex <- data.frame(mass = x, sex=sex, movement = y)
-  summary(lm(movement ~ mass + sex, data=masssex))
-    summary(lm(movement ~ mass, data=masssex[masssex$sex==0,]))
-      summary(lm(movement ~ mass, data=masssex[masssex$sex==1,]))
-
-    summary(lm(movement ~ mass*sex, data=masssex))
 @
 
+<<eval=FALSE, echo=FALSE>>=
+    
+
+  write.csv(masssex, file = "../data/masssex.csv", row.names = FALSE)
+  
+  summary(lm(movement ~ mass, data=masssex[masssex$sex==0,]))
+  summary(lm(movement ~ mass, data=masssex[masssex$sex==1,]))
+
+  summary(lm(movement ~ mass*sex, data=masssex))
+@
+
+  \begin{alertblock}{Exercise}
+    \begin{enumerate}
+      \item Load the data masssex.csv
+      \item Fit a simple regression explaining movement by mass for each sex separately. Is the relationship different between sexes?
+      \item Fit the multiple regression explaining movement by mass, sex, and mass:sex, using the full dataset. Is the relationship different between sexes?
+      \item Try to understand the discreapancy by plotting the data
+    \end{enumerate}
+  \end{alertblock}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Warnings}
+1.
+<<eval=FALSE>>=
+  masssex <- read.csv(file="masssex.csv")
+@
+\pause
+2.
+<<eval=FALSE>>=
+  summary(lm(movement ~ mass, data=masssex[masssex$sex==0,]))
+  summary(lm(movement ~ mass, data=masssex[masssex$sex==1,]))
+@
+\pause
+3.
+<<eval=FALSE>>=
+  summary(lm(movement ~ mass*sex, data=masssex))
+@
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Warnings}
+4.
+<<intersexbehav, echo=TRUE,dev='tikz', out.height='0.9\\textheight', out.width='0.9\\textwidth', echo=FALSE>>=
+setPar()
+     plot(masssex[masssex$sex==0,"mass"],masssex[masssex$sex==0,"movement"],
+       col="blue", xlim=range(masssex$mass), ylim=range(masssex$movement),
+       xlab="mass", ylab="movement")
+  points(masssex[masssex$sex==1,"mass"],masssex[masssex$sex==1,"movement"], col="red") 
+  legend(x="topleft", col=c("blue", "red"), legend = c("Sex 0", "Sex 1"), pch=1)
+@
 \end{frame}
 %%%%%%%%%%%
 
