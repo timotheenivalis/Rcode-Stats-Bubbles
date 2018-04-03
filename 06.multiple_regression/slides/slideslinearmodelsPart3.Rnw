@@ -129,9 +129,9 @@ setPar()
 \begin{frame}[fragile]{Fitting an interaction}
   <<echo=FALSE>>=
     set.seed(123)
-    a <- rnorm(100)
-    b <- rnorm(100)
-    y <- 1 - 0.3*a + 0.5*b + 0.2*a*b + rnorm(100)
+    x1 <- rnorm(100)
+    x2 <- rnorm(100)
+    y <- 1 + -0.4*x1 + 0.5*x2 + 0.2*x1*x2 + rnorm(100)
   @
     
   <<eval=FALSE>>=
@@ -152,6 +152,23 @@ setPar()
     \end{itemize}
   \end{alertblock}
 
+<<echo=FALSE>>=
+    set.seed(123)
+  x <- exp(rnorm(200))   
+  x <- x[order(x)]
+  sex <- c(rep(0, 150), rep(1, 50) )
+  y <- 1 + sex * 0.0 + x*0.2 + rnorm(200, 0, 0.5)
+  
+  plot(x[as.logical(sex)],y[as.logical(sex)], col="blue", xlim=c(0,15))
+  points(x[!as.logical(sex)],y[!as.logical(sex)], col="red")
+
+  masssex <- data.frame(mass = x, sex=sex, movement = y)
+  summary(lm(movement ~ mass + sex, data=masssex))
+    summary(lm(movement ~ mass, data=masssex[masssex$sex==0,]))
+      summary(lm(movement ~ mass, data=masssex[masssex$sex==1,]))
+
+    summary(lm(movement ~ mass*sex, data=masssex))
+@
 
 \end{frame}
 %%%%%%%%%%%
