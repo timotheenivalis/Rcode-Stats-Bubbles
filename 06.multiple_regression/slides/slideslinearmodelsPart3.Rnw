@@ -99,15 +99,25 @@ setPar()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Multiple regression}
 
+\begin{frame}[fragile]{}
 
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{}
+
+\end{frame}
+%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}
 
 \begin{frame}[fragile]{Warnings}
 
   \begin{alertblock}{Vocabulary warning!}
     \begin{itemize}[<+->]
-      \item \textit{correlation}: linear association between two variables "how well does $x$ explain $y$ ?"
-      \item \textit{interaction}: non-additive effect of two or more variables "does the effect of $x_1$ on $y$ change as a function of $x_2$?"
+      \item \textbf{correlation}: linear association between two variables \textit{"how well does $x$ explain $y$ ?"}
+      \item \textbf{interaction}: non-additive effect of two or more variables \textit{"does the effect of $x_1$ on $y$ change as a function of $x_2$?"}. Adds a predictor (or several) to a model.
     \end{itemize}
   \end{alertblock}
 
@@ -135,15 +145,37 @@ setPar()
   @
     
   <<eval=FALSE>>=
-    lm(y ~ 1 + a * b)
-    lm(y ~ 1 + a + b + a:b)
+    lm(y ~ 1 + x1 * x2)
+    lm(y ~ 1 + x1 + x2 + x1:x2)
   @
   \pause
   <<>>=
-    summary(lm(y~ 1 + a*b))
+    summary(lm(y~ 1 + x1*x2))
   @
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Fitting an interaction}
+Why the multiplication sign?
+
+\only<2-3>{
+<<>>=
+x1Xx2 <- x1*x2
+@
+}
+\only<3>{
+<<>>=
+     summary(lm(y~ 1 + x1 + x2 + x1Xx2))
+@
+}
+
+\only<4>{
+Really a multiplication, but can be complicated for factors
+}
+
+\end{frame}
+%%%%%%%%%%%
+
 
 \begin{frame}[fragile]{Warnings}
   \begin{alertblock}{Modeling warning!}
@@ -207,7 +239,8 @@ setPar()
 
 \begin{frame}[fragile]{Warnings}
 4.
-<<intersexbehav, echo=TRUE,dev='tikz', out.height='0.9\\textheight', out.width='0.9\\textwidth', echo=FALSE>>=
+
+<<intersexbehav, echo=TRUE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth', echo=FALSE>>=
 setPar()
      plot(masssex[masssex$sex==0,"mass"],masssex[masssex$sex==0,"movement"],
        col="blue", xlim=range(masssex$mass), ylim=range(masssex$movement),
@@ -218,4 +251,13 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{Next times}
+  \begin{itemize}
+    \item April 20th Kevin on ggplot
+    \item May 4th Nina on Structural Equation Modeling 
+    \item then, mixed models and GLM
+    \item \textbf{Other requests?}
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%
 \end{document}

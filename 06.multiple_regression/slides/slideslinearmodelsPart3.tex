@@ -158,8 +158,8 @@
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{a} \hlopt{*} \hlstd{b)}
-  \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{a} \hlopt{+} \hlstd{b} \hlopt{+} \hlstd{a}\hlopt{:}\hlstd{b)}
+  \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{x1} \hlopt{*} \hlstd{x2)}
+  \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlnum{1} \hlopt{+} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x1}\hlopt{:}\hlstd{x2)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -167,14 +167,86 @@
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(y}\hlopt{~} \hlnum{1} \hlopt{+} \hlstd{a}\hlopt{*}\hlstd{b))}
+  \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(y}\hlopt{~} \hlnum{1} \hlopt{+} \hlstd{x1}\hlopt{*}\hlstd{x2))}
 \end{alltt}
+\begin{verbatim}
 
+Call:
+lm(formula = y ~ 1 + x1 * x2)
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error in model.frame.default(formula = y \textasciitilde{} 1 + a * b, drop.unused.levels = TRUE): variable lengths differ (found for 'a')}}\end{kframe}
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.8719 -0.6777 -0.1086  0.5897  2.3166 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.14098    0.09578  11.913  < 2e-16 ***
+x1          -0.49281    0.10834  -4.549 1.58e-05 ***
+x2           0.53434    0.09881   5.408 4.67e-07 ***
+x1:x2        0.35911    0.11449   3.137  0.00227 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9468 on 96 degrees of freedom
+Multiple R-squared:  0.4252,	Adjusted R-squared:  0.4072 
+F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Fitting an interaction}
+Why the multiplication sign?
+
+\only<2-3>{
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x1Xx2} \hlkwb{<-} \hlstd{x1}\hlopt{*}\hlstd{x2}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+}
+\only<3>{
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+     \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(y}\hlopt{~} \hlnum{1} \hlopt{+} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x1Xx2))}
+\end{alltt}
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ 1 + x1 + x2 + x1Xx2)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.8719 -0.6777 -0.1086  0.5897  2.3166 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.14098    0.09578  11.913  < 2e-16 ***
+x1          -0.49281    0.10834  -4.549 1.58e-05 ***
+x2           0.53434    0.09881   5.408 4.67e-07 ***
+x1Xx2        0.35911    0.11449   3.137  0.00227 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9468 on 96 degrees of freedom
+Multiple R-squared:  0.4252,	Adjusted R-squared:  0.4072 
+F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+}
+
+\only<4>{
+Really a multiplication, but can be complicated for factors
+}
+
+\end{frame}
+%%%%%%%%%%%
+
 
 \begin{frame}[fragile]{Warnings}
   \begin{alertblock}{Modeling warning!}
@@ -232,12 +304,22 @@
 
 \begin{frame}[fragile]{Warnings}
 4.
+
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
-\includegraphics[width=0.9\textwidth,height=0.9\textheight]{figure/intersexbehav-1} 
+\includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/intersexbehav-1} 
 
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{Next times}
+  \begin{itemize}
+    \item April 20th Kevin on ggplot
+    \item May 4th Nina on Structural Equation Modeling 
+    \item then, mixed models and GLM
+    \item \textbf{Other requests?}
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%
 \end{document}
