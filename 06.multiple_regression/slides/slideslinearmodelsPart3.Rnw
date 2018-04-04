@@ -84,7 +84,7 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{A simple linear model}
+\begin{frame}[fragile]{A multiple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope1}} $\times$ {\color{orange}{Predictor1}} + {\color{red}{Slope2}} $\times$ {\color{orange}{Predictor2}}  + {\color{gray}{Error}}} \\
   \vspace{1cm}
 \textbf{In R:}
@@ -100,12 +100,114 @@ setPar()
 \section{Multiple regression}
 
 \begin{frame}[fragile]{Sequential regression}
-<<>>=
-    
-    1
+
+    <<echo=FALSE>>=
+    set.seed(123)
+    x1 <- rnorm(n = 20)
+    x2 <- rnorm(n=20) + 0.6* x1
+    x3 <- rnorm(n=20) - 0.5* x1
+    y <- 0.5 + x2 + 0.1*x3 +rnorm(20, 0, 0.1)
+    m1 <- lm(y ~ x1)
+    m2 <- lm(m1$residuals ~ x2)
+    m3 <- lm(m2$residuals ~ x3)
+  @
+  
+We want to explain a response by three predictors
+\only<2>{
+  <<lmprinc1, echo=FALSE, dev='tikz'>>=
+    setPar()
+    plot(x1, y, xlab="\\color{orange}{Predictor 1}", ylab="\\color{purple}{Response}")
+    abline(m1, col="red", lwd=5)
+    abline(h=coef(m1)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    arrows(x0 = x1, y0=y, y1=m1$fitted.values, code=0, col="gray", lwd=3)
+  @
+}
+\only<3>{
+  <<lmprinc2, echo=FALSE, dev='tikz'>>=
+    setPar()
+      plot(x2, m1$residuals, xlab="\\color{orange}{Predictor 2}", ylab="\\color{purple}{Residuals from 1}")
+    abline(m2, col="red", lwd=5)
+    abline(h=coef(m2)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    arrows(x0 = x2, y0=m1$residuals, y1=m2$fitted.values, code=0, col="gray", lwd=3)
+  @
+}
+\only<4>{
+  <<lmprinc3, echo=FALSE, dev='tikz'>>=
+    setPar()
+      plot(x3, m2$residuals, xlab="\\color{orange}{Predictor 3}", ylab="\\color{purple}{Residuals from 2}")
+    abline(m3, col="red", lwd=5)
+    abline(h=coef(m3)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    arrows(x0 = x3, y0=m2$residuals, y1=m3$fitted.values, code=0, col="gray", lwd=3)
+  @
+}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Sequential regression}
+
+  <<>>=
+    m1 <- lm(y ~ x1)
+    m2 <- lm(m1$residuals ~ x2)
+    m3 <- lm(m2$residuals ~ x3)
     @
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{Sequential regression}
+
+But, 
+  <<>>=
+    m1 <- lm(y ~ x1)
+    m2 <- lm(m1$residuals ~ x2)
+    m3 <- lm(m2$residuals ~ x3)
+
+    coefficients(m1); coefficients(m2); coefficients(m3)
+    @
+is different from
+<<>>=
+    m1 <- lm(y ~ x3)
+    m2 <- lm(m1$residuals ~ x2)
+    m3 <- lm(m2$residuals ~ x1)
+
+    coefficients(m1); coefficients(m2); coefficients(m3)
+    @
+\end{frame}
+%%%%%%%%%%%
+\begin{frame}[fragile]{Sequential regression}
+
+  Also what happens with classical ANOVA (aov in R)
+  
+  <<>>=
+    summary(aov(y ~ x1 + x2 + x3))
+    summary(aov(y ~ x2 + x3 + x1))
+    @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Simultaneous regression}
+In contrast lm() optimizes relationships simultaneously\\
+Hence order does not matter:
+  <<>>=
+    coefficients(lm(y ~ x1 + x2 + x3))
+    coefficients(lm(y ~ x2 + x3 + x1))
+  @
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Simultaneous regression}
+
+<<>>=
+    vcov(lm(y ~ x1 + x2 + x3))
+  @
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}
@@ -344,7 +446,7 @@ setPar()
 
   \begin{frame}[fragile]{Prediction with interaction}
 
-  <<predinteractive, echo=FALSE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
+  <<predinteractivemat, echo=FALSE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
   setPar()
     m1 <- lm(plantsize ~ x_location * y_location, data=plantsize)
     newdata <- data.frame(x_location = rep(seq(-3,3, length.out = 10),10),
@@ -353,7 +455,7 @@ setPar()
   
   library(reshape2)
   matpred <- acast(newdata, x_location~y_location, value.var="prediction")
-  image(t(matpred), col = topo.colors(100))
+  image(t(matpred), col = topo.colors(10))
 
   @
 

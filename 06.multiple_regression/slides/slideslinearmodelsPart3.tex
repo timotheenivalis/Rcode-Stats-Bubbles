@@ -112,7 +112,7 @@
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{A simple linear model}
+\begin{frame}[fragile]{A multiple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope1}} $\times$ {\color{orange}{Predictor1}} + {\color{red}{Slope2}} $\times$ {\color{orange}{Predictor2}}  + {\color{gray}{Error}}} \\
   \vspace{1cm}
 \textbf{In R:}
@@ -132,18 +132,170 @@
 \section{Multiple regression}
 
 \begin{frame}[fragile]{Sequential regression}
+
+
+  
+We want to explain a response by three predictors
+\only<2>{
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc1-1} 
+
+\end{knitrout}
+}
+\only<3>{
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc2-1} 
+
+\end{knitrout}
+}
+\only<4>{
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc3-1} 
+
+\end{knitrout}
+}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Sequential regression}
+
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-    \hlnum{1}
+  \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1)}
+  \hlstd{m2} \hlkwb{<-} \hlkwd{lm}\hlstd{(m1}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x2)}
+  \hlstd{m3} \hlkwb{<-} \hlkwd{lm}\hlstd{(m2}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x3)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Sequential regression}
+
+But, 
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1)}
+  \hlstd{m2} \hlkwb{<-} \hlkwd{lm}\hlstd{(m1}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x2)}
+  \hlstd{m3} \hlkwb{<-} \hlkwd{lm}\hlstd{(m2}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x3)}
+
+  \hlkwd{coefficients}\hlstd{(m1);} \hlkwd{coefficients}\hlstd{(m2);} \hlkwd{coefficients}\hlstd{(m3)}
 \end{alltt}
 \begin{verbatim}
-[1] 1
+(Intercept)          x1 
+  0.4585067   0.4715738 
+(Intercept)          x2 
+-0.02542972  0.75420781 
+ (Intercept)           x3 
+-0.009178959  0.257305942 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+is different from
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x3)}
+    \hlstd{m2} \hlkwb{<-} \hlkwd{lm}\hlstd{(m1}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x2)}
+    \hlstd{m3} \hlkwb{<-} \hlkwd{lm}\hlstd{(m2}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x1)}
+
+    \hlkwd{coefficients}\hlstd{(m1);} \hlkwd{coefficients}\hlstd{(m2);} \hlkwd{coefficients}\hlstd{(m3)}
+\end{alltt}
+\begin{verbatim}
+(Intercept)          x3 
+  0.5289919  -0.1036939 
+(Intercept)          x2 
+-0.03288572  0.97534187 
+(Intercept)          x1 
+ 0.01443407 -0.10191840 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+\begin{frame}[fragile]{Sequential regression}
+
+  Also what happens with classical ANOVA (aov in R)
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{summary}\hlstd{(}\hlkwd{aov}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x3))}
+\end{alltt}
+\begin{verbatim}
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+x1           1  3.997   3.997  394.05 1.07e-12 ***
+x2           1 13.998  13.998 1379.87  < 2e-16 ***
+x3           1  0.120   0.120   11.82  0.00338 ** 
+Residuals   16  0.162   0.010                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\begin{alltt}
+  \hlkwd{summary}\hlstd{(}\hlkwd{aov}\hlstd{(y} \hlopt{~} \hlstd{x2} \hlopt{+} \hlstd{x3} \hlopt{+} \hlstd{x1))}
+\end{alltt}
+\begin{verbatim}
+            Df Sum Sq Mean Sq  F value  Pr(>F)    
+x2           1 17.931  17.931 1767.562 < 2e-16 ***
+x3           1  0.183   0.183   18.003 0.00062 ***
+x1           1  0.002   0.002    0.176 0.68076    
+Residuals   16  0.162   0.010                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Simultaneous regression}
+In contrast lm() optimizes relationships simultaneously\\
+Hence order does not matter:
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{coefficients}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x3))}
+\end{alltt}
+\begin{verbatim}
+(Intercept)          x1          x2          x3 
+ 0.48948612 -0.01357404  1.03015700  0.08395938 
+\end{verbatim}
+\begin{alltt}
+  \hlkwd{coefficients}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x2} \hlopt{+} \hlstd{x3} \hlopt{+} \hlstd{x1))}
+\end{alltt}
+\begin{verbatim}
+(Intercept)          x2          x3          x1 
+ 0.48948612  1.03015700  0.08395938 -0.01357404 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Simultaneous regression}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{vcov}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x3))}
+\end{alltt}
+\begin{verbatim}
+              (Intercept)            x1            x2            x3
+(Intercept)  5.295645e-04 -0.0001478660  3.906623e-05 -7.631575e-05
+x1          -1.478660e-04  0.0010493201 -4.483007e-04  4.028972e-04
+x2           3.906623e-05 -0.0004483007  7.877264e-04 -5.987783e-05
+x3          -7.631575e-05  0.0004028972 -5.987783e-05  5.963792e-04
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}
@@ -399,6 +551,31 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/predinteractive-1} 
+
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction with interaction}
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+     \item Create a prediction for plant size as a function of x for two values of y and plot it
+     \item Fit an interaction between x and y coordinates
+     \item Create a new prediction with interaction, and plot it
+     \item Compare estimates and p-values across models. Do you think x location has an effect or not?
+    \end{enumerate}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/predinteractivemat-1} 
 
 \end{knitrout}
 
