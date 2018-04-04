@@ -83,7 +83,7 @@
 
 
 \begin{frame}
-\maketitle	
+\maketitle
 \end{frame}
 %%%%%%%%%%%
 
@@ -91,9 +91,9 @@
 {
   \begin{frame}<beamer>
     \frametitle{}
-    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
   \end{frame}
-} 
+}
 
 
 
@@ -103,7 +103,7 @@
 
 \begin{frame}[fragile]{A simple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
-  
+
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/lmprinc-1} 
@@ -131,19 +131,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Multiple regression}
 
+\begin{frame}[fragile]{Sequential regression}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlnum{1}
+\end{alltt}
+\begin{verbatim}
+[1] 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}
 
 \begin{frame}[fragile]{Warnings}
 
   \begin{alertblock}{Vocabulary warning!}
     \begin{itemize}[<+->]
-      \item \textit{correlation}: linear association between two variables "how well does $x$ explain $y$ ?"
-      \item \textit{interaction}: non-additive effect of two or more variables "does the effect of $x_1$ on $y$ change as a function of $x_2$?"
+      \item \textbf{correlation}: linear association between two variables \textit{"how well does $x$ explain $y$ ?"}
+      \item \textbf{interaction}: non-additive effect of two or more variables \textit{"does the effect of $x_1$ on $y$ change as a function of $x_2$?"}. Adds a predictor (or several) to a model.
     \end{itemize}
   \end{alertblock}
 
-\pause 
+\pause
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.6\textwidth,height=0.6\textheight]{figure/histinter-1} 
@@ -154,7 +168,7 @@
 
 \begin{frame}[fragile]{Fitting an interaction}
 
-    
+
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -198,8 +212,7 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 
 \begin{frame}[fragile]{Fitting an interaction}
 Why the multiplication sign?
-
-\only<2-3>{
+\pause
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -207,8 +220,7 @@ Why the multiplication sign?
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-}
-\only<3>{
+\pause
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -238,11 +250,6 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-}
-
-\only<4>{
-Really a multiplication, but can be complicated for factors
-}
 
 \end{frame}
 %%%%%%%%%%%
@@ -312,14 +319,100 @@ Really a multiplication, but can be complicated for factors
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+% 
+\begin{frame}[fragile]{Prediction}
+
+
+ 
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+      \uncover<2>{\item Create a prediction for plant size as a function of x for two values of y}
+    \end{enumerate}
+  \end{exampleblock}
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plantsize} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"plantsize.csv"}\hlstd{)}
+\hlstd{m0} \hlkwb{<-} \hlkwd{lm}\hlstd{(plantsize} \hlopt{~} \hlstd{x_location} \hlopt{+} \hlstd{y_location,} \hlkwc{data}\hlstd{=plantsize)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+\end{frame}
+%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Prediction}
+
+3.1. Predict
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{newdata} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x_location} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{100}\hlstd{),}\hlnum{2}\hlstd{),}
+                        \hlkwc{y_location} \hlstd{=} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,} \hlnum{100}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{100}\hlstd{)))}
+  \hlstd{newdata}\hlopt{$}\hlstd{prediction} \hlkwb{<-} \hlkwd{predict}\hlstd{(m0,} \hlkwc{newdata} \hlstd{= newdata)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction}
+
+3.2 Visualize 
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{setPar}\hlstd{()}
+  \hlkwd{plot}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{], newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
+       \hlkwc{xlab}\hlstd{=}\hlstr{"x location"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"plant size"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,} \hlkwc{ylim} \hlstd{=} \hlkwd{range}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{)}
+  \hlkwd{lines}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{], newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/predadditive-1} 
+
+\end{knitrout}
+
+  
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction with interaction}
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+     \item Create a prediction for plant size as a function of x for two values of y and plot it
+     \item Fit an interaction between x and y coordinates
+     \item Create a new prediction with interaction, and plot it
+    \end{enumerate}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
+\includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/predinteractive-1} 
+
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%
 
 \begin{frame}{Next times}
   \begin{itemize}
     \item April 20th Kevin on ggplot
-    \item May 4th Nina on Structural Equation Modeling 
+    \item May 4th Nina on Structural Equation Modeling
     \item then, mixed models and GLM
     \item \textbf{Other requests?}
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%
+
 \end{document}

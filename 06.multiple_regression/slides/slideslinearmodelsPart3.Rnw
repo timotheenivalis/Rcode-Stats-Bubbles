@@ -46,7 +46,7 @@ setPar()
 
 
 \begin{frame}
-\maketitle	
+\maketitle
 \end{frame}
 %%%%%%%%%%%
 
@@ -54,9 +54,9 @@ setPar()
 {
   \begin{frame}<beamer>
     \frametitle{}
-    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
   \end{frame}
-} 
+}
 
 
 
@@ -66,7 +66,7 @@ setPar()
 
 \begin{frame}[fragile]{A simple linear model}
   \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
-  
+
   <<lmprinc, echo=FALSE, dev='tikz'>>=
     setPar()
     set.seed(123)
@@ -78,9 +78,9 @@ setPar()
     abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
     abline(v=0)
     abline(h=0)
-    
+
     arrows(x0 = x, y0=y, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
-  @ 
+  @
 \end{frame}
 %%%%%%%%%%%
 
@@ -89,7 +89,7 @@ setPar()
   \vspace{1cm}
 \textbf{In R:}
 <<eval=FALSE>>=
-  lm(response ~ 1 + predictor1 + predictor2, data=data) 
+  lm(response ~ 1 + predictor1 + predictor2, data=data)
 @
 
 
@@ -99,13 +99,11 @@ setPar()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Multiple regression}
 
-\begin{frame}[fragile]{}
-
-\end{frame}
-%%%%%%%%%%%
-
-\begin{frame}[fragile]{}
-
+\begin{frame}[fragile]{Sequential regression}
+<<>>=
+    
+    1
+    @
 \end{frame}
 %%%%%%%%%%%
 
@@ -121,14 +119,14 @@ setPar()
     \end{itemize}
   \end{alertblock}
 
-\pause 
+\pause
   <<histinter, echo=FALSE, dev='tikz', out.height='0.6\\textheight', out.width='0.6\\textwidth'>>=
   setPar()
     a <- 2
     b <- 3
     ab <- 5
     abi <-0.2
-    
+
     barplot(height = c(a,b,ab), ylab="response", names.arg = c("a", "b", "a+b"))
     barplot(height = c(a,b,abi), add = TRUE, col="red")
     legend(x="topleft", legend = c("No interaction", "Interaction"), fill = c("gray", "red"))
@@ -143,7 +141,7 @@ setPar()
     x2 <- rnorm(100)
     y <- 1 + -0.4*x1 + 0.5*x2 + 0.2*x1*x2 + rnorm(100)
   @
-    
+
   <<eval=FALSE>>=
     lm(y ~ 1 + x1 * x2)
     lm(y ~ 1 + x1 + x2 + x1:x2)
@@ -157,21 +155,14 @@ setPar()
 
 \begin{frame}[fragile]{Fitting an interaction}
 Why the multiplication sign?
-
-\only<2-3>{
+\pause
 <<>>=
 x1Xx2 <- x1*x2
 @
-}
-\only<3>{
+\pause
 <<>>=
      summary(lm(y~ 1 + x1 + x2 + x1Xx2))
 @
-}
-
-\only<4>{
-Really a multiplication, but can be complicated for factors
-}
 
 \end{frame}
 %%%%%%%%%%%
@@ -186,7 +177,7 @@ Really a multiplication, but can be complicated for factors
 
 <<echo=FALSE>>=
     set.seed(123)
-  x <- exp(rnorm(200))   
+  x <- exp(rnorm(200))
   x <- x[order(x)]
   sex <- c(rep(0, 150), rep(1, 50) )
   y <- 1 + sex * 0.0 + x*0.2 + rnorm(200, 0, 0.5)
@@ -196,10 +187,10 @@ Really a multiplication, but can be complicated for factors
 @
 
 <<eval=FALSE, echo=FALSE>>=
-    
+
 
   write.csv(masssex, file = "../data/masssex.csv", row.names = FALSE)
-  
+
   summary(lm(movement ~ mass, data=masssex[masssex$sex==0,]))
   summary(lm(movement ~ mass, data=masssex[masssex$sex==1,]))
 
@@ -245,19 +236,138 @@ setPar()
      plot(masssex[masssex$sex==0,"mass"],masssex[masssex$sex==0,"movement"],
        col="blue", xlim=range(masssex$mass), ylim=range(masssex$movement),
        xlab="mass", ylab="movement")
-  points(masssex[masssex$sex==1,"mass"],masssex[masssex$sex==1,"movement"], col="red") 
+  points(masssex[masssex$sex==1,"mass"],masssex[masssex$sex==1,"movement"], col="red")
   legend(x="topleft", col=c("blue", "red"), legend = c("Sex 0", "Sex 1"), pch=1)
 @
 \end{frame}
 %%%%%%%%%%%
+% 
+\begin{frame}[fragile]{Prediction}
+
+<<echo=FALSE, eval=FALSE>>=
+  set.seed(123)
+  x1 <- rnorm(1000)
+  x2 <- 0.5+rnorm(1000) + 0.5*x1
+  y <- 10 + 0.1*x1 + 0.2*x2 + 0.5*x1*x2 + rnorm(1000)
+  
+  write.csv(x = data.frame(plantsize = y, x_location=x1, y_location=x2), file = "plantsize.csv", row.names = FALSE)
+  summary(lm(y ~ x1 * x2))
+  summary(lm(y ~ x1+ x2))
+@
+ 
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+      \uncover<2>{\item Create a prediction for plant size as a function of x for two values of y}
+    \end{enumerate}
+  \end{exampleblock}
+  
+    <<>>=
+    plantsize <- read.csv("plantsize.csv")
+    m0 <- lm(plantsize ~ x_location + y_location, data=plantsize)
+  @
+  
+\end{frame}
+%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Prediction}
+
+3.1. Predict
+<<>>=
+    
+  newdata <- data.frame(x_location = rep(seq(-3,3, length.out = 100),2),
+                        y_location = c(rep(-3, 100), rep(4,100)))
+  newdata$prediction <- predict(m0, newdata = newdata)
+@
+
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction}
+
+3.2 Visualize 
+<<predadditive, echo=TRUE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
+  setPar()
+  plot(newdata$x_location[newdata$y_location==-3], newdata$prediction[newdata$y_location==-3],
+       xlab="x location", ylab="plant size", type="l", ylim = range(newdata$prediction), col="blue")
+  lines(newdata$x_location[newdata$y_location==4], newdata$prediction[newdata$y_location==4], col="red")
+@
+
+  
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction with interaction}
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+     \item Create a prediction for plant size as a function of x for two values of y and plot it
+     \item Fit an interaction between x and y coordinates
+     \item Create a new prediction with interaction, and plot it
+    \end{enumerate}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+  <<predinteractive, echo=FALSE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
+  setPar()
+    m1 <- lm(plantsize ~ x_location * y_location, data=plantsize)
+    newdata <- data.frame(x_location = rep(seq(-3,3, length.out = 100),2),
+                        y_location = c(rep(-3, 100), rep(4,100)))
+  newdata$prediction <- predict(m1, newdata = newdata)
+  plot(newdata$x_location[newdata$y_location==-3], newdata$prediction[newdata$y_location==-3],
+       xlab="x location", ylab="plant size", type="l", ylim = range(newdata$prediction), col="blue")
+  lines(newdata$x_location[newdata$y_location==4], newdata$prediction[newdata$y_location==4], col="red")
+@
+
+\end{frame}
+%%%%%%%%%%
+
+\begin{frame}[fragile]{Prediction with interaction}
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load plantsize.csv and plot the data
+      \item Fit an additive model explaining plant size by x and y coordinates
+     \item Create a prediction for plant size as a function of x for two values of y and plot it
+     \item Fit an interaction between x and y coordinates
+     \item Create a new prediction with interaction, and plot it
+     \item Compare estimates and p-values across models. Do you think x location has an effect or not?
+    \end{enumerate}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+  <<predinteractive, echo=FALSE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
+  setPar()
+    m1 <- lm(plantsize ~ x_location * y_location, data=plantsize)
+    newdata <- data.frame(x_location = rep(seq(-3,3, length.out = 10),10),
+                        y_location = rep(seq(-3,4, length.out = 10), each=10))
+  newdata$prediction <- predict(m1, newdata = newdata)
+  
+  library(reshape2)
+  matpred <- acast(newdata, x_location~y_location, value.var="prediction")
+  image(t(matpred), col = topo.colors(100))
+
+  @
+
+\end{frame}
+%%%%%%%%%%
 
 \begin{frame}{Next times}
   \begin{itemize}
     \item April 20th Kevin on ggplot
-    \item May 4th Nina on Structural Equation Modeling 
+    \item May 4th Nina on Structural Equation Modeling
     \item then, mixed models and GLM
     \item \textbf{Other requests?}
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%
+
 \end{document}
