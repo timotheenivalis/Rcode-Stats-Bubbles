@@ -366,7 +366,13 @@ Order does \textbf{not} matter:
 %%%%%%%%%%%
 
 \begin{frame}{Conditional estimation}
+
+  
   \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load babies.csv
+      \item What drives change in number of babies born?
+    \end{enumerate}
   \end{exampleblock}
 \end{frame}
 %%%%%%%%%%%
@@ -436,9 +442,7 @@ innovativeness 0.38804729 0.03210760 12.085841 1.758144e-31
   \pause
   Data simulated with positive effect of innovativeness on rigor (simulated slope 0.3)\\ \pause
   \textbf{You should NOT correct for impact}\\ \bigskip \pause
-  \textbf{\large \color{red} Rule of Thumb: Do not correct for variables outside the causal path of interest}\pause
-  \textbf{\large \color{red} Rule: Think twice about the meaning of conditional parameters (?? effect of innovativeness on rigor, conditional on publication impact ??)}
-  
+  \textbf{\large \color{red} Rule of Thumb: Do not correct for variables influenced by your predictor outside the causal path of interest}
 \end{frame}
 %%%%%%%%%%%
 

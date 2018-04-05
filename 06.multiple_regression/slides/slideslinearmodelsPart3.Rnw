@@ -283,8 +283,32 @@ Order does \textbf{not} matter:
 %%%%%%%%%%%
 
 \begin{frame}{Conditional estimation}
+  <<echo=FALSE, eval=FALSE>>=
+  set.seed(123)
+  years <- 1960:2015
+  births <- round(15+0.8*(years-mean(years))/sd(years) + rnorm(length(years), 0, 3),0)
+  storks <- sapply(exp(1+1.5*(years-mean(years))/sd(years) + rnorm(length(years), 0, 0.05)), function(x) rpois(lambda = x, n=1))
+  temperature <- 13 + 0.2*(years-mean(years))/sd(years) + rnorm(length(years), 0, 0.2)
+  
+  plot(years, births)
+  plot(years, storks)
+  plot(storks, births)
+  summary(lm(births ~ storks))
+  summary(lm(births ~ storks + years))
+  summary(lm(births ~ years))
+  summary(lm(births ~ temperature+ years))
+  
+  write.csv(x=data.frame(babies_born=births, number_of_storks = storks, mean_temperature=temperature, year=years), file="babies.csv", row.names = FALSE)
+  @
+  
   \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+      \item Load babies.csv
+      \item What drives change in number of babies born?
+    \end{enumerate}
   \end{exampleblock}
+  
+  
 \end{frame}
 %%%%%%%%%%%
 
