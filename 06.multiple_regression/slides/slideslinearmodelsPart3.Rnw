@@ -458,14 +458,14 @@ x1Xx2 <- x1*x2
   summary(lm(movement ~ mass*sex, data=masssex))
 @
 
-  \begin{alertblock}{Exercise}
+  \begin{exampleblock}{Exercise}
     \begin{enumerate}
       \item Load the data masssex.csv
       \item Fit a simple regression explaining movement by mass for each sex separately. Is the relationship different between sexes?
       \item Fit the multiple regression explaining movement by mass, sex, and mass:sex, using the full dataset. Is the relationship different between sexes?
       \item Try to understand the discreapancy by plotting the data
     \end{enumerate}
-  \end{alertblock}
+  \end{exampleblock}
 
 \end{frame}
 %%%%%%%%%%%
@@ -549,7 +549,7 @@ setPar()
 \begin{frame}[fragile]{Prediction}
 
 3.2 Visualize 
-<<predadditive, echo=TRUE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
+<<predadditive, echo=TRUE,dev='tikz', out.height='0.5\\textheight', out.width='0.5\\textwidth'>>=
   setPar()
   plot(newdata$x_location[newdata$y_location==-3],
        newdata$prediction[newdata$y_location==-3],
