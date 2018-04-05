@@ -69,6 +69,7 @@
 \usepackage{graphicx}
 
 \usepackage{tikz}
+\usetikzlibrary{calc}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
@@ -254,9 +255,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Simultaneous regression}
+\begin{frame}[fragile]{Multiple regression}
 In contrast lm() optimizes relationships simultaneously\\
-Hence order does not matter:
+Order does \textbf{not} matter:
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -279,23 +280,167 @@ Hence order does not matter:
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Simultaneous regression}
+\begin{frame}[fragile]{Multiple regression}
+\textbf{BUT} estimates may change with extra covariates
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{coefficients}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2 ))}
+\end{alltt}
+\begin{verbatim}
+(Intercept)          x1          x2 
+ 0.50022999 -0.07029467  1.03858671 
+\end{verbatim}
+\begin{alltt}
+    \hlkwd{coefficients}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x3))}
+\end{alltt}
+\begin{verbatim}
+(Intercept)          x1          x2          x3 
+ 0.48948612 -0.01357404  1.03015700  0.08395938 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\pause
+\begin{block}{??}
+  \begin{itemize}
+    \item That is a good thing
+    \item Estimates are independent effects, conditional on the other parameters
+  \end{itemize}
+\end{block}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation}
+
+\begin{exampleblock}{Exercise}
+  \begin{enumerate}
+    \item load jumpingdistance.csv
+    \item Use plots and lm() to test whether mass increases jumping distance
+  \end{enumerate}
+\end{exampleblock}
+
+
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-    \hlkwd{vcov}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{x1} \hlopt{+} \hlstd{x2} \hlopt{+} \hlstd{x3))}
+  \hlstd{jumping} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"jumpingdistance.csv"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Conditional estimation}
+  \begin{center}
+  \begin{tikzpicture}
+  \node (cor) at (-8, 2) {Total / marginal effects};
+    \node (jump1) at (-6,0) {jumping distance};
+    \node (height1) at (-9, 1) {height};
+    \node (mass1) at (-9, -1) {mass};
+    \draw[->, thick, color=red] (height1) -- (jump1);
+    \draw[->, thick, color=red] (mass1) -- (jump1);
+
+  \draw[dashed] ($(jump1.east)+(0.2,2)$)-- ($(jump1.east)+(0.2,-2)$);
+  
+  \pause
+  
+    \node (caus) at (-2, 2) {Direct / conditional effects};
+    \node (jump) at (0,0) {jumping distance};
+    \node (height) at (-3, 1) {height};
+    \node (mass) at (-3, -1) {mass};
+    \draw[->, ultra thick, color=red] (height) -- (jump);
+    \draw[->, color=blue] (mass) -- (jump);
+    \draw[->, color=red, thick] (height)--(mass);
+  \end{tikzpicture}
+  \end{center}
+  
+  \pause
+  \begin{itemize}
+    \item Marginal effects $\approx$ raw correlations, sum of direct and indirect effects
+    \item Multiple regression estimates direct effects may reveal causal relationships
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Conditional estimation}
+  \begin{exampleblock}{Exercise}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+
+  
+  \textbf{Are more innovative papers less rigorous?}
+  \begin{center}
+  \begin{tikzpicture}
+    \node (cor) at (-8, 2) {Research question};
+    \node (rig) at (-9,-1) {Scientific rigor};
+    \node (innov) at (-9, 1) {Innovativeness};
+    \draw[->, color=blue] (innov)--(rig);
+    \node (qm) at (-8.8,0) {\textbf{?}};
+    
+    \pause
+    \node (impact) at (-6, 0) {Impact};
+    \draw[->, color=red, thick] (rig)--(impact);
+    \draw[->, color=red, thick] (innov)--(impact);
+    
+  \end{tikzpicture}
+  \end{center}
+  
+  \textit{Should you correct for publication impact?}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+    \textit{Should you include publication impact?}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(rigor} \hlopt{~} \hlstd{innovativeness} \hlopt{+} \hlstd{impact))}\hlopt{$}\hlstd{coefficients}
 \end{alltt}
 \begin{verbatim}
-              (Intercept)            x1            x2            x3
-(Intercept)  5.295645e-04 -0.0001478660  3.906623e-05 -7.631575e-05
-x1          -1.478660e-04  0.0010493201 -4.483007e-04  4.028972e-04
-x2           3.906623e-05 -0.0004483007  7.877264e-04 -5.987783e-05
-x3          -7.631575e-05  0.0004028972 -5.987783e-05  5.963792e-04
+                 Estimate Std. Error    t value      Pr(>|t|)
+(Intercept)     0.0301366 0.02188752   1.376885  1.688569e-01
+innovativeness -0.3150363 0.03051417 -10.324262  8.238502e-24
+impact          0.5135830 0.01538756  33.376503 1.361378e-164
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+  Apparent {\color{blue}{negative}} effect of innovativeness ?
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(rigor} \hlopt{~} \hlstd{innovativeness))}\hlopt{$}\hlstd{coefficients}
+\end{alltt}
+\begin{verbatim}
+                 Estimate Std. Error   t value     Pr(>|t|)
+(Intercept)    0.04104524 0.03182923  1.289545 1.975073e-01
+innovativeness 0.38804729 0.03210760 12.085841 1.758144e-31
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+    Apparent {\color{red}{positive}} effect of innovativeness ?
+    
 \end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+    \textit{Should you include publication impact?}
+
+  \pause
+  Data simulated with positive effect of innovativeness on rigor (simulated slope 0.3)\\ \pause
+  \textbf{You should NOT correct for impact}\\ \bigskip \pause
+  \textbf{\large \color{red} Rule of Thumb: Do not correct for variables outside the causal path of interest}\pause
+  \textbf{\large \color{red} Rule: Think twice about the meaning of conditional parameters (?? effect of innovativeness on rigor, conditional on publication impact ??)}
+  
+\end{frame}
+%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}

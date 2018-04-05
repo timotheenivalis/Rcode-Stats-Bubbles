@@ -19,6 +19,7 @@
 \usepackage{graphicx}
 
 \usepackage{tikz}
+\usetikzlibrary{calc}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
@@ -191,9 +192,9 @@ is different from
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Simultaneous regression}
+\begin{frame}[fragile]{Multiple regression}
 In contrast lm() optimizes relationships simultaneously\\
-Hence order does not matter:
+Order does \textbf{not} matter:
   <<>>=
     coefficients(lm(y ~ x1 + x2 + x3))
     coefficients(lm(y ~ x2 + x3 + x1))
@@ -202,12 +203,146 @@ Hence order does not matter:
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Simultaneous regression}
+\begin{frame}[fragile]{Multiple regression}
+\textbf{BUT} estimates may change with extra covariates
+<<>>=
+    coefficients(lm(y ~ x1 + x2 ))
+    coefficients(lm(y ~ x1 + x2 + x3))
+  @
+\pause
+\begin{block}{??}
+  \begin{itemize}
+    \item That is a good thing
+    \item Estimates are independent effects, conditional on the other parameters
+  \end{itemize}
+\end{block}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation}
+
+\begin{exampleblock}{Exercise}
+  \begin{enumerate}
+    \item load jumpingdistance.csv
+    \item Use plots and lm() to test whether mass increases jumping distance
+  \end{enumerate}
+\end{exampleblock}
+
+<<eval=FALSE, echo=FALSE>>=
+    set.seed(123)
+    height <- rnorm(1000, 1.65, 0.1)
+    mass <- 20*(height)^2 + rnorm(1000, 0, 4)
+    plot(height, mass, ylim=c(0,100))
+    
+    jump <- abs(height+2 + 0.5*(height-mean(height))/sd(height) - 0.2*((mass-mean(mass))/sd(mass)) +rnorm(1000))
+  plot(mass, jump)
+  plot(height, jump)
+  summary(lm(jump ~ mass))
+  summary(lm(jump ~ mass + height))
+  write.csv(data.frame(jump=jump, mass=mass, height=height), file = "jumpingdistance.csv", row.names = FALSE)  
+@
 
 <<>>=
-    vcov(lm(y ~ x1 + x2 + x3))
-  @
+  jumping <- read.csv(file = "jumpingdistance.csv")
+@
+  
+  
 \end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Conditional estimation}
+  \begin{center}
+  \begin{tikzpicture}
+  \node (cor) at (-8, 2) {Total / marginal effects};
+    \node (jump1) at (-6,0) {jumping distance};
+    \node (height1) at (-9, 1) {height};
+    \node (mass1) at (-9, -1) {mass};
+    \draw[->, thick, color=red] (height1) -- (jump1);
+    \draw[->, thick, color=red] (mass1) -- (jump1);
+
+  \draw[dashed] ($(jump1.east)+(0.2,2)$)-- ($(jump1.east)+(0.2,-2)$);
+  
+  \pause
+  
+    \node (caus) at (-2, 2) {Direct / conditional effects};
+    \node (jump) at (0,0) {jumping distance};
+    \node (height) at (-3, 1) {height};
+    \node (mass) at (-3, -1) {mass};
+    \draw[->, ultra thick, color=red] (height) -- (jump);
+    \draw[->, color=blue] (mass) -- (jump);
+    \draw[->, color=red, thick] (height)--(mass);
+  \end{tikzpicture}
+  \end{center}
+  
+  \pause
+  \begin{itemize}
+    \item Marginal effects $\approx$ raw correlations, sum of direct and indirect effects
+    \item Multiple regression estimates direct effects may reveal causal relationships
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Conditional estimation}
+  \begin{exampleblock}{Exercise}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+  <<echo=FALSE>>=
+  set.seed(123)
+  innovativeness <- rnorm(1000)
+  rigor <- rnorm(1000) + 0.3*innovativeness
+
+  impact <- rigor + innovativeness + rnorm(1000)
+  @
+  
+  \textbf{Are more innovative papers less rigorous?}
+  \begin{center}
+  \begin{tikzpicture}
+    \node (cor) at (-8, 2) {Research question};
+    \node (rig) at (-9,-1) {Scientific rigor};
+    \node (innov) at (-9, 1) {Innovativeness};
+    \draw[->, color=blue] (innov)--(rig);
+    \node (qm) at (-8.8,0) {\textbf{?}};
+    
+    \pause
+    \node (impact) at (-6, 0) {Impact};
+    \draw[->, color=red, thick] (rig)--(impact);
+    \draw[->, color=red, thick] (innov)--(impact);
+    
+  \end{tikzpicture}
+  \end{center}
+  
+  \textit{Should you correct for publication impact?}
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+    \textit{Should you include publication impact?}
+<<>>=
+    summary(lm(rigor ~ innovativeness + impact))$coefficients
+  @
+  Apparent {\color{blue}{negative}} effect of innovativeness ?
+
+<<>>=
+    summary(lm(rigor ~ innovativeness))$coefficients
+  @
+    Apparent {\color{red}{positive}} effect of innovativeness ?
+    
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conditional estimation final warning: more is not always better}
+    \textit{Should you include publication impact?}
+
+  \pause
+  Data simulated with positive effect of innovativeness on rigor (simulated slope 0.3)\\ \pause
+  \textbf{You should NOT correct for impact}\\ \bigskip \pause
+  \textbf{\large \color{red} Rule of Thumb: Do not correct for variables influenced by your predictor outside the causal path of interest}
+\end{frame}
+%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Interaction}
