@@ -178,7 +178,7 @@ We want to explain a response by three predictors
 
 \begin{frame}[fragile]{Sequential regression}
 
-But, 
+But estimates in
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -186,19 +186,15 @@ But,
   \hlstd{m2} \hlkwb{<-} \hlkwd{lm}\hlstd{(m1}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x2)}
   \hlstd{m3} \hlkwb{<-} \hlkwd{lm}\hlstd{(m2}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x3)}
 
-  \hlkwd{coefficients}\hlstd{(m1);} \hlkwd{coefficients}\hlstd{(m2);} \hlkwd{coefficients}\hlstd{(m3)}
+  \hlkwd{c}\hlstd{(}\hlkwd{coefficients}\hlstd{(m1)[}\hlnum{2}\hlstd{],} \hlkwd{coefficients}\hlstd{(m2)[}\hlnum{2}\hlstd{],} \hlkwd{coefficients}\hlstd{(m3)[}\hlnum{2}\hlstd{])}
 \end{alltt}
 \begin{verbatim}
-(Intercept)          x1 
-  0.4585067   0.4715738 
-(Intercept)          x2 
--0.02542972  0.75420781 
- (Intercept)           x3 
--0.009178959  0.257305942 
+       x1        x2        x3 
+0.4715738 0.7542078 0.2573059 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-is different from
+are different from
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -206,15 +202,11 @@ is different from
     \hlstd{m2} \hlkwb{<-} \hlkwd{lm}\hlstd{(m1}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x2)}
     \hlstd{m3} \hlkwb{<-} \hlkwd{lm}\hlstd{(m2}\hlopt{$}\hlstd{residuals} \hlopt{~} \hlstd{x1)}
 
-    \hlkwd{coefficients}\hlstd{(m1);} \hlkwd{coefficients}\hlstd{(m2);} \hlkwd{coefficients}\hlstd{(m3)}
+    \hlkwd{c}\hlstd{(}\hlkwd{coefficients}\hlstd{(m1)[}\hlnum{2}\hlstd{],} \hlkwd{coefficients}\hlstd{(m2)[}\hlnum{2}\hlstd{],} \hlkwd{coefficients}\hlstd{(m3)[}\hlnum{2}\hlstd{])}
 \end{alltt}
 \begin{verbatim}
-(Intercept)          x3 
-  0.5289919  -0.1036939 
-(Intercept)          x2 
--0.03288572  0.97534187 
-(Intercept)          x1 
- 0.01443407 -0.10191840 
+        x3         x2         x1 
+-0.1036939  0.9753419 -0.1019184 
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -357,11 +349,11 @@ Order does \textbf{not} matter:
   \end{tikzpicture}
   \end{center}
   
-  \pause
+  \uncover<2>{
   \begin{itemize}
     \item Marginal effects $\approx$ raw correlations, sum of direct and indirect effects
-    \item Multiple regression estimates direct effects may reveal causal relationships
-  \end{itemize}
+    \item Multiple regression estimates direct effects (conditional on other predictors) $\rightarrow$ may reveal causal relationships
+  \end{itemize}}
 \end{frame}
 %%%%%%%%%%%
 
@@ -374,6 +366,8 @@ Order does \textbf{not} matter:
       \item What drives change in number of babies born?
     \end{enumerate}
   \end{exampleblock}
+  
+  
 \end{frame}
 %%%%%%%%%%%
 
@@ -669,9 +663,12 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
   \hlkwd{setPar}\hlstd{()}
-  \hlkwd{plot}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{], newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
-       \hlkwc{xlab}\hlstd{=}\hlstr{"x location"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"plant size"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,} \hlkwc{ylim} \hlstd{=} \hlkwd{range}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{)}
-  \hlkwd{lines}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{], newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+  \hlkwd{plot}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
+       \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
+       \hlkwc{xlab}\hlstd{=}\hlstr{"x location"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"plant size"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,}
+       \hlkwc{ylim} \hlstd{=} \hlkwd{range}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{)}
+  \hlkwd{lines}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],}
+        \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.7\textwidth,height=0.7\textheight]{figure/predadditive-1} 
@@ -732,7 +729,7 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 %%%%%%%%%%
 
 \begin{frame}{Next times}
-  \begin{itemize}
+  \begin{itemize}  
     \item April 20th Kevin on ggplot
     \item May 4th Nina on Structural Equation Modeling
     \item then, mixed models and GLM

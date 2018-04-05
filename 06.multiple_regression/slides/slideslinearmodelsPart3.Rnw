@@ -163,21 +163,21 @@ We want to explain a response by three predictors
 
 \begin{frame}[fragile]{Sequential regression}
 
-But, 
+But estimates in
   <<>>=
     m1 <- lm(y ~ x1)
     m2 <- lm(m1$residuals ~ x2)
     m3 <- lm(m2$residuals ~ x3)
 
-    coefficients(m1); coefficients(m2); coefficients(m3)
+    c(coefficients(m1)[2], coefficients(m2)[2], coefficients(m3)[2])
     @
-is different from
+are different from
 <<>>=
     m1 <- lm(y ~ x3)
     m2 <- lm(m1$residuals ~ x2)
     m3 <- lm(m2$residuals ~ x1)
 
-    coefficients(m1); coefficients(m2); coefficients(m3)
+    c(coefficients(m1)[2], coefficients(m2)[2], coefficients(m3)[2])
     @
 \end{frame}
 %%%%%%%%%%%
@@ -274,11 +274,11 @@ Order does \textbf{not} matter:
   \end{tikzpicture}
   \end{center}
   
-  \pause
+  \uncover<2>{
   \begin{itemize}
     \item Marginal effects $\approx$ raw correlations, sum of direct and indirect effects
-    \item Multiple regression estimates direct effects may reveal causal relationships
-  \end{itemize}
+    \item Multiple regression estimates direct effects (conditional on other predictors) $\rightarrow$ may reveal causal relationships
+  \end{itemize}}
 \end{frame}
 %%%%%%%%%%%
 
@@ -551,9 +551,12 @@ setPar()
 3.2 Visualize 
 <<predadditive, echo=TRUE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
   setPar()
-  plot(newdata$x_location[newdata$y_location==-3], newdata$prediction[newdata$y_location==-3],
-       xlab="x location", ylab="plant size", type="l", ylim = range(newdata$prediction), col="blue")
-  lines(newdata$x_location[newdata$y_location==4], newdata$prediction[newdata$y_location==4], col="red")
+  plot(newdata$x_location[newdata$y_location==-3],
+       newdata$prediction[newdata$y_location==-3],
+       xlab="x location", ylab="plant size", type="l",
+       ylim = range(newdata$prediction), col="blue")
+  lines(newdata$x_location[newdata$y_location==4], 
+        newdata$prediction[newdata$y_location==4], col="red")
 @
 
   
@@ -614,7 +617,12 @@ setPar()
   
   library(reshape2)
   matpred <- acast(newdata, x_location~y_location, value.var="prediction")
-  image(t(matpred), col = topo.colors(10))
+  layout(mat = matrix(data = c(1,2),nrow = 1), widths = c(3,1) )
+  image(t(matpred), col = topo.colors(10), xlab = "x location", ylab = "y location")
+  
+  par(mar=c(5, 0,4, 6)+0.1)
+  image(matrix(data = seq(min(newdata$prediction), max(newdata$prediction), length.out = 10), nrow= 1 ), col=topo.colors(10), xaxt = "n", yaxt="n", main="legend")
+  axis(side = 4, at = c(0,0.2,0.4,0.6,0.8,1), labels = round(seq(min(newdata$prediction), max(newdata$prediction), length.out =6),1))
 
   @
 
@@ -622,7 +630,7 @@ setPar()
 %%%%%%%%%%
 
 \begin{frame}{Next times}
-  \begin{itemize}
+  \begin{itemize}  
     \item April 20th Kevin on ggplot
     \item May 4th Nina on Structural Equation Modeling
     \item then, mixed models and GLM
