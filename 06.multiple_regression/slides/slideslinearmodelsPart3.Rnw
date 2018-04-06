@@ -245,8 +245,19 @@ Order does \textbf{not} matter:
 <<>>=
   jumping <- read.csv(file = "jumpingdistance.csv")
 @
+
+A first approach suggests mass increases jumping distance:
+<<eval=FALSE>>=  
+    summary(lm(jump ~ mass, data=jumping))
+    plot(mass, jump)
+@
   
-  
+But that is incorrect and due to the correlation between mass and height:
+<<eval=FALSE>>=  
+    summary(lm(jump ~ mass + height, data=jumping))
+@
+The direct (causal) effect of mass is negative, as revealed by a multiple regression
+
 \end{frame}
 %%%%%%%%%%%
 
@@ -282,7 +293,7 @@ Order does \textbf{not} matter:
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{Conditional estimation}
+\begin{frame}[fragile]{Conditional estimation}
   <<echo=FALSE, eval=FALSE>>=
   set.seed(123)
   years <- 1960:2015
@@ -308,6 +319,22 @@ Order does \textbf{not} matter:
     \end{enumerate}
   \end{exampleblock}
   
+  <<>>=
+  babies <- read.csv("babies.csv")
+  @
+  
+  Marginal (=total) effects of storks and temperature
+  <<eval=FALSE>>=
+    plot(babies)
+  summary(lm(babies_born ~ number_of_storks, data=babies))
+  summary(lm(babies_born ~ mean_temperature, data=babies))
+  @
+  
+  But this is a spurious effect due to time covariation. Adding year as a covariate shows that there is no evidence of an effect of storks and temperatures on number of births. 
+  <<eval=FALSE>>=
+    summary(lm(babies_born ~ mean_temperature + year, data=babies))
+    summary(lm(babies_born ~ number_of_storks + year, data=babies))
+  @
   
 \end{frame}
 %%%%%%%%%%%
@@ -488,17 +515,35 @@ x1Xx2 <- x1*x2
 @
 \end{frame}
 %%%%%%%%%%%
+\begin{frame}[fragile]{Warnings}
+4. Visualize the problem (result on next slide):
+<<eval=FALSE>>=
+plot(masssex[masssex$sex==0,"mass"],masssex[masssex$sex==0,"movement"],
+ col="blue", xlim=range(masssex$mass), ylim=range(masssex$movement),
+   xlab="mass", ylab="movement")
+points(masssex[masssex$sex==1,"mass"],
+       masssex[masssex$sex==1,"movement"], col="red")
+legend(x="topleft", col=c("blue", "red"), 
+       legend = c("Sex 0", "Sex 1"), pch=1)
+@
+The slope of movement on mass is the same for both sexes, but the range of values is much smaller for sex 0, so that there is no power to detect a significant effect. Analysing sexes separately is unsound. You must fit an interaction in a model with both sexes to test for an interaction.
 
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{Warnings}
 4.
 
 <<intersexbehav, echo=TRUE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth', echo=FALSE>>=
 setPar()
-     plot(masssex[masssex$sex==0,"mass"],masssex[masssex$sex==0,"movement"],
-       col="blue", xlim=range(masssex$mass), ylim=range(masssex$movement),
+     plot(masssex[masssex$sex==0,"mass"],
+          masssex[masssex$sex==0,"movement"],
+       col="blue", xlim=range(masssex$mass),
+       ylim=range(masssex$movement),
        xlab="mass", ylab="movement")
-  points(masssex[masssex$sex==1,"mass"],masssex[masssex$sex==1,"movement"], col="red")
-  legend(x="topleft", col=c("blue", "red"), legend = c("Sex 0", "Sex 1"), pch=1)
+  points(masssex[masssex$sex==1,"mass"],
+         masssex[masssex$sex==1,"movement"], col="red")
+  legend(x="topleft", col=c("blue", "red"),
+         legend = c("Sex 0", "Sex 1"), pch=1)
 @
 \end{frame}
 %%%%%%%%%%%
@@ -549,7 +594,15 @@ setPar()
 \begin{frame}[fragile]{Prediction}
 
 3.2 Visualize 
-<<predadditive, echo=TRUE,dev='tikz', out.height='0.5\\textheight', out.width='0.5\\textwidth'>>=
+<<eval=FALSE>>=
+  plot(newdata$x_location[newdata$y_location==-3],
+       newdata$prediction[newdata$y_location==-3],
+       xlab="x location", ylab="plant size", type="l",
+       ylim = range(newdata$prediction), col="blue")
+  lines(newdata$x_location[newdata$y_location==4], 
+        newdata$prediction[newdata$y_location==4], col="red")
+@
+<<predadditive, echo=FALSE,dev='tikz', out.height='0.5\\textheight', out.width='0.5\\textwidth'>>=
   setPar()
   plot(newdata$x_location[newdata$y_location==-3],
        newdata$prediction[newdata$y_location==-3],
@@ -591,7 +644,6 @@ setPar()
 
 \end{frame}
 %%%%%%%%%%
-
 \begin{frame}[fragile]{Prediction with interaction}
   \begin{exampleblock}{Exercise}
     \begin{enumerate}
@@ -608,6 +660,44 @@ setPar()
 
   \begin{frame}[fragile]{Prediction with interaction}
 
+<<eval=FALSE>>=
+m1 <- lm(plantsize ~ x_location * y_location, data=plantsize)
+newdata <- data.frame(x_location = rep(seq(-3,3, length.out = 10),10),
+                 y_location = rep(seq(-3,4, length.out = 10), each=10))
+newdata$prediction <- predict(m1, newdata = newdata)
+plot(newdata$x_location[newdata$y_location==-3],
+     newdata$prediction[newdata$y_location==-3],
+       xlab="x location", ylab="plant size", type="l",
+     ylim = range(newdata$prediction), col="blue")
+lines(newdata$x_location[newdata$y_location==4], 
+      newdata$prediction[newdata$y_location==4], col="red")
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+<<eval=FALSE>>=
+   library(reshape2)
+  matpred <- acast(newdata, x_location~y_location, value.var="prediction")
+  layout(mat = matrix(data = c(1,2),nrow = 1), widths = c(3,1) )
+  image(t(matpred), col = topo.colors(10), xlab = "x location",
+        ylab = "y location")
+  
+  par(mar=c(5, 0,4, 6)+0.1)
+  image(matrix(data = seq(min(newdata$prediction),
+              max(newdata$prediction), length.out = 10), nrow= 1 ), 
+        col=topo.colors(10), xaxt = "n", yaxt="n", main="legend")
+  axis(side = 4, at = c(0,0.2,0.4,0.6,0.8,1),
+labels = round(seq(min(newdata$prediction), max(newdata$prediction), 
+                   length.out =6),1))
+@
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
   <<predinteractivemat, echo=FALSE,dev='tikz', out.height='0.7\\textheight', out.width='0.7\\textwidth'>>=
   setPar()
     m1 <- lm(plantsize ~ x_location * y_location, data=plantsize)
@@ -618,11 +708,16 @@ setPar()
   library(reshape2)
   matpred <- acast(newdata, x_location~y_location, value.var="prediction")
   layout(mat = matrix(data = c(1,2),nrow = 1), widths = c(3,1) )
-  image(t(matpred), col = topo.colors(10), xlab = "x location", ylab = "y location")
+  image(t(matpred), col = topo.colors(10), xlab = "x location",
+        ylab = "y location")
   
   par(mar=c(5, 0,4, 6)+0.1)
-  image(matrix(data = seq(min(newdata$prediction), max(newdata$prediction), length.out = 10), nrow= 1 ), col=topo.colors(10), xaxt = "n", yaxt="n", main="legend")
-  axis(side = 4, at = c(0,0.2,0.4,0.6,0.8,1), labels = round(seq(min(newdata$prediction), max(newdata$prediction), length.out =6),1))
+  image(matrix(data = seq(min(newdata$prediction),
+              max(newdata$prediction), length.out = 10), nrow= 1 ), 
+        col=topo.colors(10), xaxt = "n", yaxt="n", main="legend")
+  axis(side = 4, at = c(0,0.2,0.4,0.6,0.8,1),
+labels = round(seq(min(newdata$prediction), max(newdata$prediction), 
+                   length.out =6),1))
 
   @
 

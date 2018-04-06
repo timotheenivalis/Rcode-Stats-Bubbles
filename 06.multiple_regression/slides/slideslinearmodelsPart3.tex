@@ -320,8 +320,27 @@ Order does \textbf{not} matter:
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
+A first approach suggests mass increases jumping distance:
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(jump} \hlopt{~} \hlstd{mass,} \hlkwc{data}\hlstd{=jumping))}
+    \hlkwd{plot}\hlstd{(mass, jump)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
   
-  
+But that is incorrect and due to the correlation between mass and height:
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(jump} \hlopt{~} \hlstd{mass} \hlopt{+} \hlstd{height,} \hlkwc{data}\hlstd{=jumping))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+The direct (causal) effect of mass is negative, as revealed by a multiple regression
+
 \end{frame}
 %%%%%%%%%%%
 
@@ -357,7 +376,7 @@ Order does \textbf{not} matter:
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{Conditional estimation}
+\begin{frame}[fragile]{Conditional estimation}
 
   
   \begin{exampleblock}{Exercise}
@@ -367,6 +386,34 @@ Order does \textbf{not} matter:
     \end{enumerate}
   \end{exampleblock}
   
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{babies} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"babies.csv"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  Marginal (=total) effects of storks and temperature
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{plot}\hlstd{(babies)}
+\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(babies_born} \hlopt{~} \hlstd{number_of_storks,} \hlkwc{data}\hlstd{=babies))}
+\hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(babies_born} \hlopt{~} \hlstd{mean_temperature,} \hlkwc{data}\hlstd{=babies))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  But this is a spurious effect due to time covariation. Adding year as a covariate shows that there is no evidence of an effect of storks and temperatures on number of births. 
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(babies_born} \hlopt{~} \hlstd{mean_temperature} \hlopt{+} \hlstd{year,} \hlkwc{data}\hlstd{=babies))}
+  \hlkwd{summary}\hlstd{(}\hlkwd{lm}\hlstd{(babies_born} \hlopt{~} \hlstd{number_of_storks} \hlopt{+} \hlstd{year,} \hlkwc{data}\hlstd{=babies))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
   
 \end{frame}
 %%%%%%%%%%%
@@ -603,7 +650,25 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 \end{knitrout}
 \end{frame}
 %%%%%%%%%%%
+\begin{frame}[fragile]{Warnings}
+4. Visualize the problem (result on next slide):
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(masssex[masssex}\hlopt{$}\hlstd{sex}\hlopt{==}\hlnum{0}\hlstd{,}\hlstr{"mass"}\hlstd{],masssex[masssex}\hlopt{$}\hlstd{sex}\hlopt{==}\hlnum{0}\hlstd{,}\hlstr{"movement"}\hlstd{],}
+ \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{xlim}\hlstd{=}\hlkwd{range}\hlstd{(masssex}\hlopt{$}\hlstd{mass),} \hlkwc{ylim}\hlstd{=}\hlkwd{range}\hlstd{(masssex}\hlopt{$}\hlstd{movement),}
+   \hlkwc{xlab}\hlstd{=}\hlstr{"mass"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"movement"}\hlstd{)}
+\hlkwd{points}\hlstd{(masssex[masssex}\hlopt{$}\hlstd{sex}\hlopt{==}\hlnum{1}\hlstd{,}\hlstr{"mass"}\hlstd{],}
+       \hlstd{masssex[masssex}\hlopt{$}\hlstd{sex}\hlopt{==}\hlnum{1}\hlstd{,}\hlstr{"movement"}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\hlkwd{legend}\hlstd{(}\hlkwc{x}\hlstd{=}\hlstr{"topleft"}\hlstd{,} \hlkwc{col}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"blue"}\hlstd{,} \hlstr{"red"}\hlstd{),}
+       \hlkwc{legend} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Sex 0"}\hlstd{,} \hlstr{"Sex 1"}\hlstd{),} \hlkwc{pch}\hlstd{=}\hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+The slope of movement on mass is the same for both sexes, but the range of values is much smaller for sex 0, so that there is no power to detect a significant effect. Analysing sexes separately is unsound. You must fit an interaction in a model with both sexes to test for an interaction.
 
+\end{frame}
+%%%%%%%%%%%
 \begin{frame}[fragile]{Warnings}
 4.
 
@@ -662,7 +727,6 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{setPar}\hlstd{()}
   \hlkwd{plot}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
        \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
        \hlkwc{xlab}\hlstd{=}\hlstr{"x location"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"plant size"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,}
@@ -671,6 +735,9 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
         \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
 \end{alltt}
 \end{kframe}
+\end{knitrout}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}
 \includegraphics[width=0.5\textwidth,height=0.5\textheight]{figure/predadditive-1} 
 
 \end{knitrout}
@@ -702,7 +769,6 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
 
 \end{frame}
 %%%%%%%%%%
-
 \begin{frame}[fragile]{Prediction with interaction}
   \begin{exampleblock}{Exercise}
     \begin{enumerate}
@@ -714,6 +780,52 @@ F-statistic: 23.67 on 3 and 96 DF,  p-value: 1.49e-11
      \item Compare estimates and p-values across models. Do you think x location has an effect or not?
     \end{enumerate}
   \end{exampleblock}
+\end{frame}
+%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(plantsize} \hlopt{~} \hlstd{x_location} \hlopt{*} \hlstd{y_location,} \hlkwc{data}\hlstd{=plantsize)}
+\hlstd{newdata} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x_location} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{10}\hlstd{),}\hlnum{10}\hlstd{),}
+                 \hlkwc{y_location} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{10}\hlstd{),} \hlkwc{each}\hlstd{=}\hlnum{10}\hlstd{))}
+\hlstd{newdata}\hlopt{$}\hlstd{prediction} \hlkwb{<-} \hlkwd{predict}\hlstd{(m1,} \hlkwc{newdata} \hlstd{= newdata)}
+\hlkwd{plot}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
+     \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==-}\hlnum{3}\hlstd{],}
+       \hlkwc{xlab}\hlstd{=}\hlstr{"x location"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"plant size"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,}
+     \hlkwc{ylim} \hlstd{=} \hlkwd{range}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{)}
+\hlkwd{lines}\hlstd{(newdata}\hlopt{$}\hlstd{x_location[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],}
+      \hlstd{newdata}\hlopt{$}\hlstd{prediction[newdata}\hlopt{$}\hlstd{y_location}\hlopt{==}\hlnum{4}\hlstd{],} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+  \begin{frame}[fragile]{Prediction with interaction}
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+   \hlkwd{library}\hlstd{(reshape2)}
+  \hlstd{matpred} \hlkwb{<-} \hlkwd{acast}\hlstd{(newdata, x_location}\hlopt{~}\hlstd{y_location,} \hlkwc{value.var}\hlstd{=}\hlstr{"prediction"}\hlstd{)}
+  \hlkwd{layout}\hlstd{(}\hlkwc{mat} \hlstd{=} \hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{),}\hlkwc{nrow} \hlstd{=} \hlnum{1}\hlstd{),} \hlkwc{widths} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{) )}
+  \hlkwd{image}\hlstd{(}\hlkwd{t}\hlstd{(matpred),} \hlkwc{col} \hlstd{=} \hlkwd{topo.colors}\hlstd{(}\hlnum{10}\hlstd{),} \hlkwc{xlab} \hlstd{=} \hlstr{"x location"}\hlstd{,}
+        \hlkwc{ylab} \hlstd{=} \hlstr{"y location"}\hlstd{)}
+
+  \hlkwd{par}\hlstd{(}\hlkwc{mar}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{0}\hlstd{,}\hlnum{4}\hlstd{,} \hlnum{6}\hlstd{)}\hlopt{+}\hlnum{0.1}\hlstd{)}
+  \hlkwd{image}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlkwd{min}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),}
+              \hlkwd{max}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwc{length.out} \hlstd{=} \hlnum{10}\hlstd{),} \hlkwc{nrow}\hlstd{=} \hlnum{1} \hlstd{),}
+        \hlkwc{col}\hlstd{=}\hlkwd{topo.colors}\hlstd{(}\hlnum{10}\hlstd{),} \hlkwc{xaxt} \hlstd{=} \hlstr{"n"}\hlstd{,} \hlkwc{yaxt}\hlstd{=}\hlstr{"n"}\hlstd{,} \hlkwc{main}\hlstd{=}\hlstr{"legend"}\hlstd{)}
+  \hlkwd{axis}\hlstd{(}\hlkwc{side} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{at} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0.2}\hlstd{,}\hlnum{0.4}\hlstd{,}\hlnum{0.6}\hlstd{,}\hlnum{0.8}\hlstd{,}\hlnum{1}\hlstd{),}
+\hlkwc{labels} \hlstd{=} \hlkwd{round}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlkwd{min}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),} \hlkwd{max}\hlstd{(newdata}\hlopt{$}\hlstd{prediction),}
+                   \hlkwc{length.out} \hlstd{=}\hlnum{6}\hlstd{),}\hlnum{1}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 \end{frame}
 %%%%%%%%%%
 
