@@ -1,0 +1,266 @@
+\documentclass[10pt]{beamer}%
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+
+\usepackage[utf8]{inputenc}%
+
+
+\usepackage[normalem]{ulem}%strikeout
+ 
+
+% graphics
+%% Figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{xcolor}%for color mixing
+
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
+\usepackage{graphicx}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Doc info %%%%%%%%%%%%%%%%%%%
+\title[\textbf{Generalized linear models:}]{Generalized Linear Models (GLMs)}
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+<<Plot Options, echo=FALSE, message=FALSE>>=
+#load(file = ".RData")
+opts_knit$set(width=60)
+opts_chunk$set(comment=NA, fig.width=8, fig.height=6, out.width='0.8\\textwidth',
+               out.height='0.6\\textwidth',background='#D7DDEB', size="small")
+
+
+szgr <- 2
+szax <- 1.3
+marr <- c(4, 4, 1, 1) + 0.1
+setPar<-function(){
+par(las=1,mar=marr, cex=szgr, cex.lab=szax , cex.axis=szax, lwd=2 ,pch=1, las=1)
+}
+setPar()
+@
+
+
+\begin{frame}
+\maketitle
+\end{frame}
+%%%%%%%%%%%
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{}
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear model, reminder}
+
+\begin{frame}[fragile]{A simple linear model}
+  \textbf{{\color{purple}{Response}} = {\color{blue}{Intercept}} + {\color{red}{Slope}} $\times$ {\color{orange}{Predictor}} + {\color{gray}{Error}}} \\
+
+  <<lmprinc, echo=FALSE, dev='tikz'>>=
+    setPar()
+    set.seed(123)
+    x <- rnorm(20)
+    y <- 1 + x + rnorm(20)
+    plot(x, y, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}")
+    lm0 <- lm(y~x)
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+
+    arrows(x0 = x, y0=y, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+  @
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model failure: binary data}
+
+  <<binlmprinc, echo=FALSE, dev='tikz'>>=
+    setPar()
+    set.seed(123)
+    x <- rnorm(30)
+    latent <- 1 + 2*x + rnorm(30, sd = 0.5)
+    y <- 1/(1+exp(-latent))
+    obs <- sapply(y, FUN=function(x){rbinom(1,1,x)})
+    plot(x, obs, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}", xlim = c(-3,3), ylim=c(-0.5,1.5))
+    lm0 <- lm(y~x)
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+
+    arrows(x0 = x, y0=obs, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+  @
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{Linear model basic assumptions}
+ \begin{block}{}
+     \begin{itemize}
+      \item Linear combination of parameters (including transformation, polynoms, interactions\dots)\\ \textit{Risk: biologically meaningless}
+      \item Predictor not perfectly correlated \\ \textit{Risk: Model won't run, unstable convergence, or huge SE}
+       \item {\color{red!20!black}{Little error in predictors}}\\ \textit{Risk: bias estimates (underestimate with Gaussian error)}
+       \item {\color{red!50!black}{Gaussian error distribution}}\\ \textit{Risk: Poor predictions}
+       \item {\color{red!70!black}{Homoscedasticity (constant error variance)}}\\ \textit{Risk: Over-optimistic uncertainty, unreliable predictions}
+       \item {\color{red!99!black}{Independence of error}}\\ \textit{Risk: Bias and over-optimistic uncertainty}
+     \end{itemize}
+ \end{block}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model failure: binary data}
+
+  <<binlmprinc2, echo=FALSE, dev='tikz', out.width="0.7\\textwidth", out.height="0.53\\textwidth">>=
+    setPar()
+    plot(x, obs, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}", xlim = c(-3,3), ylim=c(-0.5,1.5))
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    arrows(x0 = x, y0=obs, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+  @
+  
+  \begin{alertblock}{Assumptions violated:}
+    Non-Gaussian errors, non-constant error variance, correlated errors
+  \end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{A simple linear model failure: binary data}
+
+  <<binlmprinc3, echo=FALSE, dev='tikz', out.width="0.7\\textwidth", out.height="0.53\\textwidth">>=
+    setPar()
+    plot(x, obs, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}", xlim = c(-3,3), ylim=c(-0.5,1.5))
+    abline(lm0, col="red", lwd=5)
+    abline(h=coef(lm0)[1], lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+    arrows(x0 = x, y0=obs, y1=lm0$fitted.values, code=0, col="gray", lwd=3)
+    ndat <- data.frame(x=seq(-2.9,2.9, length.out = 100))
+    ndat <- cbind(ndat, predict(lm0, newdata =ndat, interval = "prediction"))
+    polygon(x=c(ndat$x, rev(ndat$x)), y=c(ndat$lwr, rev(ndat$upr)), border = NA, col=rgb(0.5,0,0,0.4))
+  @
+  \begin{alertblock}{Practical consequences:}
+    Non-sensical predictions, wrong confidence-interval and p-value, extrapolation ALWAYS fails
+  \end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{What we want our model to do}
+  <<binglmprinc, echo=FALSE, dev='tikz', out.width="0.7\\textwidth", out.height="0.53\\textwidth">>=
+    setPar()
+    plot(x, obs, xlab="\\color{orange}{Predictor}", ylab="\\color{purple}{Response}", xlim = c(-3,3), ylim=c(-0.5,1.5))
+    glm0 <- glm(obs~x, family="binomial")
+    ndat <- data.frame(x=seq(-2.9,2.9, length.out = 100))
+    ndat <- cbind(ndat, predict.glm(glm0, newdata =ndat, se.fit = TRUE))
+    ndat$lci <- ndat$fit - 1.96*ndat$se.fit
+    ndat$hci <- ndat$fit + 1.96*ndat$se.fit
+      
+    lines(ndat$x, 1/(1+exp(-ndat$fit)), col="red", lwd=5)
+    abline(h=1/(1+exp(-coef(glm0)[1])), lty=2, col="blue", lwd=5)
+    abline(v=0)
+    abline(h=0)
+   arrows(x0 = x, y0=obs, y1=1/(1+exp(-predict(glm0))), code=0, col="gray", lwd=3)
+    polygon(x=c(ndat$x, rev(ndat$x)), y=1/(1+exp(-c(ndat$lci, rev(ndat$hci)))), border = NA, col=rgb(0.5,0,0,0.4))
+
+  @
+    \begin{alertblock}{Good features:}
+    Never out of [0,1], variable uncertainty, non-linear trend, close fit
+  \end{alertblock}
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}{That is what a Generalized Linear Model does}
+
+\begin{block}{Vocabulary warning}
+  \begin{itemize}
+    \item General Linear Model (=linear model with several responses, multivariate)
+    \item \textbf{Generalized Linear Model (=non-normal errors, and uncertainty dependent on the mean)} 
+  \end{itemize}
+\end{block}
+
+\pause
+
+\begin{block}{What a GLM is:}
+  \begin{enumerate}
+    \item A linear function ($y = \mu + \beta x$ \dots)
+    \item A probability distribution (Bernouilli, Binomial, Poisson\dots)
+    \item A "link function" to convert between the scale of the linear function ($-\infty$ to $+\infty$) and the scale of the data and the probability distribution (often positive integer: 0, 1, 2, 3\dots)
+  \end{enumerate}
+  A GLM fits a continuous expected response; we observe discrete realizations
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Logistic regression}
+  \begin{itemize}[<+->]
+    \item Binary or proportion data (survival, presence/absence\dots)
+    \item Binomial probability distribution ( = Bernouilly if binary data)
+    \item Link function often logit: $y=\log(\frac{probability}{1-probability})$
+    \item Back-transformation inverse-logit: $probability = \frac{1}{1 + exp(-y)}$
+    \item Linear function $y = intercept + slope_1 predictor_1 + slope_2 predictor_2 +$ \dots
+  \end{itemize}
+
+  Binomial (and Bernouilli distribution in R):
+  <<eval = FALSE>>=
+    
+    bernouilli_random_sample <- rbinom(n = 10000, size = 1, prob = 0.3)
+    hist(bernouilli_random_sample)
+    mean(bernouilli_random_sample); 0.3
+    var(bernouilli_random_sample); 0.3*(1-0.3)
+  @
+  
+  Logistic regression in R:
+  <<eval=FALSE>>=
+    glm(formula = obs ~ 1 + x, family = "binomial", data=data)
+  @
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Logistic regression}
+  
+  %data prep
+  <<echo=FALSE, eval=FALSE>>=
+    set.seed(123)
+    x <- rnorm(n = 200)  
+    y <- 0.5 + 3*x
+    obs <- sapply(y, FUN=function(x){rbinom(1,1, 1/(1+exp(-x)) ) })
+    
+    plot(x, obs)
+    abline(lm(obs~x))
+    
+    summary(lm(obs~x))
+    summary(glm(obs~x, family = "binomial"))
+    
+    dat <- data.frame(survival = obs, relative_size = x)
+    write.csv(dat, file = "survivalsize.csv", quote = FALSE, row.names = FALSE)
+  @
+
+  <<>>=
+    dat <- read.csv("survivalsize.csv") 
+    
+  @
+
+  \begin{exampleblock}{Exercise}
+    \begin{enumerate}
+    \end{enumerate}
+  \end{exampleblock}
+\end{frame}
+%%%%%%%%%%%
+
+\end{document}
