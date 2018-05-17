@@ -290,10 +290,6 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}{Logistic regression: Jensen's inequality}
-\end{frame}
-%%%%%%%%%%%
-
 \begin{frame}{Logistic regression: trivia}
 
   \begin{itemize}[<+->]
@@ -334,7 +330,16 @@ setPar()
 \begin{frame}[fragile]{Poisson regression}
 
 <<eval=FALSE, echo=FALSE>>=
-  x <-     
+  set.seed(123)
+  x <- rnorm(n = 300, 2, 2)
+  x2 <- rbinom(n = 300, size = 1, prob = 0.5)
+  y <- exp(0.5 + 0.2 * x  + 0.3*x2)
+  obs <- sapply(y, FUN=function(y){rpois(1, lambda = y)})
+  plot(obs)
+summary(glm(obs ~ x + x2, family=poisson))
+summary(glm(obs ~ x + x2, family=gaussian))
+dat <- data.frame(reproduction=obs, size =x, sex=x2)
+write.csv(dat, file = "reproduction.csv", row.names = FALSE, quote = FALSE)
 @
   
   
@@ -349,6 +354,40 @@ setPar()
       \item Before GLMs, researchers used to log-transform the data and fit linear models. What are the problems with this approach?
     \end{enumerate}
   \end{exampleblock}
+  
+  <<echo=FALSE, eval=FALSE>>=
+  reproduction <- read.csv("reproduction.csv")
+  hist(reproduction$reproduction, freq = FALSE)
+  normsamp <- rnorm(10000, mean(reproduction$reproduction),
+    sqrt(var(reproduction$reproduction)))
+  lines(density(normsamp))    
+  
+  summary(glm3 <- glm(reproduction ~ size , family=poisson, data=reproduction))
+  summary(lm3 <- lm(reproduction ~ size,data=reproduction))
+  plot(glm3)
+  plot(lm3)
+  
+  lm(log(reproduction) ~size, data=reproduction)
+  lm(log(reproduction + 0.01) ~size, data=reproduction)
+  lm(log(reproduction + 0.0001) ~size, data=reproduction)
+  lm(log(reproduction + 0.1) ~size, data=reproduction)
+  
+  plot(reproduction$reproduction, x=reproduction$size, xlim=c(-4,10),ylim=c(-2,13))
+  #abline(lm3, col="red")
+  ndat <- data.frame(size=seq(-4,10,length.out = 100))
+  ndatp <- cbind(ndat,predict(glm3, newdata = ndat, se.fit = TRUE))
+  ndatp$plci <- ndatp$fit -1.96*ndatp$se.fit
+  ndatp$phci <- ndatp$fit +1.96*ndatp$se.fit
+  lines(ndatp$size, exp(ndatp$fit), col="blue", lwd=5)
+  lines(ndatp$size, exp(ndatp$plci), col="blue")
+  lines(ndatp$size, exp(ndatp$phci), col="blue")
+
+  ndatg <- cbind(ndat,predict(lm3, newdata = ndat, interval = "confidence"))
+  lines(ndatg$size, ndatg$fit, col="red")
+  lines(ndatg$size, ndatg$lwr, col="red")
+    lines(ndatg$size, ndatg$upr, col="red")
+    abline(h=0)
+@
 
 \end{frame}
 %%%%%%%%%%%
@@ -446,4 +485,12 @@ setPar()
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}{Extras}
+  If time allows:
+  \begin{itemize}
+    \item Jensen inequality
+    \item Poisson model in MCMCglmm
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%
 \end{document}
