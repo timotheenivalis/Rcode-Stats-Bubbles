@@ -7,3 +7,6 @@ In this session we will cover:
 Slides and data necessary for this session are zipped: https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/09.glmm_part1/DataAndSlides.zip
 
 Slides alone are here: https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/09.glmm_part1/slides/glmm1.pdf
+
+Solutions for the exercises are here:
+https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/09.glmm_part1/slides/exercises.pdf
