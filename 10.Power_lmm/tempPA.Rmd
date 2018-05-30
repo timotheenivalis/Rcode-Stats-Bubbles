@@ -1,0 +1,74 @@
+---
+title: "Teaser to Power analysis by data simulation"
+author: T. Bonnet
+date: 28/05/2018
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+  pdf_document: default
+---
+
+This document shows a way to estimate statistical power for a t-test by simulating data. We start with a fixed sample size and fixed difference between the samples.
+
+## Simulation
+
+```{r}
+set.seed(123) # random seed to make code reproducible
+samplesize <- 40
+sampdiff <- 0.5
+samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) #random numbers following normal 
+#distribution of mean 0 and standard deviation 1
+samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+```
+
+Our two simulated samples are samp1 and samp2. We "collected" 40 datum in each sample, and the real difference between them is 0.5.
+Maybe you could imagine that the things we are sampling are birds in two populations, and that the trait we are measuring is some standardized measure of behaviour (aggression index). Birds are more aggressive in the second population (with a difference of 0.5).
+We haven't measured every individual in the two populations, but only a small fraction. The question now is, have we measured enough individuals to detect the difference between the two populations.
+
+## Test on the first simulation
+
+We perform a t-test comparing the two samples. To stay very basic, we will just look at the p-value from the test:
+```{r}
+testres <- t.test(samp1, samp2)
+testres$p.value
+```
+
+That's "significant", we can distinguish the difference between the samples from noise.
+
+## Compute power for this situation
+Statistical power is the probability to observe a significant result under the present biological and experimental conditions (variance, difference, and sample size).
+To estimate statistical power, we can repeat the process of simulation and test many times, and use the frequency of significant results as an estimate of this probability.
+
+```{r}
+nbsimul <- 1000
+set.seed(123) # random seed to make code reproducible
+samplesize <- 40
+sampdiff <- 0.5
+storepvalues <- vector(length = nbsimul)
+for (i in 1:nbsimul)
+{
+  samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) 
+  samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+  testres <- t.test(samp1, samp2)
+  storepvalues[i] <- testres$p.value # store the pvalue from this data set test
+}
+```
+
+Statistical power is estimated as the proportion of significant results, that is p-values below our significance threshold (typically 5%), which we can compute as:
+```{r}
+mean(storepvalues<0.05)
+```
+
+So the power is estimated to be 59.8% for a sample size of 40 per sample, a difference of 0.5 between the samples, and a defaut t-test.
+
+## Exercise
+
+How many individuals should we collect to obtain a power of at least 99% ?
+
+hint: there is an analytical solution in this simple case, but I would prefer you to use one or two for loops (a while loop could be useful too!)!
+
+Also, try and error is an acceptable solution.
+
+
+
