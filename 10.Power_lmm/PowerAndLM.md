@@ -72,7 +72,59 @@ What power depends on
 Statistical power increases with
 ========================================================
 type: prompt
+incremental: true
 
 * **Larger sample size** <- you can control
 * **Smaller unexplained variability** <- you can sometimes control
 * **Real strength of the effect of interest** <- you cannot control
+
+We can estimate statistical power
+========================================================
+type: prompt
+incremental: true
+
+If we know or assume:
+* A sample size
+* Explained and unexplained sources of variation
+* A real strength of the effect
+
+Exercise 1: power calculated by sample size
+========================================================
+
+See file tempPA
+
+We assume we know the data variability. How many samples to find a difference of 0.5?
+
+Simple solution for simple cases: pwr package
+========================================================
+
+```r
+library(pwr)
+p40 <- pwr.t.test(n = 40, d = 0.5/1 )
+p40$power
+```
+
+```
+[1] 0.5981469
+```
+
+```r
+p143 <- pwr.t.test(n = 143, d = 0.5/1 )
+p143$power
+```
+
+```
+[1] 0.9878887
+```
+
+
+Exercise 2: power calculated by sample size and effect size
+========================================================
+
+What if unmeasure variation is not just noise?
+========================================================
+type: section
+
+%# examples where relationship is hidden by covariates / random effects
+%# where relationship is over-estimated by pseudo replication
+
