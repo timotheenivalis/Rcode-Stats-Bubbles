@@ -12,3 +12,4 @@ Navigate the different topics with the folders above, or with the following link
 * 7. [Meta-analysis with Metafor](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/07.meta_analysis)
 * 8. [Structural Equation Modeling](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/08.sem)
 * 9. [Generalized Linear Models (GLMs)](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/09.glmm_part1)
+* 10. [Power analysis and mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/10.Power_lmm)
