@@ -1,0 +1,162 @@
+---
+title: "GLM exercises"
+output: pdf_document
+---
+
+# Logistic regression
+
+- Load survivalsize.csv
+```{r}
+    dat <- read.csv("survivalsize.csv") 
+```
+
+- Plot survival data. What kind of distribution is it?
+```{r}
+    plot(dat$survival)
+    hist(dat$survival)
+```
+Bernouilli distribution (= binomial distribution of size 1).
+
+- Fit a linear model and a logistic model with intercept only. How to interpret the estimate?
+```{r}
+  summary(glm(survival ~ 1, data=dat, family = "gaussian"))
+  summary(glm(survival ~ 1, data=dat, family = "binomial"))
+  1/(1+exp(-0.2209))
+  mean(dat$survival)
+```
+
+The linear model (Gaussian GLM) gives the mean survival as its intercept.
+The bernouilli model (Gaussian GLM) also gives the mean survival as its intercept, but on a logit scale. You have to back-transform the intercept using 1/(1+exp( - intercept)) to calculate the mean.
+
+- Fit a linear regression and a logistic regression of survival on relative size, compare the output
+```{r}
+    summary(lm1 <- glm(survival ~ 1 + relative_size, data=dat, family = "gaussian"))
+    summary(glm1 <- glm(survival ~ 1 + relative_size, data=dat, family = "binomial"))
+```
+- Check the diagnostic plots for both models. Should you be worried?
+```{r}
+plot(lm1)
+plot(glm1)
+```
+The diagnostic for the lm shows violations of the assumpations. The glm diagnostic looks similar, but you should not be worried, because the glm doesn't make the same assumptions. To be specific, the glm does not have defined residuals on the scale of the linear predictor (where distribution assumptions are relevant), but only expected values. The diagnostic are based on the data scale residuals, but it is not the scale on which the glm is fitted.
+These plots are not useful to check the fit of a glm.
+Instead, you can check a model works by simulating data from the model estimates and comparing the distribution to that of the initial data (we do not cover that method today).
+
+- Extract and visualize a model prediction from both models (use the function predict, and/or do it by hand to practice link-function back-transformation)
+
+```{r}
+    plot(dat$relative_size, dat$survival, ylab="survival probability",
+         xlab="relative size")
+    ndat <- data.frame(relative_size = seq(-3,3, length.out = 100))  
+    ndat <- cbind(ndat, predict(lm1, newdata = ndat),
+                  predict(glm1, newdata = ndat, type = "response"))
+    lines(ndat[,1], ndat[,2], col="red")
+    lines(ndat[,1], ndat[,3], col="blue")
+```
+
+The linear model makes unreasonable predictions, falling out of the range of possible values. The GLM fits much better.
+
+# Poisson Regression
+
+- Load the data reproduction.csv
+```{r}
+ reproduction <- read.csv("reproduction.csv")
+```
+
+- Plot reproduction data, calculate the mean and variance. 
+- Overlay a Gaussian distribution of same mean and variance, does it fit?
+```{r}
+  hist(reproduction$reproduction, freq = FALSE)
+  normsamp <- rnorm(10000, mean(reproduction$reproduction),
+    sqrt(var(reproduction$reproduction)))
+  lines(density(normsamp))    
+```
+
+- Fit an compare a lm and a Poisson glm of reproduction on size 
+```{r}
+  summary(glm3 <- glm(reproduction ~ size , family=poisson, data=reproduction))
+  summary(lm3 <- lm(reproduction ~ size,data=reproduction))
+```
+
+- Check the diagnostic plots for both models. Should you be worried?
+```{r}
+ plot(glm3)
+  plot(lm3)
+```
+
+The lm is wrong. Diagnostic looks similar for the glm, but assumptions are not the same, so it is okay.
+
+- Extract and visualize a model prediction from both models (use the function predict, and/or do it by hand to practice link-function back-transformation)
+```{r}
+plot(reproduction$reproduction, x=reproduction$size, xlim=c(-4,10),ylim=c(-2,13))
+ndat <- data.frame(size=seq(-4,10,length.out = 100))
+ndat <- cbind(ndat, predict(lm3, newdata = ndat),
+              predict(glm3, newdata = ndat, type = "response"))
+lines(ndat[,1], ndat[,2], col="red")
+lines(ndat[,1], ndat[,3], col="blue")
+```
+
+The GLM fits better, predicts correctly that negative values are impossible, and that the values tend to increase exponentially.
+
+Adding the confidence interval is a bit annoying, but can be done:
+
+```{r}
+  plot(reproduction$reproduction, x=reproduction$size, xlim=c(-4,10),ylim=c(-2,13))
+  ndat <- data.frame(size=seq(-4,10,length.out = 100))
+  ndatp <- cbind(ndat,predict(glm3, newdata = ndat, se.fit = TRUE))
+  ndatp$plci <- ndatp$fit -1.96*ndatp$se.fit
+  ndatp$phci <- ndatp$fit +1.96*ndatp$se.fit
+  lines(ndatp$size, exp(ndatp$fit), col="blue", lwd=5)
+  lines(ndatp$size, exp(ndatp$plci), col="blue")
+  lines(ndatp$size, exp(ndatp$phci), col="blue")
+
+  lm3 <- lm(reproduction ~ size,data=reproduction)
+  ndatg <- cbind(ndat,predict(lm3, newdata = ndat, interval = "confidence"))
+  lines(ndatg$size, ndatg[,2], col="red")
+  lines(ndatg$size, ndatg[,3], col="red")
+    lines(ndatg$size, ndatg[,4], col="red")
+    abline(h=0)
+```
+
+- Before GLMs, researchers used to log-transform the data and fit linear models. What are the problems with this approach?
+```{r, eval=FALSE}
+  lm(log(reproduction) ~size, data=reproduction)
+  lm(log(reproduction + 0.01) ~size, data=reproduction)
+  lm(log(reproduction + 0.0001) ~size, data=reproduction)
+  lm(log(reproduction + 0.1) ~size, data=reproduction)
+  
+```
+Either you cannot fit the model because log(0) is not defined, or you have to add an arbitrary quantity to the zeros. The choice of the arbitrary quantity changes model estimates, so it is difficult to interpret them.
+
+# Over-dispersion
+ Write a for loop to look at the distribution of p-values for a Poisson GLM and a quasi-Poisson GLM.
+ 
+```{r}
+    set.seed(123)
+    pvvector <- vector(length = 1000)
+  pvvectorq <- vector(length = 1000)
+  for (i in 1:1000)
+      {
+        x <- rnorm(100)
+         y <- exp(-1 + rnorm(100, 0, 2))
+         obs <- sapply(y, FUN = function(x){rpois(n = 1, lambda = x)})
+         glm2 <- glm(obs ~ x, family = "poisson")
+         sglm2 <- summary(glm2)
+         pvvector[i] <- sglm2$coefficients[2,4]
+     
+         glm2q <- glm(obs ~ x, family = "quasipoisson")
+         sglm2q <- summary(glm2q)
+        pvvectorq[i] <- sglm2q$coefficients[2,4]
+        }
+     hist(pvvector); mean(pvvector<0.05)
+     hist(pvvectorq) ; mean(pvvectorq<0.05)
+
+
+```
+
+The Poisson GLM finds significant effect 66.3% of the time, while we simulated no effect.
+The quasi-Poisson GLM finds significant effects only 8.6% of the time (which is a bit more than the 5% we should get, but not by much).
+The quasi-Poisson is much more reliable than the Poisson.
+
+Never use a simple Poisson GLM, it makes unreasonable and unecessary assumptions.
+
