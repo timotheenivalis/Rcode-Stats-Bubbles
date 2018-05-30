@@ -1,0 +1,140 @@
+Statistical Power and Mixed Effect Models
+========================================================
+author: Timothée Bonnet
+date: June 1st 2018
+autosize: true
+font-family: 'Helvetica'
+
+
+What is power?
+========================================================
+incremental: true
+
+<div align="center">
+<img src="PowerAndLM-figure/fig1.jpg" width=700 height=437>
+</div>
+
+Probability to detect an effect **that exists for real**
+
+= 1 - false negative rate (type II error)
+
+
+Why should you think about statistical power?
+========================================================
+incremental: true
+
+**Low power means:**
+* **Statistical tests non-significant whether an effect exists or not**
+* **Your results will be inconclusive**
+* **Data collection and analyses are wasted** (_maybe not completely, there is a twist later on_)
+
+**High power means:**
+* **Test probably significant when an effect exists**
+* **Test rarely significant when an effect does not exist**
+* **You learn something about the world**
+
+Think about power early and late
+====================================
+type: alert
+
+**BEFORE planning experiment or data collection:**
+* Can I get enough data to answer my question? Is it worth it?
+* How to improve my chances of detecting an effect **if it exists**?
+
+But also AFTER doing an analysis:
+* Is this non-significant result due to a lack of power or to the absence of an effect?
+* What is the maximal likely value of the effect? Is it still important biologically?
+
+
+What power depends on
+========================================================
+
+**1. Sample size**
+
+```{r, echo=FALSE, fig.width=14}
+par(mfrow=c(1,2))
+set.seed(123)
+x <- rnorm(n = 8, mean = 0, 1)
+y <- 0.6*x +rnorm(8)
+plot(x = x, y=y, main="8 data points")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+
+x <- rnorm(n = 1000, mean = 0, 1)
+y <- 0.6*x +rnorm(1000)
+plot(x = x, y=y,  main="1000 data points")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+
+```
+
+What power depends on
+========================================================
+
+**2. Strength of the effect**
+
+```{r, echo=FALSE, fig.width=14}
+par(mfrow=c(1,2))
+set.seed(123)
+x <- rnorm(n = 100, mean = 0, 1)
+y <- 0.1*x +rnorm(100)
+plot(x = x, y=y, main="Slope = 0.1")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+
+x <- rnorm(n = 100, mean = 0, 1)
+y <- 1*x +rnorm(100)
+plot(x = x, y=y,  main="Slope = 1")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+
+```
+
+
+What power depends on
+========================================================
+
+**3. Unexplained variation**
+
+```{r, echo=FALSE, fig.width=14}
+par(mfrow=c(1,2))
+set.seed(123)
+x <- rnorm(n = 100, mean = 0, 1)
+y <- 0.5*x +rnorm(100, sd = 3)
+plot(x = x, y=y, main="Residual variance = 9")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+
+x <- rnorm(n = 100, mean = 0, 1)
+y <- 0.5*x +rnorm(100, sd=0.1)
+plot(x = x, y=y, main="Residual variance = 0.01")
+abline(lm(y ~ x), col="red", lwd=3)
+abline(h=0)
+newdat <- data.frame(x=seq(from=-5,to=5,length.out = 100))
+newdat <- cbind(newdat, predict.lm(lm(y ~ x), newdata=newdat, interval = "confidence"))
+polygon(x = c(newdat$x, rev(newdat$x)), y = c(newdat$lwr, rev(newdat$upr)), col = rgb(1,0.1,0.1,0.1))
+```
+
+
+Statistical power increases with
+========================================================
+type: prompt
+
+* **Larger sample size** <- you can control
+* **Smaller unexplained variability** <- you can sometimes control
+* **Real strength of the effect of interest** <- you cannot control
