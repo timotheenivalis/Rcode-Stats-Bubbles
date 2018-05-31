@@ -5,6 +5,19 @@ date: June 1st 2018
 autosize: true
 font-family: 'Helvetica'
 
+```{r, echo=FALSE}
+library(lme4)
+library(simr)
+
+szgr <- 2
+szax <- 1.3
+marr <- c(4, 4, 1, 1) + 0.1
+setPar<-function(){
+par(las=1,mar=marr, cex=szgr, cex.lab=szax , cex.axis=szax, lwd=2 ,pch=1, las=1)
+}
+setPar()
+```
+
 
 What is power?
 ========================================================
@@ -170,11 +183,209 @@ p143$power
 
 Exercise 2: power calculated by sample size and effect size
 ========================================================
+incremental: true
 
-What if unmeasure variation is not just noise?
+Try several values between zero and one for the assumed effect size in the simulations (pwr is allowed)
+
+ Show how power varies with sample size and effect size
+
+```{r, echo=FALSE, eval=FALSE}
+effectvalues <- seq(from=0, to = 1, by=0.1)
+sampvalues <- seq(from=40, to=200, by = 20)
+nbvalues <- length(effectvalues)*length(sampvalues)
+pow <- data.frame(effect=1:nbvalues, samplesize=NA, power=NA)
+index <- 1
+for (eff in effectvalues)
+  for (samp in sampvalues)
+  {
+    pow$effect[index] <- eff
+    pow$samplesize[index] <- samp
+    pow$power[index] <- pwr.t.test(n = samp, d = eff )$power
+    index <- index + 1
+  }
+
+plot(pow$effect[pow$samplesize==sampvalues[1]], pow$power[pow$samplesize==sampvalues[1]], type="l")
+for (i in 2:length(sampvalues))
+{
+  lines(pow$effect[pow$samplesize==sampvalues[i]], pow$power[pow$samplesize==sampvalues[i]])
+}
+```
+
+You did the experiment with a sample size 100 and did not find a significant result.
+Let's assume a value less than 0.7 is biologically unimportant. Can you conclude something?
+
+What if a value of 0.1 is still biologically important?
+
+**Post-hoc power analysis**
+
+What if unmeasure variation is not random?
 ========================================================
 type: section
 
-%# examples where relationship is hidden by covariates / random effects
-%# where relationship is over-estimated by pseudo replication
+What is really the sample size?
+========================================================
+
+We have assumed observations to be **independent** in our simulations
+
+Corresponds to an assumption of linear models
+
+What if they are not?
+
+A silly example 
+=======================================================
+incremental: true
+
+Does size differ between people with a hair bun and people with a crest?
+
+Only 2 individuals individuals => we take 50 measurements of each person
+
+_t-test of the difference, p<0.0001..._
+
+**In reality, the data contain no information because the measurements are perfectly dependent: Effective sample size is 2, question has 2 parameters.**
+
+More realistic examples
+=======================================================
+incremental: true
+
+Two bird populations, one supplemented with food. Measure reproductive success within populations, test the effect of food on reproduction.
+Effective sample size?
+
+**2, for 2 parameters => no information, no power**
+
+300 mass measurements of 50 individuals. Does mass impact on lifetime reproductive success?
+Effective sample size?
+
+**50, for 2 parameters => some information / power**
+
+More realistic examples
+=======================================================
+incremental: true
+
+?
+
+* Inference about individuals with multiple measurements of same individuals
+* Inference about spatial variation with several measurements per site
+* Inference about trait co-evolution within a phylogeny
+* ...
+
+Solution: model the correlation between observations
+=======================================================
+
+* With fixed effects for grouping factors
+* or With a random effect in a mixed model
+
+** package lme4 **
+
+Exercise
+=======================================================
+
+```{r, echo=FALSE, eval=FALSE}
+set.seed(123)
+
+nbindg1 <- 20
+nbindg2 <- 20
+diffgroup <- 0.5
+
+indvalues <- rnorm(n = nbindg1 + nbindg2, mean = c(rep(0, times=nbindg1), rep(diffgroup,times=nbindg2)), sd=1)
+
+obsperind <- 10
+measurementerror <- 0.1
+
+#individual data
+inddata <- data.frame(group= c(rep(1, times=nbindg1), rep(2,times=nbindg2)),
+                      individual=1:(nbindg1+nbindg2))
+inddata$value <- rnorm(n=nrow(inddata), mean=0, sd=measurementerror) +
+                  indvalues[inddata$individual]
+summary(lm(value ~ 1 + group, data = inddata))
+
+
+dat <- data.frame(group= c(rep(1, times=nbindg1*obsperind), rep(2,times=nbindg2*obsperind)),
+           individual = rep(1:(nbindg1+nbindg2), each=obsperind) )
+
+dat$value <- rnorm(n = nrow(dat), mean = 0, sd = measurementerror) + 
+              indvalues[dat$individual]
+
+summary(lm(value ~ 1+group, data=dat))
+
+summary(lmer(value ~ 1+group + (1|individual), data=dat))
+
+write.csv(x = dat, file = "RepeatedMeasurements.csv", quote = FALSE, row.names = FALSE)
+write.csv(x = inddata, file = "IndividualMeasurements.csv", quote = FALSE, row.names = FALSE)
+
+```
+
+* Load RepeatedMeasurements.csv (10 measurements per individual) and IndividualMeasurements.csv (1 measurement per individual)
+* Do the two groups differ? (use lm() and lmer() to test the difference)
+
+
+
+Non-independance can also hide or reverse an effect
+========================================================
+type: subsection
+
+Example: thorns and herbivory
+============================================
+
+Does a defensive tissue (thorns) reduce herbivory on a plant species?
+
+<img src="PowerAndLM-figure/thorns.jpg" height="300" />
+
+
+Collected data in 5 locations to reach large sample size
+
+Example: thorns and herbivory
+============================================
+
+```{r, echo=FALSE, fig.width=10, out.width="0.8*\\textwidth"}
+setPar()
+set.seed(1234)
+x <- 4+sort(rnorm(100)) + rnorm(100,0,0.5)
+block <- rep(x = 1:5, each=20)
+blockvalues <- c(-2,-1,0,1,2)
+y <- 8 - x + blockvalues[block] + rnorm(100,0,0.2)
+plot(x,y, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(y~ x), lwd=5)
+```
+
+
+Example: thorns and herbivory
+============================================
+
+```{r}
+summary(lm(y~ x))
+```
+
+What is wrong?
+
+Example: thorns and herbivory
+============================================
+
+```{r, echo=FALSE, fig.width=10, out.width="0.8*\\textwidth"}
+setPar()
+plot(x,y, col=block, ylab = "Herbivory load", xlab= "Thorn density")
+slp <- coefficients(summary(lmer(y~ x + (1|block))))[2,1]
+inter <- coefficients(summary(lmer(y~ x + (1|block))))[1,1]
+
+abline(a = inter+blockvalues[1], b=slp, lwd=5)
+abline(a = inter+blockvalues[2], b=slp, lwd=5, col="red")
+abline(a = inter+blockvalues[3], b=slp, lwd=5, col="green")
+abline(a = inter+blockvalues[4], b=slp, lwd=5, col="blue")
+abline(a = inter+blockvalues[5], b=slp, lwd=5, col="cyan")
+```
+
+**Simpson's paradox**
+
+Example: thorns and herbivory
+============================================
+```{r, message=FALSE}
+library(lme4)
+summary(lmer(y~ x + (1|block)))
+```
+
+
+```{r, echo=FALSE, fig.width=10, out.width="0.8*\\textwidth"}
+setPar()
+plot(x,y - blockvalues[block], col=block, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(y~ x), lwd=5)
+```
 
