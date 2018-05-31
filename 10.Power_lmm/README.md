@@ -15,3 +15,8 @@ The workshop is on Friday 1, from 10 to 12, in the ecology meeting room (Roberts
 
 Here is a teaser and exercise about estimating statistical power:
 [http://timotheenivalis.github.io/Rnotebooks/tempPA](http://timotheenivalis.github.io/Rnotebooks/tempPA)
+
+Load all the material from this folder:
+[https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/10.Power_lmm/SlidesAndData](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/10.Power_lmm/SlidesAndData)
+or its .zip:
+[https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/10.Power_lmm/SlidesAndData.zip](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/blob/master/10.Power_lmm/SlidesAndData.zip)
