@@ -1,7 +1,7 @@
 ---
-title: "Teaser to Power analysis by data simulation with solution"
+title: "Exercises with solutions"
 author: T. Bonnet
-date: 28/05/2018
+date: 1/06/2018
 output:
   html_document: 
     toc: true
@@ -9,7 +9,9 @@ output:
   pdf_document: default
 ---
 
-This document shows a way to estimate statistical power for a t-test by simulating data. We start with a fixed sample size and fixed difference between the samples.
+# Exercise 1: A first example of simulation
+
+This section shows a way to estimate statistical power for a t-test by simulating data. We start with a fixed sample size and fixed difference between the samples.
 
 ## Simulation
 
@@ -104,6 +106,8 @@ samplesize
 plot(pcont, x=40:samplesize)
 ```
 
+With 143 samples per group we are almost certain to detect an effect of this magnitude.
+
 In practice, we could get almost as much information while testing far fewer sample sizes. Let's just play it safe and take a broad range of values:
 
 ```{r}
@@ -130,4 +134,110 @@ abline(h=0.99, col="red")
 
 ```
 
+## A simpler solution using pwr
+```{r}
+library(pwr)
+valuestotest <- c(10, 50, 100, 150, 200, 250, 300, 350, 400)
+pcont2 <- vector(length = length(valuestotest))
+power <- 0
+for (j in 1:length(valuestotest))
+{
+  pcont2[j] <- pwr.t.test(n=valuestotest[j], d = 0.5)$power
+}
 
+plot(pcont2, x=valuestotest, type="b")
+abline(h=0.99, col="red")
+
+```
+
+
+
+# Exercise 2: Power calculated by sample size and effect size
+
+## Computing power
+
+We will calculate power for a set of sample sizes:
+```{r}
+samplesizestotest <- seq(from=10, to =200, by = 20)
+```
+crossed with a set of effect sizes:
+```{r}
+effectsizestotest <- seq(from=0, to = 1, by = 0.1)
+
+```
+
+We create a data frame that contains all combinations of these two sets using the function expand.grid:
+
+```{r}
+container <- expand.grid(samplesize= samplesizestotest, effectsize=effectsizestotest)
+```
+
+We add a column that will contain power estimates:
+```{r}
+container$power <- NA
+head(container)
+```
+
+Now we calculate power for every line of the container using a for loop (we use "potatoes" as an index just to demonstrate that the name of the index doesn't have to be always "i")
+```{r}
+library(pwr)
+for(potatoes in 1:nrow(container))
+{
+  
+  container$power[potatoes] <-pwr.t.test(n = container$samplesize[potatoes], d = container$effectsize[potatoes])$power
+}
+```
+
+We can visualize the results with:
+```{r}
+
+plot(x = container$samplesize[container$effectsize==effectsizestotest[1]], y=container$power[container$effectsize==effectsizestotest[1]], ylim = c(0,1), type="l", xlab="Sample size", ylab="Power")
+effectsizestotest[1]
+for(radish in 2:length(effectsizestotest))
+{
+  lines(x = container$samplesize[container$effectsize==effectsizestotest[radish]],
+        y=container$power[container$effectsize==effectsizestotest[radish]], type="l", col= rgb(red = effectsizestotest[radish],green = 0, blue = 0, maxColorValue = max(effectsizestotest)))
+}
+legend(x="bottomright", legend = rev(effectsizestotest), col = rev(rgb(red = effectsizestotest,0,0, maxColorValue = max(effectsizestotest))), lty=1, title = "Effect size")
+```
+
+or using ggplot (ask Kevin for details!):
+```{r}
+library(ggplot2)
+ggplot(data = container, aes(x=samplesize, y=power, colour=as.factor(effectsize))) +
+  geom_line()+
+  theme_bw()
+
+```
+
+# Mixed model exercise
+
+Load data and package
+```{r}
+library(lme4)
+
+repeateddata <- read.csv(file = "RepeatedMeasurements.csv")
+inddata <- read.csv(file = "IndividualMeasurements.csv")
+
+```
+
+Fit lm() on individual data
+```{r}
+summary(lm(value ~ 1 + group, data = inddata))
+```
+
+Fit lm() on repeated data
+```{r}
+summary(lm(value ~ 1 + group, data = repeateddata))
+```
+```
+
+The standard error is too small!
+
+Fit lmer() on repeated data
+
+```{r}
+summary(lmer(value ~ 1 + group + (1 | individual), data=repeateddata))
+```
+
+We find again the same estimate, and the standard error is corrected: we do not find a significant effect.
