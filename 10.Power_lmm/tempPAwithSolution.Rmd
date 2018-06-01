@@ -201,14 +201,61 @@ for(radish in 2:length(effectsizestotest))
 legend(x="bottomright", legend = rev(effectsizestotest), col = rev(rgb(red = effectsizestotest,0,0, maxColorValue = max(effectsizestotest))), lty=1, title = "Effect size")
 ```
 
-or using ggplot (ask Kevin for details!):
-```{r}
-library(ggplot2)
-ggplot(data = container, aes(x=samplesize, y=power, colour=as.factor(effectsize))) +
-  geom_line()+
-  theme_bw()
+or using ggplot and also considering several values of unexplained variation (thanks Kevin!)
 
+```{r}
+library(tidyverse)
 ```
+
+
+```{r}
+power.t = function (diff=1, u=0, sd=1, n=100, iters=10000) {
+  data.frame(i=1:n) %>%
+    mutate(pval=map_dbl(i, function (x, diff, u, sd, n) {
+      a = rnorm(n, u, sd)
+      b = rnorm(n, u+diff, sd)
+      t = t.test(a, b)
+      t$p.value
+    }, diff, u, sd, n)) %>%
+    group_by() %>%
+    summarise(power=mean(pval < 0.05)) %>%
+    pull(power)
+}
+
+powerVnVdiff = expand.grid(n=c(3, 10, 20, 50, 100, 200, 500, 1000),
+                           diff=seq(0, 1, 0.1), sd=c(0.5, 1:3)) %>%
+  mutate(power=pmap_dbl(list(diff=diff, n=n, sd=sd), power.t, iters=1000))
+```
+
+```{r, fig.width=7, fig.height=9}
+ggplot(powerVnVdiff, aes(x=n, y=power)) +
+  geom_line(aes(colour=as.factor(diff))) +
+  scale_colour_discrete(name="Effect Size") +
+  facet_wrap(~paste0("SD = ", sd), ncol=1) +
+  scale_x_log10() +
+  theme_bw()
+```
+
+
+# Tim's plot
+```{r}
+library(pwr)
+pwrVn_eff = expand.grid(n=seq(10, 200, 20), eff=seq(0,1,0.1)) %>%
+  mutate(power=pmap(list(n=n, d=eff), pwr.t.test),
+         power=map_dbl(power, "power"))
+head(pwrVn_eff)
+
+
+
+ggplot(pwrVn_eff, aes(x=n, y=power)) +
+  geom_line(aes(colour=as.factor(eff))) +
+  scale_color_discrete(name="Effect Size") +
+  labs(x="Sample Size", y="Power") +
+  theme_bw()
+  
+```
+
+
 
 # Mixed model exercise
 
@@ -241,3 +288,5 @@ summary(lmer(value ~ 1 + group + (1 | individual), data=repeateddata))
 ```
 
 We find again the same estimate, and the standard error is corrected: we do not find a significant effect.
+
+
