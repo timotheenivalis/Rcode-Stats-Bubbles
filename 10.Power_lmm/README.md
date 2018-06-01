@@ -13,7 +13,7 @@ Please install the package lme4 (and if you are interested in using other packag
 
 The workshop is on Friday 1, from 10 to 12, in the ecology meeting room (Robertson 3rd floor).
 
-Here is a teaser and exercise about estimating statistical power:
+Here are the exercises with their solutions:
 [http://timotheenivalis.github.io/Rnotebooks/tempPA](http://timotheenivalis.github.io/Rnotebooks/tempPA)
 
 Load all the material from this folder:
