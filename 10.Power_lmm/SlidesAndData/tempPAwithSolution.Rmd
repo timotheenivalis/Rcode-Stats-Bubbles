@@ -1,0 +1,292 @@
+---
+title: "Exercises with solutions"
+author: T. Bonnet
+date: 1/06/2018
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+  pdf_document: default
+---
+
+# Exercise 1: A first example of simulation
+
+This section shows a way to estimate statistical power for a t-test by simulating data. We start with a fixed sample size and fixed difference between the samples.
+
+## Simulation
+
+```{r}
+set.seed(123) # random seed to make code reproducible
+samplesize <- 40
+sampdiff <- 0.5
+samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) #random numbers following normal 
+#distribution of mean 0 and standard deviation 1
+samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+```
+
+Our two simulated samples are samp1 and samp2. We "collected" 40 datum in each sample, and the real difference between them is 0.5.
+Maybe you could imagine that the things we are sampling are birds in two populations, and that the trait we are measuring is some standardized measure of behaviour (aggression index). Birds are more aggressive in the second population (with a difference of 0.5).
+We haven't measured every individual in the two populations, but only a small fraction. The question now is, have we measured enough individuals to detect the difference between the two populations.
+
+## Test on the first simulation
+
+We perform a t-test comparing the two samples. To stay very basic, we will just look at the p-value from the test:
+```{r}
+testres <- t.test(samp1, samp2)
+testres$p.value
+```
+
+That's "significant", we can distinguish the difference between the samples from noise.
+
+## Compute power for this situation
+Statistical power is the probability to observe a significant result under the present biological and experimental conditions (variance, difference, and sample size).
+To estimate statistical power, we can repeat the process of simulation and test many times, and use the frequency of significant results as an estimate of this probability.
+
+```{r}
+nbsimul <- 1000
+set.seed(123) # random seed to make code reproducible
+samplesize <- 40
+sampdiff <- 0.5
+storepvalues <- vector(length = nbsimul)
+for (i in 1:nbsimul)
+{
+  samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) 
+  samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+  testres <- t.test(samp1, samp2)
+  storepvalues[i] <- testres$p.value # store the pvalue from this data set test
+}
+```
+
+Statistical power is estimated as the proportion of significant results, that is p-values below our significance threshold (typically 5%), which we can compute as:
+```{r}
+mean(storepvalues<0.05)
+```
+
+So the power is estimated to be 59.8% for a sample size of 40 per sample, a difference of 0.5 between the samples, and a defaut t-test.
+
+## Exercise
+
+How many individuals should we collect to obtain a power of at least 99% ?
+
+hint: there is an analytical solution in this simple case, but I would prefer you to use one or two for loops (a while loop could be useful too!)!
+
+Also, try and error is an acceptable solution.
+
+## Solution
+
+A very crude solution is to loop over all sample sizes, one by one, until we reach a power of 0.99. A while loop is the right tool when you want to interrupt a loop based on a condition.
+We will also record all the realized powers so that we can plot them as a function of sample size afterwards.
+```{r, cache=TRUE}
+nbsimul <- 1000
+set.seed(123) # random seed to make code reproducible
+samplesize <- 40
+pcont <- vector()
+j <- 1
+power <- 0.596
+sampdiff <- 0.5
+while(power<0.99)
+{
+  print(x = paste0("Sample size ", samplesize, " is not sufficient, power is only ", power))
+  samplesize <- samplesize + 1
+  storepvalues <- vector(length = nbsimul)
+  for (i in 1:nbsimul)
+  {
+    samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) 
+    samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+    testres <- t.test(samp1, samp2)
+    storepvalues[i] <- testres$p.value # store the pvalue from this data set test
+  }
+  power <- mean(storepvalues<0.05)
+  j <- j+1
+  pcont[j] <- power
+}
+
+samplesize
+
+plot(pcont, x=40:samplesize)
+```
+
+With 143 samples per group we are almost certain to detect an effect of this magnitude.
+
+In practice, we could get almost as much information while testing far fewer sample sizes. Let's just play it safe and take a broad range of values:
+
+```{r}
+valuestotest <- c(10, 50, 100, 150, 200, 250, 300, 350, 400)
+pcont2 <- vector(length = length(valuestotest))
+power <- 0
+for (j in 1:length(valuestotest))
+{
+  samplesize <- valuestotest[j]
+  storepvalues <- vector(length = nbsimul)
+  for (i in 1:nbsimul)
+  {
+    samp1 <- rnorm(n = samplesize, mean = 0, sd = 1) 
+    samp2 <- rnorm(n = samplesize, mean = sampdiff, sd = 1)
+    testres <- t.test(samp1, samp2)
+    storepvalues[i] <- testres$p.value # store the pvalue from this data set test
+  }
+  power <- mean(storepvalues<0.05)
+  pcont2[j] <- power
+}
+
+plot(pcont2, x=valuestotest, type="b")
+abline(h=0.99, col="red")
+
+```
+
+## A simpler solution using pwr
+```{r}
+library(pwr)
+valuestotest <- c(10, 50, 100, 150, 200, 250, 300, 350, 400)
+pcont2 <- vector(length = length(valuestotest))
+power <- 0
+for (j in 1:length(valuestotest))
+{
+  pcont2[j] <- pwr.t.test(n=valuestotest[j], d = 0.5)$power
+}
+
+plot(pcont2, x=valuestotest, type="b")
+abline(h=0.99, col="red")
+
+```
+
+
+
+# Exercise 2: Power calculated by sample size and effect size
+
+## Computing power
+
+We will calculate power for a set of sample sizes:
+```{r}
+samplesizestotest <- seq(from=10, to =200, by = 20)
+```
+crossed with a set of effect sizes:
+```{r}
+effectsizestotest <- seq(from=0, to = 1, by = 0.1)
+
+```
+
+We create a data frame that contains all combinations of these two sets using the function expand.grid:
+
+```{r}
+container <- expand.grid(samplesize= samplesizestotest, effectsize=effectsizestotest)
+```
+
+We add a column that will contain power estimates:
+```{r}
+container$power <- NA
+head(container)
+```
+
+Now we calculate power for every line of the container using a for loop (we use "potatoes" as an index just to demonstrate that the name of the index doesn't have to be always "i")
+```{r}
+library(pwr)
+for(potatoes in 1:nrow(container))
+{
+  
+  container$power[potatoes] <-pwr.t.test(n = container$samplesize[potatoes], d = container$effectsize[potatoes])$power
+}
+```
+
+We can visualize the results with:
+```{r}
+
+plot(x = container$samplesize[container$effectsize==effectsizestotest[1]], y=container$power[container$effectsize==effectsizestotest[1]], ylim = c(0,1), type="l", xlab="Sample size", ylab="Power")
+effectsizestotest[1]
+for(radish in 2:length(effectsizestotest))
+{
+  lines(x = container$samplesize[container$effectsize==effectsizestotest[radish]],
+        y=container$power[container$effectsize==effectsizestotest[radish]], type="l", col= rgb(red = effectsizestotest[radish],green = 0, blue = 0, maxColorValue = max(effectsizestotest)))
+}
+legend(x="bottomright", legend = rev(effectsizestotest), col = rev(rgb(red = effectsizestotest,0,0, maxColorValue = max(effectsizestotest))), lty=1, title = "Effect size")
+```
+
+or using ggplot and also considering several values of unexplained variation (thanks Kevin!)
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+power.t = function (diff=1, u=0, sd=1, n=100, iters=10000) {
+  data.frame(i=1:n) %>%
+    mutate(pval=map_dbl(i, function (x, diff, u, sd, n) {
+      a = rnorm(n, u, sd)
+      b = rnorm(n, u+diff, sd)
+      t = t.test(a, b)
+      t$p.value
+    }, diff, u, sd, n)) %>%
+    group_by() %>%
+    summarise(power=mean(pval < 0.05)) %>%
+    pull(power)
+}
+
+powerVnVdiff = expand.grid(n=c(3, 10, 20, 50, 100, 200, 500, 1000),
+                           diff=seq(0, 1, 0.1), sd=c(0.5, 1:3)) %>%
+  mutate(power=pmap_dbl(list(diff=diff, n=n, sd=sd), power.t, iters=1000))
+```
+
+```{r, fig.width=7, fig.height=9}
+ggplot(powerVnVdiff, aes(x=n, y=power)) +
+  geom_line(aes(colour=as.factor(diff))) +
+  scale_colour_discrete(name="Effect Size") +
+  facet_wrap(~paste0("SD = ", sd), ncol=1) +
+  scale_x_log10() +
+  theme_bw()
+```
+
+
+# Tim's plot
+```{r}
+library(pwr)
+pwrVn_eff = expand.grid(n=seq(10, 200, 20), eff=seq(0,1,0.1)) %>%
+  mutate(power=pmap(list(n=n, d=eff), pwr.t.test),
+         power=map_dbl(power, "power"))
+head(pwrVn_eff)
+
+
+
+ggplot(pwrVn_eff, aes(x=n, y=power)) +
+  geom_line(aes(colour=as.factor(eff))) +
+  scale_color_discrete(name="Effect Size") +
+  labs(x="Sample Size", y="Power") +
+  theme_bw()
+  
+```
+
+
+
+# Mixed model exercise
+
+Load data and package
+```{r}
+library(lme4)
+
+repeateddata <- read.csv(file = "RepeatedMeasurements.csv")
+inddata <- read.csv(file = "IndividualMeasurements.csv")
+
+```
+
+Fit lm() on individual data
+```{r}
+summary(lm(value ~ 1 + group, data = inddata))
+```
+
+Fit lm() on repeated data
+```{r}
+summary(lm(value ~ 1 + group, data = repeateddata))
+```
+```
+
+The standard error is too small!
+
+Fit lmer() on repeated data
+
+```{r}
+summary(lmer(value ~ 1 + group + (1 | individual), data=repeateddata))
+```
+
+We find again the same estimate, and the standard error is corrected: we do not find a significant effect.
+
+

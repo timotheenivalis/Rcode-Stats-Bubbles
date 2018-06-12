@@ -1,0 +1,13 @@
+## Linear mixed models.
+
+This Friday (June 15th 2018) we will talk about linear mixed models.
+We will see through examples how including random effects in your models can:
+- reveal hidden relationships between a covariate and the response
+- correct over-optimistic p-values and avoid false-positive
+- but also measure biologically interesting processes
+
+We will see what are random effects (including phylogenetic and genetic effects), how to interpret and extract model outputs, how to test for random effect significance (and whether you should do it)...
+
+I will quickly demonstrate the use of several packages able to fit mixed models (lme4, glmmTMB, MCMCglmm, brms), each with their advantages and fancy tricks; to show that lme4 is not the only option and that another one may better fit your needs.
+
+We will meet again in the Ecology room, third floor of Robertson.

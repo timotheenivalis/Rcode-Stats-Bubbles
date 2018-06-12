@@ -45,3 +45,10 @@ vignettes/*.pdf
 
 #specific folders
 *figure/
+tempPAwithSolution_cache/
+tempPAwithSolution_files/
+
+#specific files after workshops
+
+
+
