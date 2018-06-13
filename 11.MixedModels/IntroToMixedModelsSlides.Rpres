@@ -1,0 +1,308 @@
+<style>
+.section {
+    color: black;
+    background: #E9E8E8;
+    position: fixed;
+    text-align:center;
+    width:100%;
+}
+</style>
+Introduction to linear mixed models
+========================================================
+author: Timothée Bonnet
+date: June 15 2018
+autosize: true
+font-family: 'Helvetica'
+
+Example: hidden relationships
+========================================================
+
+
+Exercise: more hidden relationships
+========================================================
+type: prompt
+
+What are random effects?
+========================================================
+type: section
+
+Residuals and random effects
+========================================================
+
+```{r, echo=FALSE}
+resv <- as.data.frame(diag(5), row.names = c("obs1", "obs2", "obs3", "obs4", "obs5"))
+names(resv) <- c("obs1", "obs2", "obs3", "obs4", "obs5")
+```
+
+Assumed variance-covariance matrix of the process that generates the residuals
+```{r, echo=FALSE}
+knitr::kable(resv)
+```
+
+*residuals are perfectly correlated with themselves, and independent of each-other*
+
+
+Residuals and random effects
+========================================================
+
+```{r, echo=FALSE}
+resv <- as.data.frame(diag(5), row.names = c("obs1", "obs2", "obs3", "obs4", "obs5"))
+names(resv) <- c("obs1", "obs2", "obs3", "obs4", "obs5")
+resv <- rbind(c("ind1", "ind1", "ind2", "ind2", "ind3"),resv)
+resv <- cbind(c("","ind1", "ind1", "ind2", "ind2", "ind3"),resv)
+dimnames(resv) <- list(c("","obs1", "obs2", "obs3", "obs4", "obs5"),c("","obs1", "obs2", "obs3", "obs4", "obs5"))
+resv[2,3] <- 1
+resv[3,2] <- 1
+resv[5,4] <- 1
+resv[4,5] <- 1
+```
+
+If multiple measurements:
+```{r, echo=FALSE}
+knitr::kable(resv)
+```
+
+*among individuals, residuals are correlated with each-other*
+
+Residuals and random effects: split the matrix to decompose the variance
+========================================================
+left: 35%
+```{r, echo=FALSE}
+idv <- as.data.frame(diag(3), row.names = c("ind1", "ind2", "ind3"))
+names(idv) <- c("ind1", "ind2", "ind3")
+```
+
+**Individual var-cov**
+```{r, echo=FALSE}
+knitr::kable(idv)
+```
+***
+**Residual var-cov**
+```{r, echo=FALSE}
+resv <- as.data.frame(diag(5), row.names = c("obs1", "obs2", "obs3", "obs4", "obs5"))
+names(resv) <- c("obs1", "obs2", "obs3", "obs4", "obs5")
+```
+
+```{r, echo=FALSE}
+knitr::kable(resv)
+```
+
+
+NB: phylogenies, spatial correlation, time-series, genetic similarity...
+========================================================
+
+...are mixed models with correlations across random effect levels (individuals, species, locations...)
+```{r, echo=FALSE}
+resv <- as.data.frame(diag(5), row.names = c("obs1", "obs2", "obs3", "obs4", "obs5"))
+names(resv) <- c("obs1", "obs2", "obs3", "obs4", "obs5")
+resv <- rbind(c("ind1", "ind1", "ind2", "ind3", "ind4"),resv)
+resv <- cbind(c("","ind1", "ind1", "ind2", "ind3", "ind4"),resv)
+dimnames(resv) <- list(c("","obs1", "obs2", "obs3", "obs4", "obs5"),c("","obs1", "obs2", "obs3", "obs4", "obs5"))
+resv[2,3] <- 1
+resv[3,2] <- 1
+resv[2,4] <- 0.25
+resv[4,2] <- 0.25
+resv[2,6] <- 0.01
+resv[6,2] <- 0.01
+resv[6,5] <- 0.125
+resv[5,6] <- 0.125
+```
+
+```{r, echo=FALSE}
+knitr::kable(resv)
+```
+
+Correlations represent **(co-)variation that is unexplained**, but is **related to a biological process**
+
+
+Residuals and random effects
+========================================================
+
+$$
+y_{ij} = \mu + \beta x_{ij} + u_i + \epsilon_{ij}
+$$
+
+with, residuals $\epsilon_{ij}\sim Normal(0,V_R)$ and individual random effect $u_{i}\sim Normal(0,V_I)$.
+
+
+Variance components
+========================================================
+
+
+
+Testing random effects significance
+========================================================
+type: section
+
+A variance cannot be negative
+========================================================
+
+
+
+Exercise
+========================================================
+type: prompt
+
+Beyond the random intercept
+========================================================
+type: section
+
+Random interactions, random slopes...
+========================================================
+
+
+Package demonstration
+========================================================
+type: section
+
+Data
+========================================================
+type: prompt
+
+Load data to experiment with various packages
+```{r, echo=FALSE, eval=FALSE}
+nobs <- 1800
+x <- rnorm(n = nobs, mean = 0, sd = 1)
+nind <- 145
+indobs <- sample(x = 1:nind, size = nobs, replace = TRUE)
+indval <- rnorm(n = nind, mean = 0, sd = sqrt(0.6))
+y <- 25+ 0.2*x + indval[indobs] +rnorm(nobs, 0, 2)
+
+dat <- data.frame(response=y, predictor=x, individual=indobs)
+write.table(dat, file = "datforpackagecomp.txt", quote = FALSE, row.names = FALSE)
+```
+
+```{r}
+dat <- read.table(file = "datforpackagecomp.txt", header=TRUE)
+```
+
+The simulated variance among individual is 0.6.
+The simulated effect of the predictor on the response is 0.2
+
+lme4
+========================================================
+```{r}
+library(lme4)
+```
+
+```{r, eval=FALSE}
+mlme4 <- lmer(response ~ 1 + predictor + (1|individual), data=dat)
+summary(mlme4)
+```
+
+glmmTMB
+========================================================
+```{r, eval=FALSE}
+install.packages("glmmTMB")
+```
+```{r}
+library(glmmTMB)
+```
+
+```{r, eval=FALSE}
+mglmmtmb <- glmmTMB(response ~ 1 + predictor + (1|individual), data=dat)
+summary(mglmmtmb)
+
+
+MCMCglmm
+========================================================
+```{r, eval=FALSE}
+install.packages("MCMCglmm")
+```
+```{r}
+library(MCMCglmm)
+```
+
+```{r, eval=FALSE}
+mmcmcglmm <- MCMCglmm(fixed = response ~ 1 + predictor,
+                      random =  ~individual, data=dat)
+summary(mmcmcglmm)
+```
+
+brms
+========================================================
+```{r, eval=FALSE}
+install.packages("brms")
+install.packages("shinystan")
+```
+```{r}
+library(brms)
+library(shinystan)
+```
+
+```{r, eval=FALSE}
+mbrms <- brm(formula = response ~ 1 + predictor + (1|individual), data=dat)
+summary(mbrms)
+plot(mbrms)
+launch_shinystan(mbrms)
+```
+
+INLA
+========================================================
+```{r, eval=FALSE}
+install.packages("INLA", repos=c(getOption("repos"), INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+```
+
+```{r}
+library(INLA)
+```
+
+```{r, eval=FALSE}
+inla
+```
+
+Summary (based on personal exp.)
+=======================================================
+```{r, echo=FALSE}
+comp <- data.frame(Package= c("**lme4**", "**glmmTMB**", "**MCMCglmm**", "**brms**", "**INLA**"),
+                   Framework = c("ML", "ML", "Bayes", "Bayes", "Bayes"),
+                   Speed = c("fast", "fast+", "very slow", "slow", "fast-"),
+                   Flexibility = c("-", "+", "++", "+++", "++"),
+                   Syntax = c("lme4", "lme4", "+/- lme4", "lme4", "diff"),
+                   Doc = c("good", "low", "medium+ (formal)", "medium (blogs)", "low"))
+```
+
+```{r, echo=FALSE}
+knitr::kable(comp)
+```
+
+```{r, echo=FALSE}
+comp <- data.frame(Package= c("**lme4**", "**glmmTMB**", "**MCMCglmm**", "**brms**", "**INLA**"),
+                   Post_treatment = c("difficult", "difficult", "easy but manual", "easy(?) and automated", "medium and manual"),
+                   Whims = c("few", "some-", "few", "some", "some+"),
+                   Structure = c("S4", "S3", "S3", "S3", "S3"))
+```
+
+```{r, echo=FALSE}
+knitr::kable(comp)
+```
+
+
+
+
+Exercise: Compare the speed of the different packages
+====================================================
+type: prompt
+
+And let me know what you find!
+
+Hint:
+```{r, eval=FALSE}
+system.time()
+```
+
+Essential resources
+====================================================
+
+Ben Bolker FAQ:
+http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html
+http://glmm.wikidot.com/start
+
+Subscribe to mailing-list:
+https://stat.ethz.ch/mailman/listinfo/r-sig-mixed-models
+
+MCMCglmm:
+https://cran.r-project.org/web/packages/MCMCglmm/vignettes/CourseNotes.pdf
+
+brms:
+https://paul-buerkner.github.io/blog/brms-blogposts/
