@@ -26,19 +26,19 @@ x <- 4+sort(rnorm(100)) + rnorm(100,0,0.15)
 block <- rep(x = 1:5, each=20)
 blockvalues <- c(-2,-1,0,1,2)
 y <- 8 - x + blockvalues[block] + rnorm(100,0,0.5)
-dat <- data.frame(response = y, predictor = x, block=block)
+thorns <- data.frame(response = y, predictor = x, block=block)
 ```
 
 Is there an effect of the predictor (let's pretend Thorn density in a bush) on the response (let's pretend Herbivory load on the bush)?
 Graphically, it looks like there is a positive relationship (more thorns means more herbivory!?):
 ```{r}
-plot(dat$response, x=dat$predictor, ylab = "Herbivory load", xlab= "Thorn density")
-abline(lm(response~ predictor, data=dat), lwd=5, col="gray")#this is a shortcut to draw a regression line
+plot(thorns$response, x=thorns$predictor, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")#this is a shortcut to draw a regression line
 ```
 
 The summary of a linear model (simple linear regression) also indicates that strong evidence for a positive relationship between the response and the predictor.
 ```{r}
-summary(lm(response~ predictor, data=dat))
+summary(lm(response~ predictor, data=thorns))
 ```
 
 As always, we should check the assumptions of our model to be confident about the parameter estimates and their uncertainty (in particular, their p-values). The main assumptions are:
@@ -48,7 +48,7 @@ As always, we should check the assumptions of our model to be confident about th
 
 You can have a look at some diagnostic graphes using plot(lm()):
 ```{r, eval=FALSE}
-plot(lm(response~ predictor, data=dat))
+plot(lm(response~ predictor, data=thorns))
 ```
 
 You should notice that the two first assumptions are more or less OK, but that something is wrong with the third one: there are trends in the residuals, so that knowing the value of a residual makes you able to more or less predict where should be the next one.
@@ -60,8 +60,8 @@ Let's pretend that we collected the data from five different locations (blocks).
 What if we visualizing differences between locations:
 
 ```{r}
-plot(x,y, col=block, ylab = "Herbivory load", xlab= "Thorn density")
-abline(lm(response~ predictor, data=dat), lwd=5, col="gray")
+plot(thorns$predictor, thorns$response, col=block, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")
 ```
 
 It looks like there is a negative effect of thorn density *within* blocks, but that it is hidden by *among* block differences!
@@ -76,15 +76,31 @@ One option would be to fit five regressions, one per-site. However, that would s
 
 Much better, correct for block, either with a fixed factor:
 ```{r}
-summary(lm(response~ predictor + as.factor(block), data=dat))
+summary(lm(response~ predictor + as.factor(block), data=thorns))
 ```
 
 
 or with a random effect:
 ```{r}
-summary(lmer(response ~ predictor + (1|block), data=dat))
+summary(thornLMM <- lmer(response ~ predictor + (1|block), data=thorns))
 ```
 
+This is what happens in both cases:
+
+```{r, echo=FALSE}
+plot(thorns$predictor, thorns$response, col=thorns$block, ylab = "Herbivory load", xlab= "Thorn density")
+slp <- fixef(thornLMM)[2]
+inter <- fixef(thornLMM)[1]
+re <- ranef(thornLMM)$block[,1]
+
+abline(a = inter+re[1], b=slp, lwd=5)
+abline(a = inter+re[2], b=slp, lwd=5, col="red")
+abline(a = inter+re[3], b=slp, lwd=5, col="green")
+abline(a = inter+re[4], b=slp, lwd=5, col="blue")
+abline(a = inter+re[5], b=slp, lwd=5, col="cyan")
+```
+
+The regression line is vertically shifted among blocks, but all data points contribute to estimating the slope.
 
 ### A more extreme example, where a random effect is really better than fixed effects
 
@@ -96,22 +112,22 @@ nbblocks <- 50
 block <- sample(x = 1:nbblocks, size = sampsize, replace = TRUE)
 blockvalues <- rnorm(n = nbblocks, mean = 0, sd = 3)
 y <- 8 - x + blockvalues[block] + rnorm(sampsize,0,1)
-dat <- data.frame(response = y, predictor = x, block=block)
+thornsmany <- data.frame(response = y, predictor = x, block=block)
 ```
 
 The true effect of the predictor on the response is -1.
 
 ```{r}
-summary(lm(response ~ predictor, data=dat))
+summary(lm(response ~ predictor, data=thornsmany))
 ```
 A simple linear regression greatly over-estimate the effect, and the standard error is very large.
 
 
 Compare the linear model with block as a factor, and the mixed model with block as a random effect:
 ```{r, eval=FALSE}
-summary(lm(response ~ predictor + as.factor(block), data=dat))
+summary(lm(response ~ predictor + as.factor(block), data=thornsmany))
 
-summary(lmer(response ~ predictor + (1|block), data=dat))
+summary(lmer(response ~ predictor + (1|block), data=thornsmany))
 ```
 
 They both provide quite a good estimate for the effect of predictor with rather small standard errors (actually the estimates and standard errors should be almost identical).
@@ -121,29 +137,80 @@ The variance component is a simple measure of how much blocks differ.
 
 
 
+## Testing random effect significance
+Likelihood Ratio Test.
+Comparison of two nested models. Ratio of likelihood $\sim \chi^2$
 
-<!-- ## Testing random effect significance -->
-
-
-
-<!-- ## Other mixed-model packages are very cool -->
-
-<!-- ### glmmTMB -->
-<!-- ```{r} -->
-<!-- library(glmmTMB) -->
-<!-- ``` -->
-
-<!-- ### MCMCglmm -->
-<!-- ```{r} -->
-<!-- library(MCMCglmm) -->
-<!-- ``` -->
-
-<!-- ### brms -->
-
-<!-- ```{r} -->
-<!-- library(brms) -->
-<!-- library(shinystan) -->
-<!-- ``` -->
+```{r}
+thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
+thornLM <- lm(response ~ predictor, data = thorns)
+anova(thornLMM, thornLM) # the mixed model MUST GO FIRST
+```
 
 
+One simulation with a random effect that has no effect
+```{r}
+set.seed(1234)
+RandomVariance <- 0
+sampsize <- 200
+x <- rnorm(sampsize,mean = 4, sd=0.25)
+nbblocks <- 50
+block <- sample(x = 1:nbblocks, size = sampsize, replace = TRUE)
+blockvalues <- rnorm(n = nbblocks, mean = 0, sd = sqrt(RandomVariance))
+y <- 8 - x + blockvalues[block] + rnorm(sampsize,0,1)
+dat <- data.frame(response = y, predictor = x, block=block)
+```
 
+```{r, eval=FALSE}
+lm0 <- lm(response ~ 1 + predictor, data=dat)
+lmm0 <- lmer(response ~ 1 + predictor + (1|block), data=dat )
+(LRT0 <- anova(lmm0, lm0)) #mixed model must come first!
+LRT0$`Pr(>Chisq)`[2] # the p-value
+```
+
+### Exercise: the p-value is wrong for the LRT
+
+**Replicate the simulations to obtain the distribution of p-values under the null-model of no variance**
+
+```{r, echo=FALSE, eval=FALSE}
+set.seed(1234)
+RandomVariance <- 0
+sampsize <- 200
+nbblocks <- 50
+nbsimuls <- 1000
+pvalues <- vector(length = nbsimuls)
+for (i in 1:nbsimuls)
+{
+  x <- rnorm(sampsize,mean = 4, sd=0.25)
+  block <- sample(x = 1:nbblocks, size = sampsize, replace = TRUE)
+  blockvalues <- rnorm(n = nbblocks, mean = 0, sd = sqrt(RandomVariance))
+  y <- 8 - x + blockvalues[block] + rnorm(sampsize,0,1)
+  dat <- data.frame(response = y, predictor = x, block=block)
+  lm0 <- lm(response ~ 1 + predictor, data=dat)
+  lmm0 <- lmer(response ~ 1 + predictor + (1|block), data=dat )
+  (LRT0 <- anova(lmm0, lm0)) #mixed model must come first!
+  pvalues[i] <- LRT0$`Pr(>Chisq)`[2] # the p-value
+}
+
+hist(pvalues)
+mean(pvalues<0.05) 
+```
+There are too few significant results. 
+It may seem good that there are fewer false positive than expected, but it is really not: **this means that the p-value doesn't have the meaning it should**.
+
+The problem is that a variance cannot be negative.
+You can check the confidence interval from our models:
+```{r, eval=FALSE, warning=FALSE}
+confint(lmm0) #Confidence interval
+```
+
+
+LRT are two sided tests / count one parameter per random effect
+A random effect is half a parameter / to be tested with one-side tests
+
+**Divide the p-values by two**
+
+Same problem with AIC/BIC: count only half a parameter per random effect
+**Remove one IC point per random effect**
+
+*NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter*
