@@ -7,20 +7,121 @@
     width:100%;
 }
 </style>
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
 Introduction to linear mixed models
 ========================================================
-author: Timothée Bonnet
+author: timotheenivalis.github.io
 date: June 15 2018
 autosize: true
 font-family: 'Helvetica'
 
 Example: hidden relationships
 ========================================================
+class: small-code
 
+
+```r
+thorns <- read.table(file = "thorndata.txt", header=TRUE)
+```
+
+
+```r
+plot(thorns$response, x=thorns$predictor, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")#this is a shortcut to draw a regression line
+```
+
+![plot of chunk unnamed-chunk-2](IntroToMixedModelsSlides-figure/unnamed-chunk-2-1.png)
+
+
+Example: hidden relationships
+========================================================
+
+
+```r
+lmthorns <- lm(response~ predictor, data=thorns)
+summary(lmthorns)
+```
+
+Example: hidden relationships
+========================================================
+
+
+```r
+plot(lmthorns)
+```
+
+Example: hidden relationships
+========================================================
+class: small-code
+*Simpson's paradox*
+
+
+```r
+plot(thorns$predictor, thorns$response, col=thorns$block, ylab = "Herbivory load", xlab= "Thorn density")
+abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")
+```
+
+![plot of chunk unnamed-chunk-5](IntroToMixedModelsSlides-figure/unnamed-chunk-5-1.png)
+
+Example: hidden relationships
+========================================================
+class: small-code
+
+Fixed-effect correction
+
+```r
+summary(lm(response~ predictor + as.factor(block), data=thorns))
+```
+
+```
+
+Call:
+lm(formula = response ~ predictor + as.factor(block), data = thorns)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.68769 -0.28889  0.04982  0.24924  1.39683 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)         6.0471     0.3872  15.617  < 2e-16 ***
+predictor          -0.9752     0.1414  -6.899 6.02e-10 ***
+as.factor(block)2   0.9400     0.1762   5.334 6.62e-07 ***
+as.factor(block)3   1.9958     0.2147   9.295 5.80e-15 ***
+as.factor(block)4   2.9706     0.2812  10.562  < 2e-16 ***
+as.factor(block)5   3.7674     0.4219   8.929 3.48e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4875 on 94 degrees of freedom
+Multiple R-squared:  0.6151,	Adjusted R-squared:  0.5947 
+F-statistic: 30.05 on 5 and 94 DF,  p-value: < 2.2e-16
+```
+
+Example: hidden relationships
+========================================================
+class: small-code
+
+
+```r
+library(lme4)
+thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
+summary(thornLMM)
+```
 
 Exercise: more hidden relationships
 ========================================================
 type: prompt
+
+Load the data thornsmanylocations.txt
+
+Compare lm() and lmer() correction of group.
+
+
 
 What are random effects?
 ========================================================
@@ -126,14 +227,71 @@ Testing random effects significance
 ========================================================
 type: section
 
-A variance cannot be negative
+Likelihood Ratio Test (LRT)
 ========================================================
 
 
 
-Exercise
+
+Exercise: LRT p-value distribution
 ========================================================
 type: prompt
+
+One simulation with a random effect that has no effect
+
+```r
+set.seed(1234)
+RandomVariance <- 0
+sampsize <- 200
+x <- rnorm(sampsize,mean = 4, sd=0.25)
+nbblocks <- 50
+block <- sample(x = 1:nbblocks, size = sampsize, replace = TRUE)
+blockvalues <- rnorm(n = nbblocks, mean = 0, sd = sqrt(RandomVariance))
+y <- 8 - x + blockvalues[block] + rnorm(sampsize,0,1)
+dat <- data.frame(response = y, predictor = x, block=block)
+```
+
+
+```r
+lm0 <- lm(response ~ 1 + predictor, data=dat)
+lmm0 <- lmer(response ~ 1 + predictor + (1|block), data=dat )
+(LRT0 <- anova(lmm0, lm0)) #mixed model must come first!
+LRT0$`Pr(>Chisq)`[2] # the p-value
+```
+
+Exercise: LRT p-value distribution
+========================================================
+type: prompt
+
+**Replicate the simulations to obtain the distribution of p-values under the null-model of no variance**
+
+
+
+
+A variance cannot be negative
+========================================================
+incremental: TRUE
+
+
+```r
+confint(lmm0) #Confidence interval
+```
+
+LRT are two sided tests / count one parameter per random effect
+A random effect is half a parameter / to be tested with one-side tests
+
+**Divide the p-values by two**
+
+Same problem with AIC/BIC: count only half a parameter per random effect
+**Remove one IC point per random effect**
+
+NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter
+
+Should you test and remove non-significant random effects?
+========================================================
+
+
+
 
 Beyond the random intercept
 ========================================================

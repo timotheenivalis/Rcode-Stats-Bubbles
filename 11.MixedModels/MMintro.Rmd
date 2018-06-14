@@ -78,6 +78,12 @@ One option would be to fit five regressions, one per-site. However, that would s
 summary(lm(response~ predictor + as.factor(block), data=dat))
 ```
 
+
+```{r}
+summary(lmer(response ~ predictor + (1|block), data=dat))
+```
+
+
 ### A more extreme example, where a random effect is really better than fixed effects
 
 ```{r}
