@@ -9,7 +9,7 @@
 </style>
 <style>
 .small-code pre code {
-  font-size: 1em;
+  font-size: 1.2em;
 }
 </style>
 Introduction to linear mixed models
@@ -316,6 +316,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 Exercise: LRT p-value distribution
 ========================================================
 type: prompt
+class: small-code
 
 One simulation with a random effect that has no effect
 
@@ -348,10 +349,10 @@ type: prompt
 
 
 
-A variance cannot be negative
+Correct p-values in LRT
 ========================================================
-incremental: TRUE
-
+incremental: true
+A variance cannot be negative
 
 ```r
 confint(lmm0) #Confidence interval
@@ -365,7 +366,7 @@ A random effect is half a parameter / to be tested with one-side tests
 Same problem with AIC/BIC: count only half a parameter per random effect
 **Remove one IC point per random effect**
 
-NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter
+*NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter*
 
 Test / remove non-significant random effects?
 ========================================================
@@ -398,6 +399,7 @@ Random interactions, random slopes...
 
 Random interactions, random slopes...
 ========================================================
+incremental: true
 
 "Random interaction" predictor:block = "random slope" = "random regression"
 
@@ -409,7 +411,8 @@ Blocks allowed to differ in intercept and slopes
 
 Fits 2 variances and 1 covariance
 
-
+Syntax to more random effects:
+http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-specification
 
 Package demonstration
 ========================================================
@@ -427,11 +430,16 @@ Load data to experiment with various packages
 dat <- read.table(file = "datforpackagecomp.txt", header=TRUE)
 ```
 
-The simulated variance among individual is 0.6.
+The simulated intercept variance among individual is 0.6.
+The simulated slope variance among individual is 0.01.
 The simulated effect of the predictor on the response is 0.2
 
 lme4
 ========================================================
+incremental: true
+class: small-code
+
+Standard, fast, simple package
 
 ```r
 library(lme4)
@@ -443,12 +451,125 @@ mlme4 <- lmer(response ~ 1 + predictor + (1|individual), data=dat)
 summary(mlme4)
 ```
 
+```
+Linear mixed model fit by REML ['lmerMod']
+Formula: response ~ 1 + predictor + (1 | individual)
+   Data: dat
+
+REML criterion at convergence: 5164.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.8690 -0.6772  0.0137  0.6656  3.0706 
+
+Random effects:
+ Groups     Name        Variance Std.Dev.
+ individual (Intercept) 0.5576   0.7467  
+ Residual               3.9580   1.9895  
+Number of obs: 1200, groups:  individual, 120
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept) 25.05978    0.09024 277.710
+predictor    0.18881    0.06030   3.131
+
+Correlation of Fixed Effects:
+          (Intr)
+predictor -0.010
+```
+
+lme4
+========================================================
+incremental: true
+class: small-code
+
+No p-values (for good reason) if you really want them:
+
+
+```r
+library(lmerTest)
+summary(lmerTest::lmer(response ~ 1 + predictor + (1|individual), data=dat))
+```
+
+```
+Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: response ~ 1 + predictor + (1 | individual)
+   Data: dat
+
+REML criterion at convergence: 5164.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.8690 -0.6772  0.0137  0.6656  3.0706 
+
+Random effects:
+ Groups     Name        Variance Std.Dev.
+ individual (Intercept) 0.5576   0.7467  
+ Residual               3.9580   1.9895  
+Number of obs: 1200, groups:  individual, 120
+
+Fixed effects:
+             Estimate Std. Error        df t value Pr(>|t|)    
+(Intercept) 2.506e+01  9.024e-02 1.172e+02 277.710  < 2e-16 ***
+predictor   1.888e-01  6.030e-02 1.154e+03   3.131  0.00178 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+          (Intr)
+predictor -0.010
+```
+
+lme4
+========================================================
+incremental: true
+class: small-code
+
+Rudimentary diagnostic
+
+```r
+plot(mlme4)
+```
+
+S4, complicated components:
+
+```r
+mlme4@beta
+mlme4@u
+```
+
+Better use functions to extract components:
+
+```r
+fixef(mlme4)
+ranef(mlme4)
+VarCorr(mlme4)
+```
+
+Individual repeatability:
+
+```r
+as.numeric(VarCorr(mlme4)$individual)/sum(getME(mlme4, "sigma")^2, as.numeric(VarCorr(mlme4)$individual))
+```
+
+```
+[1] 0.1234766
+```
+
 glmmTMB
 ========================================================
+incremental: true
+class: small-code
+
+
+In development, more options (e.g. Zero-Inflation) sometimes but a bit slower (lmm)/faster(glmm) than lme4, fewer diagnostic, less easy to extract coeff
+
 
 ```r
 install.packages("glmmTMB")
 ```
+
 
 ```r
 library(glmmTMB)
@@ -458,15 +579,72 @@ library(glmmTMB)
 ```r
 mglmmtmb <- glmmTMB(response ~ 1 + predictor + (1|individual), data=dat)
 summary(mglmmtmb)
+```
+
+```
+ Family: gaussian  ( identity )
+Formula:          response ~ 1 + predictor + (1 | individual)
+Data: dat
+
+     AIC      BIC   logLik deviance df.resid 
+  5165.8   5186.2  -2578.9   5157.8     1196 
+
+Random effects:
+
+Conditional model:
+ Groups     Name        Variance Std.Dev.
+ individual (Intercept) 0.5495   0.7413  
+ Residual               3.9544   1.9886  
+Number of obs: 1200, groups:  individual, 120
+
+Dispersion estimate for gaussian family (sigma^2): 3.95 
+
+Conditional model:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) 25.05998    0.08990  278.75  < 2e-16 ***
+predictor    0.18870    0.06029    3.13  0.00175 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+glmmTMB
+========================================================
+incremental: true
+class: small-code
+
+
+No automated diagnostics:
+
+```r
+plot(mglmmtmb) #DOESN'T work yet
+```
+
+Estimate extraction from summary (other ways?)
+
+Individual repeatability:
+
+```r
+smglmmtmb <- summary(mglmmtmb)
+
+as.numeric(smglmmtmb$varcor$cond$individual)/(smglmmtmb$sigma^2 + as.numeric(smglmmtmb$varcor$cond$individual))
+```
+
+```
+[1] 0.1220021
+```
 
 
 MCMCglmm
 ========================================================
-```
+class: small-code
+
+Bayesian MCMC, slow compare to ML, more flexible, estimate better complicated problems, post-treatment very easy and statistically correct
+
 
 ```r
 install.packages("MCMCglmm")
 ```
+
 
 ```r
 library(MCMCglmm)
@@ -476,11 +654,120 @@ library(MCMCglmm)
 ```r
 mmcmcglmm <- MCMCglmm(fixed = response ~ 1 + predictor,
                       random =  ~individual, data=dat)
+```
+
+```
+
+                       MCMC iteration = 0
+
+                       MCMC iteration = 1000
+
+                       MCMC iteration = 2000
+
+                       MCMC iteration = 3000
+
+                       MCMC iteration = 4000
+
+                       MCMC iteration = 5000
+
+                       MCMC iteration = 6000
+
+                       MCMC iteration = 7000
+
+                       MCMC iteration = 8000
+
+                       MCMC iteration = 9000
+
+                       MCMC iteration = 10000
+
+                       MCMC iteration = 11000
+
+                       MCMC iteration = 12000
+
+                       MCMC iteration = 13000
+```
+
+```r
 summary(mmcmcglmm)
+```
+
+```
+
+ Iterations = 3001:12991
+ Thinning interval  = 10
+ Sample size  = 1000 
+
+ DIC: 5129.739 
+
+ G-structure:  ~individual
+
+           post.mean l-95% CI u-95% CI eff.samp
+individual    0.5632   0.3299   0.8262      881
+
+ R-structure:  ~units
+
+      post.mean l-95% CI u-95% CI eff.samp
+units      3.97    3.652     4.32     1000
+
+ Location effects: response ~ 1 + predictor 
+
+            post.mean l-95% CI u-95% CI eff.samp  pMCMC    
+(Intercept)  25.06243 24.88928 25.24056     1000 <0.001 ***
+predictor     0.18690  0.07866  0.31341     1000 <0.001 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+MCMCglmm
+========================================================
+incremental: true
+class: small-code
+
+Diagnostics:
+
+
+```r
+plot(mmcmcglmm)
+autocorr(mmcmcglmm$VCV)
+summary(mmcmcglmm$VCV)
+```
+
+Repeatability
+
+```r
+mcmcmrep <- mmcmcglmm$VCV[,"individual"] / (mmcmcglmm$VCV[,"individual"] + mmcmcglmm$VCV[,"units"])
+plot(mcmcmrep)
+```
+
+![plot of chunk unnamed-chunk-45](IntroToMixedModelsSlides-figure/unnamed-chunk-45-1.png)
+
+
+```r
+posterior.mode(mcmcmrep)
+```
+
+```
+     var1 
+0.1270167 
+```
+
+```r
+HPDinterval(mcmcmrep)
+```
+
+```
+          lower     upper
+var1 0.07613885 0.1753302
+attr(,"Probability")
+[1] 0.95
 ```
 
 brms
 ========================================================
+class: small-code
+
+Bayesian Hamiltonian Monte Carlo based on STAN, very slow, but super efficient estimation, "infinitely" flexible (by modifying the STAN code)
+
 
 ```r
 install.packages("brms")
@@ -496,12 +783,38 @@ library(shinystan)
 ```r
 mbrms <- brm(formula = response ~ 1 + predictor + (1|individual), data=dat)
 summary(mbrms)
+```
+Diagnostics:
+
+```r
 plot(mbrms)
 launch_shinystan(mbrms)
 ```
 
+brms
+========================================================
+class: small-code
+
+
+```r
+fixef(mbrms)
+ranef(mbrms)
+brms::VarCorr(mbrms)
+```
+
+Repeatability
+
+```r
+repbrms <- posterior_samples(mbrms, pars = "sd")^2 /(posterior_samples(mbrms, pars = "sd")^2 +posterior_samples(mbrms, pars = "sigma")^2) 
+plot(as.mcmc(repbrms))
+```
+
 INLA
 ========================================================
+class: small-code
+
+Bayesian Laplace Approximation, very fast, good estimation, not as flexible.
+
 
 ```r
 install.packages("INLA", repos=c(getOption("repos"), INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
@@ -514,7 +827,8 @@ library(INLA)
 
 
 ```r
-inla
+minla <- inla(formula =response ~ 1 + predictor + f(individual, model = "iid"), data=dat )
+summary(minla)
 ```
 
 Summary (based on personal exp.)
@@ -542,6 +856,9 @@ Summary (based on personal exp.)
 |**INLA**     |medium and manual     |some+ |S3        |
 
 
+Exercise: Fit random regressions with the packages you like
+====================================================
+type: prompt
 
 
 Exercise: Compare the speed of the different packages
@@ -571,3 +888,5 @@ https://cran.r-project.org/web/packages/MCMCglmm/vignettes/CourseNotes.pdf
 
 brms:
 https://paul-buerkner.github.io/blog/brms-blogposts/
+http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/
+

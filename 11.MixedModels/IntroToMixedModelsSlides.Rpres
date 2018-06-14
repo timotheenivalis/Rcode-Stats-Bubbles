@@ -9,7 +9,7 @@
 </style>
 <style>
 .small-code pre code {
-  font-size: 1em;
+  font-size: 1.2em;
 }
 </style>
 Introduction to linear mixed models
@@ -236,6 +236,7 @@ anova(thornLMM, thornLM) # the mixed model MUST GO FIRST
 Exercise: LRT p-value distribution
 ========================================================
 type: prompt
+class: small-code
 
 One simulation with a random effect that has no effect
 ```{r}
@@ -288,10 +289,10 @@ mean(pvalues<0.05)
 ```
 
 
-A variance cannot be negative
+Correct p-values in LRT
 ========================================================
-incremental: TRUE
-
+incremental: true
+A variance cannot be negative
 ```{r, eval=FALSE}
 confint(lmm0) #Confidence interval
 ```
@@ -304,7 +305,7 @@ A random effect is half a parameter / to be tested with one-side tests
 Same problem with AIC/BIC: count only half a parameter per random effect
 **Remove one IC point per random effect**
 
-NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter
+*NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter*
 
 Test / remove non-significant random effects?
 ========================================================
@@ -361,6 +362,7 @@ abline(a = inter+reint[5], b=slp+resl[5], lwd=5, col="cyan")
 
 Random interactions, random slopes...
 ========================================================
+incremental: true
 
 "Random interaction" predictor:block = "random slope" = "random regression"
 ```{r, eval=FALSE}
@@ -371,7 +373,8 @@ Blocks allowed to differ in intercept and slopes
 
 Fits 2 variances and 1 covariance
 
-
+Syntax to more random effects:
+http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-specification
 
 Package demonstration
 ========================================================
@@ -383,12 +386,13 @@ type: prompt
 
 Load data to experiment with various packages
 ```{r, echo=FALSE, eval=FALSE}
-nobs <- 1800
+nobs <- 1200
 x <- rnorm(n = nobs, mean = 0, sd = 1)
-nind <- 145
+nind <- 120
 indobs <- sample(x = 1:nind, size = nobs, replace = TRUE)
 indval <- rnorm(n = nind, mean = 0, sd = sqrt(0.6))
-y <- 25+ 0.2*x + indval[indobs] +rnorm(nobs, 0, 2)
+indslp <- rnorm(n=nind, mean=0, sd=sqrt(0.01))
+y <- 25+ (0.2+indslp[indobs])*x + indval[indobs] +rnorm(nobs, 0, 2)
 
 dat <- data.frame(response=y, predictor=x, individual=indobs)
 write.table(dat, file = "datforpackagecomp.txt", quote = FALSE, row.names = FALSE)
@@ -398,51 +402,157 @@ write.table(dat, file = "datforpackagecomp.txt", quote = FALSE, row.names = FALS
 dat <- read.table(file = "datforpackagecomp.txt", header=TRUE)
 ```
 
-The simulated variance among individual is 0.6.
+The simulated intercept variance among individual is 0.6.
+The simulated slope variance among individual is 0.01.
 The simulated effect of the predictor on the response is 0.2
 
 lme4
 ========================================================
+incremental: true
+class: small-code
+
+Standard, fast, simple package
 ```{r}
 library(lme4)
 ```
 
-```{r, eval=FALSE}
+```{r}
 mlme4 <- lmer(response ~ 1 + predictor + (1|individual), data=dat)
 summary(mlme4)
 ```
 
+lme4
+========================================================
+incremental: true
+class: small-code
+
+No p-values (for good reason) if you really want them:
+
+```{r}
+library(lmerTest)
+summary(lmerTest::lmer(response ~ 1 + predictor + (1|individual), data=dat))
+```
+
+lme4
+========================================================
+incremental: true
+class: small-code
+
+Rudimentary diagnostic
+```{r, eval=FALSE}
+plot(mlme4)
+```
+
+S4, complicated components:
+```{r, eval=FALSE}
+mlme4@beta
+mlme4@u
+```
+
+Better use functions to extract components:
+```{r, eval=FALSE}
+fixef(mlme4)
+ranef(mlme4)
+VarCorr(mlme4)
+```
+
+Individual repeatability:
+```{r}
+as.numeric(VarCorr(mlme4)$individual)/sum(getME(mlme4, "sigma")^2, as.numeric(VarCorr(mlme4)$individual))
+```
+
 glmmTMB
 ========================================================
+incremental: true
+class: small-code
+
+
+In development, more options (e.g. Zero-Inflation) sometimes but a bit slower (lmm)/faster(glmm) than lme4, fewer diagnostic, less easy to extract coeff
+
 ```{r, eval=FALSE}
 install.packages("glmmTMB")
 ```
+
 ```{r}
 library(glmmTMB)
 ```
 
-```{r, eval=FALSE}
+```{r}
 mglmmtmb <- glmmTMB(response ~ 1 + predictor + (1|individual), data=dat)
 summary(mglmmtmb)
+```
+
+glmmTMB
+========================================================
+incremental: true
+class: small-code
+
+
+No automated diagnostics:
+```{r, eval=FALSE}
+plot(mglmmtmb) #DOESN'T work yet
+```
+
+Estimate extraction from summary (other ways?)
+
+Individual repeatability:
+```{r}
+smglmmtmb <- summary(mglmmtmb)
+
+as.numeric(smglmmtmb$varcor$cond$individual)/(smglmmtmb$sigma^2 + as.numeric(smglmmtmb$varcor$cond$individual))
+```
 
 
 MCMCglmm
 ========================================================
+class: small-code
+
+Bayesian MCMC, slow compare to ML, more flexible, estimate better complicated problems, post-treatment very easy and statistically correct
+
 ```{r, eval=FALSE}
 install.packages("MCMCglmm")
 ```
+
 ```{r}
 library(MCMCglmm)
 ```
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 mmcmcglmm <- MCMCglmm(fixed = response ~ 1 + predictor,
                       random =  ~individual, data=dat)
 summary(mmcmcglmm)
 ```
 
+MCMCglmm
+========================================================
+incremental: true
+class: small-code
+
+Diagnostics:
+
+```{r, eval=FALSE}
+plot(mmcmcglmm)
+autocorr(mmcmcglmm$VCV)
+summary(mmcmcglmm$VCV)
+```
+
+Repeatability
+```{r, results='hide'}
+mcmcmrep <- mmcmcglmm$VCV[,"individual"] / (mmcmcglmm$VCV[,"individual"] + mmcmcglmm$VCV[,"units"])
+plot(mcmcmrep)
+```
+
+```{r}
+posterior.mode(mcmcmrep)
+HPDinterval(mcmcmrep)
+```
+
 brms
 ========================================================
+class: small-code
+
+Bayesian Hamiltonian Monte Carlo based on STAN, very slow, but super efficient estimation, "infinitely" flexible (by modifying the STAN code)
+
 ```{r, eval=FALSE}
 install.packages("brms")
 install.packages("shinystan")
@@ -455,12 +565,35 @@ library(shinystan)
 ```{r, eval=FALSE}
 mbrms <- brm(formula = response ~ 1 + predictor + (1|individual), data=dat)
 summary(mbrms)
+```
+Diagnostics:
+```{r, eval=FALSE}
 plot(mbrms)
 launch_shinystan(mbrms)
 ```
 
+brms
+========================================================
+class: small-code
+
+```{r, eval=FALSE}
+fixef(mbrms)
+ranef(mbrms)
+brms::VarCorr(mbrms)
+```
+
+Repeatability
+```{r, eval=FALSE}
+repbrms <- posterior_samples(mbrms, pars = "sd")^2 /(posterior_samples(mbrms, pars = "sd")^2 +posterior_samples(mbrms, pars = "sigma")^2) 
+plot(as.mcmc(repbrms))
+```
+
 INLA
 ========================================================
+class: small-code
+
+Bayesian Laplace Approximation, very fast, good estimation, not as flexible.
+
 ```{r, eval=FALSE}
 install.packages("INLA", repos=c(getOption("repos"), INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 ```
@@ -470,7 +603,8 @@ library(INLA)
 ```
 
 ```{r, eval=FALSE}
-inla
+minla <- inla(formula =response ~ 1 + predictor + f(individual, model = "iid"), data=dat )
+summary(minla)
 ```
 
 Summary (based on personal exp.)
@@ -500,6 +634,9 @@ knitr::kable(comp)
 ```
 
 
+Exercise: Fit random regressions with the packages you like
+====================================================
+type: prompt
 
 
 Exercise: Compare the speed of the different packages
@@ -528,3 +665,5 @@ https://cran.r-project.org/web/packages/MCMCglmm/vignettes/CourseNotes.pdf
 
 brms:
 https://paul-buerkner.github.io/blog/brms-blogposts/
+http://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/
+

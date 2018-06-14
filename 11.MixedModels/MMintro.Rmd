@@ -20,6 +20,7 @@ We first simulate data that violate an assumption of linear models: independance
 The following code may appear superficially complicated, but don't worry about it. This tutorial is about mixed models, not simulations, you can just copy-paste it to generate the data we will need later on.
 
 ```{r}
+library(lme4)
 set.seed(1234)
 x <- 4+sort(rnorm(100)) + rnorm(100,0,0.15)
 block <- rep(x = 1:5, each=20)
@@ -73,12 +74,13 @@ How to correct for this problem statistically?
 One option would be to fit five regressions, one per-site. However, that would substantially reduce the statistical power, and you would likely not detect the relationship in all the blocks even if it is there in all of them.
 
 
-
+Much better, correct for block, either with a fixed factor:
 ```{r}
 summary(lm(response~ predictor + as.factor(block), data=dat))
 ```
 
 
+or with a random effect:
 ```{r}
 summary(lmer(response ~ predictor + (1|block), data=dat))
 ```
@@ -120,28 +122,28 @@ The variance component is a simple measure of how much blocks differ.
 
 
 
-## Testing random effect significance
+<!-- ## Testing random effect significance -->
 
 
 
-## Other mixed-model packages are very cool
+<!-- ## Other mixed-model packages are very cool -->
 
-### glmmTMB
-```{r}
-library(glmmTMB)
-```
+<!-- ### glmmTMB -->
+<!-- ```{r} -->
+<!-- library(glmmTMB) -->
+<!-- ``` -->
 
-### MCMCglmm
-```{r}
-library(MCMCglmm)
-```
+<!-- ### MCMCglmm -->
+<!-- ```{r} -->
+<!-- library(MCMCglmm) -->
+<!-- ``` -->
 
-### brms
+<!-- ### brms -->
 
-```{r}
-library(brms)
-library(shinystan)
-```
+<!-- ```{r} -->
+<!-- library(brms) -->
+<!-- library(shinystan) -->
+<!-- ``` -->
 
 
 
