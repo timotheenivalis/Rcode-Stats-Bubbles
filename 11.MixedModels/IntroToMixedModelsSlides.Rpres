@@ -35,8 +35,9 @@ abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")#this is a shortc
 
 Example: hidden relationships
 ========================================================
+class: small-code
 
-```{r, eval=FALSE}
+```{r}
 lmthorns <- lm(response~ predictor, data=thorns)
 summary(lmthorns)
 ```
@@ -44,8 +45,8 @@ summary(lmthorns)
 Example: hidden relationships
 ========================================================
 
-```{r, eval=FALSE}
-plot(lmthorns)
+```{r}
+plot(lmthorns, which=1)
 ```
 
 Example: hidden relationships
@@ -71,19 +72,36 @@ Example: hidden relationships
 ========================================================
 class: small-code
 
-```{r, message=FALSE, warning=FALSE, results='hide'}
+```{r, message=FALSE, warning=FALSE}
 library(lme4)
 thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
 summary(thornLMM)
+```
+
+
+Example: hidden relationships
+========================================================
+class: small-code
+```{r, echo=FALSE}
+plot(thorns$predictor, thorns$response, col=thorns$block, ylab = "Herbivory load", xlab= "Thorn density")
+slp <- fixef(thornLMM)[2]
+inter <- fixef(thornLMM)[1]
+re <- ranef(thornLMM)$block[,1]
+
+abline(a = inter+re[1], b=slp, lwd=5)
+abline(a = inter+re[2], b=slp, lwd=5, col="red")
+abline(a = inter+re[3], b=slp, lwd=5, col="green")
+abline(a = inter+re[4], b=slp, lwd=5, col="blue")
+abline(a = inter+re[5], b=slp, lwd=5, col="cyan")
 ```
 
 Exercise: more hidden relationships
 ========================================================
 type: prompt
 
-Load the data thornsmanylocations.txt
+Load the data _thornsmanylocations.txt_
 
-Compare lm() and lmer() correction of group.
+Compare **lm()** and **lmer()** corrections for block.
 
 
 
@@ -129,9 +147,10 @@ knitr::kable(resv)
 
 *among individuals, residuals are correlated with each-other*
 
-Residuals and random effects: split the matrix to decompose the variance
+Residuals and random effects
 ========================================================
 left: 35%
+
 ```{r, echo=FALSE}
 idv <- as.data.frame(diag(3), row.names = c("ind1", "ind2", "ind3"))
 names(idv) <- c("ind1", "ind2", "ind3")
@@ -186,13 +205,14 @@ Residuals and random effects
 $$
 y_{ij} = \mu + \beta x_{ij} + u_i + \epsilon_{ij}
 $$
-
 with, residuals $\epsilon_{ij}\sim Normal(0,V_R)$ and individual random effect $u_{i}\sim Normal(0,V_I)$.
 
 
-Variance components
-========================================================
-
+Random effects are cool because:
+* More efficient than estimating many independent fixed effects
+* Avoid distration from many coefficients and p-values
+* Test effect of grouping variable as one parameter
+* Variance components biologically interesting (e.g. repeatability $V_I/(V_I+V_R)$)
 
 
 Testing random effects significance
@@ -201,7 +221,15 @@ type: section
 
 Likelihood Ratio Test (LRT)
 ========================================================
+class: small-code
 
+Comparison of two nested models. Ratio of likelihood $\sim \chi^2$
+
+```{r}
+thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
+thornLM <- lm(response ~ predictor, data = thorns)
+anova(thornLMM, thornLM) # the mixed model MUST GO FIRST
+```
 
 
 
@@ -278,11 +306,20 @@ Same problem with AIC/BIC: count only half a parameter per random effect
 
 NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter
 
-Should you test and remove non-significant random effects?
+Test / remove non-significant random effects?
 ========================================================
+incremental: true
 
+**Test ?**
 
+* Yes if effect of interest
+* Maybe if only a nuisance parameter
 
+**Remove ?**
+
+* Probably should keep if part of exp. design
+* Doesn't matter much if non-significant
+* Maybe remove if too many variables in exploratory analyses
 
 Beyond the random intercept
 ========================================================
@@ -290,6 +327,50 @@ type: section
 
 Random interactions, random slopes...
 ========================================================
+
+```{r, echo=FALSE}
+plot(thorns$predictor, thorns$response, col=thorns$block, ylab = "Herbivory load", xlab= "Thorn density", main="Random intercept only")
+slp <- fixef(thornLMM)[2]
+inter <- fixef(thornLMM)[1]
+re <- ranef(thornLMM)$block[,1]
+
+abline(a = inter+re[1], b=slp, lwd=5)
+abline(a = inter+re[2], b=slp, lwd=5, col="red")
+abline(a = inter+re[3], b=slp, lwd=5, col="green")
+abline(a = inter+re[4], b=slp, lwd=5, col="blue")
+abline(a = inter+re[5], b=slp, lwd=5, col="cyan")
+```
+
+Random interactions, random slopes...
+========================================================
+
+```{r, echo=FALSE}
+plot(thorns$predictor, thorns$response, col=thorns$block, ylab = "Herbivory load", xlab= "Thorn density", main="Random intercept and slope")
+thornLMM2 <- lmer(response ~ 1 + predictor + (1+predictor|block), data=thorns)
+slp <- fixef(thornLMM2)[2]
+inter <- fixef(thornLMM2)[1]
+reint <- ranef(thornLMM2)$block[,1]
+resl <- ranef(thornLMM2)$block[,2]
+
+abline(a = inter+reint[1], b=slp+resl[1], lwd=5)
+abline(a = inter+reint[2], b=slp+resl[2], lwd=5, col="red")
+abline(a = inter+reint[3], b=slp+resl[3], lwd=5, col="green")
+abline(a = inter+reint[4], b=slp+resl[4], lwd=5, col="blue")
+abline(a = inter+reint[5], b=slp+resl[5], lwd=5, col="cyan")
+```
+
+Random interactions, random slopes...
+========================================================
+
+"Random interaction" predictor:block = "random slope" = "random regression"
+```{r, eval=FALSE}
+lmer(response ~ 1 + predictor + (1+predictor|block), data=thorns)
+```
+
+Blocks allowed to differ in intercept and slopes
+
+Fits 2 variances and 1 covariance
+
 
 
 Package demonstration

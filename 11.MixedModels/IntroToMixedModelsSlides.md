@@ -39,6 +39,7 @@ abline(lm(response~ predictor, data=thorns), lwd=5, col="gray")#this is a shortc
 
 Example: hidden relationships
 ========================================================
+class: small-code
 
 
 ```r
@@ -46,13 +47,36 @@ lmthorns <- lm(response~ predictor, data=thorns)
 summary(lmthorns)
 ```
 
+```
+
+Call:
+lm(formula = response ~ predictor, data = thorns)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.11617 -0.51831  0.08215  0.54349  1.51932 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   3.2564     0.2854   11.41  < 2e-16 ***
+predictor     0.2524     0.0717    3.52 0.000657 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.7252 on 98 degrees of freedom
+Multiple R-squared:  0.1122,	Adjusted R-squared:  0.1032 
+F-statistic: 12.39 on 1 and 98 DF,  p-value: 0.0006566
+```
+
 Example: hidden relationships
 ========================================================
 
 
 ```r
-plot(lmthorns)
+plot(lmthorns, which=1)
 ```
+
+![plot of chunk unnamed-chunk-4](IntroToMixedModelsSlides-figure/unnamed-chunk-4-1.png)
 
 Example: hidden relationships
 ========================================================
@@ -113,13 +137,46 @@ thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
 summary(thornLMM)
 ```
 
+```
+Linear mixed model fit by REML ['lmerMod']
+Formula: response ~ predictor + (1 | block)
+   Data: thorns
+
+REML criterion at convergence: 165.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.4884 -0.6059  0.1091  0.5234  2.8735 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ block    (Intercept) 2.129    1.4590  
+ Residual             0.238    0.4878  
+Number of obs: 100, groups:  block, 5
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)   7.7652     0.8441   9.199
+predictor    -0.9189     0.1385  -6.633
+
+Correlation of Fixed Effects:
+          (Intr)
+predictor -0.632
+```
+
+
+Example: hidden relationships
+========================================================
+class: small-code
+![plot of chunk unnamed-chunk-8](IntroToMixedModelsSlides-figure/unnamed-chunk-8-1.png)
+
 Exercise: more hidden relationships
 ========================================================
 type: prompt
 
-Load the data thornsmanylocations.txt
+Load the data _thornsmanylocations.txt_
 
-Compare lm() and lmer() correction of group.
+Compare **lm()** and **lmer()** corrections for block.
 
 
 
@@ -163,9 +220,10 @@ If multiple measurements:
 
 *among individuals, residuals are correlated with each-other*
 
-Residuals and random effects: split the matrix to decompose the variance
+Residuals and random effects
 ========================================================
 left: 35%
+
 
 
 **Individual var-cov**
@@ -214,13 +272,14 @@ Residuals and random effects
 $$
 y_{ij} = \mu + \beta x_{ij} + u_i + \epsilon_{ij}
 $$
-
 with, residuals $\epsilon_{ij}\sim Normal(0,V_R)$ and individual random effect $u_{i}\sim Normal(0,V_I)$.
 
 
-Variance components
-========================================================
-
+Random effects are cool because:
+* More efficient than estimating many independent fixed effects
+* Avoid distration from many coefficients and p-values
+* Test effect of grouping variable as one parameter
+* Variance components biologically interesting (e.g. repeatability $V_I/(V_I+V_R)$)
 
 
 Testing random effects significance
@@ -229,7 +288,28 @@ type: section
 
 Likelihood Ratio Test (LRT)
 ========================================================
+class: small-code
 
+Comparison of two nested models. Ratio of likelihood $\sim \chi^2$
+
+
+```r
+thornLMM <- lmer(response ~ predictor + (1|block), data = thorns)
+thornLM <- lm(response ~ predictor, data = thorns)
+anova(thornLMM, thornLM) # the mixed model MUST GO FIRST
+```
+
+```
+Data: thorns
+Models:
+thornLM: response ~ predictor
+thornLMM: response ~ predictor + (1 | block)
+         Df    AIC    BIC   logLik deviance  Chisq Chi Df Pr(>Chisq)    
+thornLM   3 223.50 231.31 -108.749   217.50                             
+thornLMM  4 172.05 182.47  -82.027   164.05 53.445      1   2.66e-13 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
 
 
 
@@ -287,11 +367,20 @@ Same problem with AIC/BIC: count only half a parameter per random effect
 
 NB: it is more complicated with random interactions; but the rule is to count half a parameter by variance parameter
 
-Should you test and remove non-significant random effects?
+Test / remove non-significant random effects?
 ========================================================
+incremental: true
 
+**Test ?**
 
+* Yes if effect of interest
+* Maybe if only a nuisance parameter
 
+**Remove ?**
+
+* Probably should keep if part of exp. design
+* Doesn't matter much if non-significant
+* Maybe remove if too many variables in exploratory analyses
 
 Beyond the random intercept
 ========================================================
@@ -299,6 +388,27 @@ type: section
 
 Random interactions, random slopes...
 ========================================================
+
+![plot of chunk unnamed-chunk-24](IntroToMixedModelsSlides-figure/unnamed-chunk-24-1.png)
+
+Random interactions, random slopes...
+========================================================
+
+![plot of chunk unnamed-chunk-25](IntroToMixedModelsSlides-figure/unnamed-chunk-25-1.png)
+
+Random interactions, random slopes...
+========================================================
+
+"Random interaction" predictor:block = "random slope" = "random regression"
+
+```r
+lmer(response ~ 1 + predictor + (1+predictor|block), data=thorns)
+```
+
+Blocks allowed to differ in intercept and slopes
+
+Fits 2 variances and 1 covariance
+
 
 
 Package demonstration
