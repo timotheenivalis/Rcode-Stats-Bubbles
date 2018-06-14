@@ -13,3 +13,4 @@ Navigate the different topics with the folders above, or with the following link
 * 8. [Structural Equation Modeling](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/08.sem)
 * 9. [Generalized Linear Models (GLMs)](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/09.glmm_part1)
 * 10. [Power analysis and mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/10.Power_lmm)
+* 11. [Linear mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/11.MixedModels)
