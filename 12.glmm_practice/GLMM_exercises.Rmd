@@ -1,0 +1,14 @@
+---
+title: "R Notebook"
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: true
+---
+
+## Snow vole dataset
+
+For these exercises we will use some (non-random) published data, freely available from the Dryad repository:
+Bonnet, T & Postma, E (2018). Data from: Fluctuating selection and its (elusive) evolutionary consequences in a wild rodent population. Dryad Digital Repository. [https://datadryad.org//resource/doi:10.5061/dryad.6767m](https://datadryad.org//resource/doi:10.5061/dryad.6767m).
+
+We will use only the file "Phenotypic data" or "YearPheno.txt".
