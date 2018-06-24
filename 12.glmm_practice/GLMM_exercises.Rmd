@@ -1,14 +1,52 @@
 ---
 title: "R Notebook"
-output: 
-  html_notebook: 
+output:
+  html_document:
+    df_print: paged
     toc: yes
-    toc_float: true
+    toc_float: yes
+  html_notebook:
+    toc: yes
+    toc_float: yes
 ---
 
-## Snow vole dataset
+## Introduction to the snow vole dataset
 
-For these exercises we will use some (non-random) published data, freely available from the Dryad repository:
+For these exercises we will use some published data, freely available from the Dryad repository:
 Bonnet, T & Postma, E (2018). Data from: Fluctuating selection and its (elusive) evolutionary consequences in a wild rodent population. Dryad Digital Repository. [https://datadryad.org//resource/doi:10.5061/dryad.6767m](https://datadryad.org//resource/doi:10.5061/dryad.6767m).
 
+For some context, these data are from the long-term monitoring of a population of snow voles (_Chionomys nivalis_) in the Swiss Alps.
+
+![A young snow vole. Picture by T. Bonnet](brain.jpg)
+
+
+
 We will use only the file "Phenotypic data" or "YearPheno.txt".
+
+What exactly the variables are is not crucial, but will help make sense of the exercises:
+
+* ID: focal individual unique identifier
+* animal: duplicate of ID to fit relatedness matrices in animal model
+* Mother: mother of the focal individual
+* Year: year of measurement
+* Sex: Female or male
+* Age: Juvenile or adult
+* BMI: Body mass index. Check the publication for details
+* RJst: Standardized relative Julian day 
+* RJ2st: Squared Standardized relative Julian day
+* Phi and PhiZ: survival to the next year (duplicated for historical reasons)
+* RhoZ: reproduction on the next year
+* FitnessZ: RhoZ + 2Phi. Check the publication for details
+* GGImm: proportion of assumed immigrant ancestry used to fit genetic groups. Check the publication for details
+* BMIst: BMI standardized within years
+* BMI1 and BMI2: BMI in years of positive or negative selection.
+
+## Understanding the data
+
+## Linear models
+
+## Generalized linear models
+
+## Mixed models
+
+## Generalized linear mixed models
