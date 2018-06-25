@@ -9,6 +9,9 @@ output:
     toc: yes
     toc_float: yes
 ---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE, eval = TRUE, results = "hide")
+```
 
 ## Introduction to the snow vole dataset
 
@@ -23,7 +26,7 @@ For some context, these data are from the long-term monitoring of a population o
 
 We will use only the file "Phenotypic data" or "YearPheno.txt".
 
-What exactly the variables are is not crucial, but will help make sense of the exercises:
+What exactly the variables are is not crucial, but having a vague idea will help you make sense of the exercises:
 
 * ID: focal individual unique identifier
 * animal: duplicate of ID to fit relatedness matrices in animal model
@@ -31,22 +34,151 @@ What exactly the variables are is not crucial, but will help make sense of the e
 * Year: year of measurement
 * Sex: Female or male
 * Age: Juvenile or adult
-* BMI: Body mass index. Check the publication for details
+* BMI: Body mass index.
 * RJst: Standardized relative Julian day 
 * RJ2st: Squared Standardized relative Julian day
 * Phi and PhiZ: survival to the next year (duplicated for historical reasons)
 * RhoZ: reproduction on the next year
 * FitnessZ: RhoZ + 2Phi. Check the publication for details
-* GGImm: proportion of assumed immigrant ancestry used to fit genetic groups. Check the publication for details
+* GGImm: proportion of assumed immigrant ancestry used to fit genetic groups.
 * BMIst: BMI standardized within years
 * BMI1 and BMI2: BMI in years of positive or negative selection.
 
-## Understanding the data
+## Exercise 1: Understanding the data
 
-## Linear models
+### 1.1 Load the data
+* **Load YearPheno.txt into R using one line of code, then look at the summary() of the dataset**
+_There are several ways to do that, just be sure you get proper column names (if summary returns variable names V1, V2... then you need to change an option in the function you use to load the data)_
 
-## Generalized linear models
+* **How many missing values are there for the variable BMI ?**
 
-## Mixed models
+```{r}
+yp <- read.table(file = "YearPheno.txt", header = TRUE)
 
-## Generalized linear mixed models
+summary(yp)
+```
+
+### 1.2 Visualize the main variables
+We are mainly interested in the relationship between BMI (a body mass index) and Phi, RhoZ and FitnessZ (all three measures of Darwinian individual fitness).
+
+* **Visualize the pairwise-relationships between all four variables.**
+_You may use many approaches, have all relationships in one plot or in multiple plots._
+```{r, eval=FALSE}
+plot(yp[,c("BMI", "Phi", "RhoZ","FitnessZ")])
+```
+
+* **Three of the four variables are visibly correlated to each other, which ones?**
+
+* **What type of data are the variables? Continuous, discrete, binary, integer...**
+
+* **What values can FitnessZ take? How does it differ from RhoZ?**
+__The functions table() and hist() may be useful here__
+
+```{r, eval=FALSE}
+table(yp$RhoZ)
+table(yp$FitnessZ)
+hist(yp$FitnessZ)
+```
+
+## Exercise 2: Linear models
+
+### 2.1 BMI, age and sex
+**Fit linear models to try and answer the following questions:**
+
+* **Does BMI differ between males and females?**
+* **Does BMI differ between adults and juveniles?**
+* **Is the age difference in BMI sex specific? (that is, is there an interaction sex-by-age?)**
+
+```{r}
+summary(lm(BMI ~ 1 +  Sex, data = yp ))
+summary(lm(BMI ~ 1 +  Age, data = yp ))
+summary(lm(BMI ~ 1 +  Sex*Age, data = yp ))
+```
+
+* **Check the diagnostic graphes of your models (using plot(lm(...))). What do you see? Why? Is it okay?**
+
+* **Make a graph representing expected BMI for the four age-sex-classes (Female-J, Female-A, Male-J, Male-A).**
+* **Add standard errors onto the graph.**
+_(Here you may use one of your linear model to achieve these tasks, or work directly with raw data. Try both!)_
+
+### 2.2 Effect of date
+
+* **RJst is a standardized version of date (within a year). How does BMI change through a year?**
+* **Is it the same for all ages and sexes?**
+* **Show the effect(s) of date on BMI graphically.**
+
+```{r}
+summary(lm(BMI ~ 1 + RJst * Sex*Age, data = yp ))
+
+```
+
+### 2.3 Time trend in BMI?
+
+* **Fit a linear model to see if BMI has changed through years (using the variable Year).**
+
+* **Then add Age and Sex to your model (and optionally their interaction, as well as RJst). What is the effect of Year? How could you interpret the difference with the previous model?**
+
+```{r}
+summary(lm(BMI ~ 1 + Year + Sex+Age, data = yp ))
+summary(lm(BMI ~ 1 + Year, data = yp ))
+```
+
+### 2.4 Assumptions
+
+* **What assumptions of linear models may have been violated in all of the previous models? What to do about it?**
+_Hint: wikipedia knows what the assumptions of linear models are in case you don't remember. It may not be expressed in an easy language, but it is very useful to train yourself to read it._
+
+## Exercise 3 Mixed models
+### 3.1 Fit a Linear Mixed Model
+
+* **Use the package lme4 (or another one you prefer) to fit ID as a random effect in a model of BMI (also include fixed effects: Age, Sex, RJst and appropriate interactions).**
+* **What is the estimated variance among individuals.**
+* **Test the statistical significance of the random effect using a likelihood ratio test.**
+* **What is the individual repeatability of BMI? How does the value change if you include or do not include Sex in the model? Why?**
+* **Estimate confidence intervals for the variance components (the function confint() would work for lme4)**
+
+```{r}
+library(lme4)
+summary(lmer(BMI ~ 1 + Sex*Age*RJst + (1|ID), data=yp))
+```
+
+### 3.2 Crossed-random effects
+* **Fit Year and ID as random effects. Is there more variation associated to Year or to ID?**
+* **Make hypotheses for what mechanisms are behind these variance components.**
+
+```{r}
+summary(lmer(BMI ~ 1 + Sex*Age*RJst + (1|ID) + (1|Year), data=yp))
+summary(lmer(BMI ~ 1 + Sex*Age*RJst + (1|ID) + (1|animal), data=yp))
+summary(lmer(BMI ~ 1 + Sex*Age*RJst + (1|Year), data=yp))
+```
+
+* **Fit "ID"" and "animal" as random effects. How to interpret the variance components? Is this model useful?**
+
+## Exercise 4 Generalized linear models
+
+### 4.1 From LM to GLM
+* **Up until now, among our four variables of interest, we have worked only with BMI. Why not to do a linear model with Phi, RhoZ, or FitnessZ?**
+* **Try a linear model with Phi (which is survival) as the response, RJst (which is date) as a predictor. Check the model summary, the model diagnostic, and make a graph of the model prediction... what is wrong?**
+
+### 4.2 Logistic regression
+* **Use logistic regressions (binomial GLMs) to test the effect of Age on Phi (survival probability).**
+* **Use your models to predict the survival probability of adults and that of juveniles.**
+* **Add BMI to the model. What is the effect of BMI?**
+* **Make a graph of survival probability as a function of BMI.**
+
+```{r}
+summary(glm(Phi ~ 1 + Age*Sex + BMI, data=yp, family = "binomial"))
+```
+
+### 4.3 RhoZ
+
+* **What type of GLM could you use for the variable RhoZ?**
+* **What is the effect of BMI on RhoZ?**
+
+
+## Exercise 5 Generalized linear mixed models
+
+```{r}
+library(lme4)
+glmer(RhoZ ~ 1 + (1|ID), data=yp, family = "poisson")
+```
