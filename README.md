@@ -14,3 +14,4 @@ Navigate the different topics with the folders above, or with the following link
 * 9. [Generalized Linear Models (GLMs)](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/09.glmm_part1)
 * 10. [Power analysis and mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/10.Power_lmm)
 * 11. [Linear mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/11.MixedModels)
+* 12. [Linear mixed models](https://github.com/timotheenivalis/Rcode-Stats-Bubbles/tree/master/12.glmm_practice)

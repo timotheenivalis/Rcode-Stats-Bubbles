@@ -84,6 +84,14 @@ setPar()
     \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
   \end{frame}
 }
+
+\section{About R-studio projects}
+
+\begin{frame}{About R-studio projects}
+Use them
+\end{frame}
+%%%%%%%%%%%%
+
 \section{The mean}
 
 \begin{frame}[fragile]{Calculating a mean: Arithmetic and assignment}

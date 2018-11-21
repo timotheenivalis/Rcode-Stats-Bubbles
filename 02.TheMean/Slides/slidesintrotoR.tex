@@ -90,32 +90,37 @@
 \begin{frame}{What R can do}
 
   \pause \begin{exampleblock}{Everything.$^{1,2}$}
-    
+
   {\tiny $1$ Except think about your science}\\
   {\tiny $2$ Occasionally in a non efficient way}
   \end{exampleblock}
-  
+
   \pause \begin{block}{What about RStudio?}
   \begin{itemize}
     \item Makes your life easier
-    \item Many handy tricks. So far we have seen:
+    \item Many handy tricks
       \begin{itemize}
-      \item Autocomplete suggestion (all alone or press tab)
-      \item Ctrl-Enter to send command to R
-      \item str() and View() objects in Environment
+        \item Autocomplete suggestion
+        \item Ctrl-Enter to send command to R
+        \item str() and View() objects in Environment
+        \item Files, packages, help selectors
+        \item Version control\dots
       \end{itemize}
     \end{itemize}
   \end{block}
+  
 \end{frame}
 %%%%%%%%%%%
+
+
 
 \AtBeginSection[]
 {
   \begin{frame}<beamer>
     \frametitle{}
-    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide] 
+    \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
   \end{frame}
-} 
+}
 \section{The mean}
 
 \begin{frame}[fragile]{Calculating a mean: Arithmetic and assignment}
@@ -161,41 +166,44 @@
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Calculating a mean: using vectors}
 
-\begin{frame}[fragile]{Calculating a mean: using vectors} % tiring to type again and again
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{1}\hlstd{)} \hlcom{# c is for concatenate}
+  \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{1}\hlstd{)} \hlcom{# c is for concatenate}
 \end{alltt}
 \begin{verbatim}
 [1] 2 3 5 1
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-  \pause
+\pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mydata} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{1}\hlstd{)} \hlcom{# save the vector}
+ \hlstd{mydata} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{1}\hlstd{)} \hlcom{# save the vector}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  \pause
-  
+\pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
- mydata <- (2,3,5,1) \hlcom{# c is missing => error!}
+  mydata <- (2,3,5,1) \hlcom{# c is missing => error!}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error: <text>:1:14: unexpected ','\\1:\ \ mydata <- (2,\\\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \textasciicircum{}}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{Error: <text>:1:15: unexpected ','\\1:\ \  mydata <- (2,\\\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textasciicircum{}}}\end{kframe}
 \end{knitrout}
-  
-  \pause
-  
-  Why bother with vectors?
+\end{frame}
+
+
+
+%%%%%%%%%%%
+
+  \begin{frame}[fragile]{Why bother with vectors?}
+  Substitution:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -207,11 +215,41 @@
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
+  Vectorized operations:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{mydata}\hlopt{*}\hlnum{5} \hlopt{+} \hlnum{2}
+\end{alltt}
+\begin{verbatim}
+[1] 12 22 27  7
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 \end{frame}
 %%%%%%%%%%%
 
+\begin{frame}[fragile]{Exercise}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlopt{-}\hlnum{5}\hlopt{:}\hlnum{20}
+\end{alltt}
+\begin{verbatim}
+ [1] -5 -4 -3 -2 -1  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17
+[24] 18 19 20
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+
 \begin{frame}[fragile]{Calculating a mean: using functions}%shortcut
-  
+
   How to use a function?
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -220,7 +258,8 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
+  Or use \textbf{tab}
 \pause
 
 \begin{knitrout}
@@ -245,25 +284,25 @@
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-  
+
 
 \end{frame}
-%%%%%%%%%%%
+%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data-frames}
 
 \begin{frame}[fragile]{Loading data}
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{data}\hlstd{(}\hlstr{"trees"}\hlstd{)}
+  \hlstd{trees} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"trees.csv"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
   \pause
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -272,18 +311,18 @@
 \begin{verbatim}
 'data.frame':	31 obs. of  3 variables:
  $ Girth : num  8.3 8.6 8.8 10.5 10.7 10.8 11 11 11.1 11.2 ...
- $ Height: num  70 65 63 72 81 83 66 75 80 75 ...
+ $ Height: int  70 65 63 72 81 83 66 75 80 75 ...
  $ Volume: num  10.3 10.3 10.2 16.4 18.8 19.7 15.6 18.2 22.6 19.9 ...
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-  
+
   Try also \texttt{summary}, \texttt{class}, \texttt{head}, \texttt{tail}
 \end{frame}
 %%%%%%%%%%%
 
 \begin{frame}[fragile]{Access}
-  
+
   \begin{block}{Bracket-syntax}
     \begin{itemize}
       \item Row: dataframe[row, ]
@@ -291,7 +330,7 @@
       \item Element: dataframe[row, column]
     \end{itemize}
   \end{block}
-  
+
   \pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -303,14 +342,14 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \begin{block}{Dollar-syntax}
     \begin{itemize}
       \item Column \verb+ dataframe$column_name +
       \item Element \verb+ dataframe$column_name[row] +
     \end{itemize}
   \end{block}
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -321,23 +360,17 @@
 \end{frame}
 %%%%%%%%%%%
 
-\begin{frame}[fragile]{Finally time to think a tiny bit!}
-  \begin{center}
-    \includegraphics[width=0.3\textwidth]{Figures/brain}
-  \end{center}
-\centering
+\begin{frame}{Time to think a tiny bit!}
+
   \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
-  
+
 \end{frame}
 %%%%%%%%%%%
 
 \begin{frame}[fragile]{Solution for one column}
-  \begin{center}
-    \includegraphics[width=0.3\textwidth]{Figures/brain}
-  \end{center}
-\centering
+
   \textbf{Calculate the mean for all three variables in trees,\\ excluding the last (31st) record.}
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -367,6 +400,8 @@
 \end{frame}
 %%%%%%%%%%%
 
+\section{For-loop}
+
 \begin{frame}[fragile]{How to get the row means? For-loops}
 
 \begin{knitrout}
@@ -379,7 +414,7 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -392,24 +427,24 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
 \end{frame}
 %%%%%%%%%%%
 
 \begin{frame}[fragile]{For-loops: your turn!}
 
-Load rock data.
+Load rock data
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{data}\hlstd{(}\hlstr{"rock"}\hlstd{)}
+\hlstd{rock} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"rock.csv"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \centering
 \textbf{\large Use a for loop to obtain column averages}
-  
+
 \end{frame}
 %%%%%%%%%%%
 
@@ -420,14 +455,14 @@ Load rock data.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-  \hlkwd{data}\hlstd{(}\hlstr{"rock"}\hlstd{)}
+\hlstd{rock} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"rock.csv"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \centering
 \textbf{\large Use a for loop to obtain column averages}
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -450,9 +485,9 @@ Load rock data.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \pause
-  
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -473,9 +508,9 @@ Load rock data.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \pause
-  
+
   \begin{alertblock}{Trade-off concision  / flexibility}
     \begin{itemize}
       \item colMeans shortest, but does only means
@@ -484,10 +519,50 @@ Load rock data.
       \item (NB: your computer does a for-loop whether you see it or not)
     \end{itemize}
   \end{alertblock}
-  
+
 \end{frame}
 %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{While-loop}
+
+\begin{frame}[fragile]{While-loop: idea}
+Less common than for-loops\\
+Stop the loop after a condition is met\\
+
+
+  
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{What is the smallest reproductive rate necessary to obtain a growing population?}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(popbio)}
+\hlstd{mat} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0.8}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{0}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlkwd{lambda}\hlstd{(mat)}
+\end{alltt}
+\begin{verbatim}
+[1] 0.8944272
+\end{verbatim}
+\begin{alltt}
+\hlstd{cond} \hlkwb{<-} \hlnum{1}
+\hlkwa{while}\hlstd{(}\hlkwd{lambda}\hlstd{(mat)} \hlopt{<} \hlnum{1} \hlstd{)}
+\hlstd{\{}
+  \hlstd{mat[}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{mat[}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{]}\hlopt{+}\hlnum{0.001}
+\hlstd{\}}
+\hlstd{mat[}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+[1] 1.251
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
 
 \section{Visualisation}
 
@@ -602,7 +677,7 @@ Load rock data.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   \pause
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -624,7 +699,7 @@ mean of x mean of y
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-  
+
 \end{frame}
 %%%%%%%%%%%
 
@@ -636,7 +711,7 @@ mean of x mean of y
   \hlkwd{boxplot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlnum{7}\hlopt{:}\hlnum{20}\hlstd{)} \hlopt{~} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{10}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{14}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-27-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-31-1} 
 
 \end{knitrout}
 \end{frame}
@@ -645,7 +720,7 @@ mean of x mean of y
 \begin{frame}[fragile]{Are irises different?}
 
   \textbf{Use t-tests to compare species in the iris dataset}
-  
+
   \begin{center}
     \includegraphics[height=0.6\textwidth]{Figures/iris}
   \end{center}
@@ -655,7 +730,7 @@ mean of x mean of y
 \begin{frame}[fragile]{Are irises different? Solution}
 
   \textbf{Use t-tests to compare species in the iris dataset}
-  
+
   Sorry, I was mean and forgot to tell about subsetting, which you needed here.\\
   Subset to the species \textit{setosa}:
 \begin{knitrout}
@@ -665,7 +740,7 @@ mean of x mean of y
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
+
   One t-test for sepal length between \textit{setosa} and \textit{versicolor}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
@@ -675,8 +750,8 @@ mean of x mean of y
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-  
-  
+
+
 \end{frame}
 %%%%%%%%%%%
 
