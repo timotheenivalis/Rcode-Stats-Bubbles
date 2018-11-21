@@ -1,0 +1,203 @@
+\documentclass[12pt,a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+%\usepackage{silence}
+\usepackage{mdframed}
+%\WarningFilter{mdframed}{You got a bad break}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{color}
+\colorlet{exampcol}{blue!10}
+\usepackage{multicol}
+\usepackage{booktabs}
+
+\usepackage[autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=black
+}
+
+\title{A minimalist introduction to R}
+\date{\today}
+\author{Timothée Bonnet}
+
+
+\begin{document}
+
+
+\maketitle
+
+\tableofcontents
+
+\section{Math operators}
+
+\subsection{What you need to know}
+Below we demonstrate the use of some basic mathematical operators:
+<<mathope>>=
+1+3 #addition
+5-2 #substraction
+6*4 #multiplication
+14/2 #division
+2^3 #exponent
+2**3 #other version for exponent
+@
+
+There are many mathematical functions already present in R:
+<<mathfun>>=
+exp(3) #exponential
+log(2.71) #logarithm
+sqrt(9) #square root
+9 ^ (1/2) # other version for square root
+
+#trigonometric functions :
+#(use ";" for several expressions on the same line)
+sin(pi/2); cos(1); tan(pi/3) 
+@
+
+\subsection{Practice}
+
+Use R to compute:
+$$
+  y = (\cos (0.1\pi))^3
+$$
+You should get \Sexpr{cos(0.1*pi) ^ 3}
+
+And:
+$$
+  y = \log (3-2) + 5
+$$
+You should get \Sexpr{log(3-2) +5}
+
+And if you dare:
+$$
+  y = \frac{1}{2\sqrt{2\pi}} e^{(\frac{3-\pi}{2})^2}
+$$
+
+You should get \Sexpr{(1/(2*sqrt(2*pi))) * exp(((3-pi)/2)^2)}
+
+\section{Logical operators}
+
+\subsection{What you need to know}
+
+Logical operators are very important for programming and scripting.
+You can test whether two things are equal with double = signs:
+<<logop>>=
+3 == 6/2 #is 3 equal to 6/2? TRUE!
+3 == pi  # FALSE!
+@
+
+You can also test if they are NOT equal with the operator \texttt{!=}:
+<<>>=
+2 != 3
+2 != 2
+@
+
+The \texttt{!} symbol means "not" in general, so you can use it to get the opposite result:
+<<>>=
+!TRUE
+!FALSE
+@
+
+The AND operator is \texttt{\&}
+<<>>=
+2 == 2 & 3==3
+2 ==2 & 3==2
+@
+
+The OR operator is \texttt{\textbar}
+<<>>=
+2 == 2 | 3==2
+2 == 4 | 3==2
+@
+
+
+\subsection{Practice}
+
+Try and guess the result of these logical tests before running them:
+
+<<eval=FALSE>>=
+! 1==2
+(1!=2 | 3==4) & (2==4/2)
+"abc" != "bc" 
+@
+
+\section{Assignment}
+\subsection{What you need to know}
+
+Values can be assigned to objects to store them and make your code flexible. You assign a value to an object using the operator \verb+ <- + (or \verb+ = +, but be careful not to confuse this with the \verb+ == + used in tests).
+
+<<>>=
+#You can use objects in calculation
+a <- 12
+a + 2
+
+# you can assign an object value to another object
+b <- a
+c <- a*b
+
+# you can re-assign an object
+a <- "c"
+b <- "c"
+a == b
+c <- a == "b"
+c
+@
+
+\begin{Containers}
+
+\subsection{Vectors}
+The simplest container is a vector.
+A flexible way to create a vector by \textit{concatenating} several values with the syntax \verb+ c(x,y,...)+.
+
+<<>>=
+a <- c(3,9,3,5) # c is for concatenate
+a
+@
+
+You can now do calculations on your vector:
+
+<<>>=
+a * 2
+@
+
+You can access one or several elements in the vector using squared brackets
+<<>>=
+#access one value
+a[1]
+a[2]
+
+#access multiple values by concatenating locations
+a[c(1,3)]
+
+#access mutiple successive values
+a[2:4]#the syntax x:y means "all integers between x and y"
+
+#modify a value
+a[3] <- -5
+a
+
+#modify mutiple values
+a[1:2] <- 1
+a
+@
+
+Load rock data
+  <<>>=
+  rock <- read.csv("rock.csv")
+  @
+  
+
+\textbf{\large Use a for loop to obtain column averages}
+  
+
+
+
+\end{document}
