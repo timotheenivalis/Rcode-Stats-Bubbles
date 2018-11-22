@@ -121,6 +121,14 @@
     \tableofcontents[currentsection,hideothersubsections,subsectionstyle=hide]% down vote\tableofcontents[currentsection,currentsubsection,hideothersubsections,sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
   \end{frame}
 }
+
+\section{About R-studio projects}
+
+\begin{frame}{About R-studio projects}
+Use them
+\end{frame}
+%%%%%%%%%%%%
+
 \section{The mean}
 
 \begin{frame}[fragile]{Calculating a mean: Arithmetic and assignment}
@@ -410,12 +418,53 @@
   \hlkwd{for} (i in 1:N)
   \{
     something as a function of i
-  \}
+  \}\hlcom{#end of the loop}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
   \pause
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{31}\hlstd{)}
+  \hlstd{\{}
+    \hlkwd{print}\hlstd{(i)}
+  \hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to get the row means? For-loops}
+
+Start by buiding the code for 1 iteration (1 "i" value, e.g., 22):
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{(}\hlkwd{as.numeric}\hlstd{(trees[}\hlnum{22}\hlstd{,]))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\pause 
+We will want to store the result somewhere:
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlstd{ResultMean} \hlkwb{<-} \hlkwd{vector}\hlstd{()} \hlcom{# we will store the results there}
+  \hlstd{ResultMean[}\hlnum{22}\hlstd{]} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{as.numeric}\hlstd{(trees[}\hlnum{22}\hlstd{,]))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \pause
+  
+Now change 22 to "i" and write a loop around:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -530,7 +579,16 @@ Load rock data.
 Less common than for-loops\\
 Stop the loop after a condition is met\\
 
-
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{while}(condition TRUE)
+    \{
+      something
+    \}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
   
 \end{frame}
 %%%%%%%%%%%
@@ -562,6 +620,61 @@ Stop the loop after a condition is met\\
 
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{But think twice before running a while loop\dots}
+  
+What happens if you run:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x} \hlkwb{<-} \hlnum{1}
+\hlkwa{while}\hlstd{(x}\hlopt{>}\hlnum{0}\hlstd{)}
+\hlstd{\{}
+  \hlstd{x} \hlkwb{<-} \hlstd{x} \hlopt{+} \hlnum{1}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Looking for a rare event}
+
+The function sample() takes 5 number between 1 and 6 (like 5 dice!):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwc{x} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{6}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{5}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Are all die equal?
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{all}\hlstd{(x} \hlopt{==} \hlstd{x[}\hlnum{1}\hlstd{])}
+\end{alltt}
+\begin{verbatim}
+[1] FALSE
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Are they ever going to be equal?
+Write a while loop to find a case
+
+
+\end{frame}
+%%%%%%%%%%%%
+
+\section{If-else statements}
+
+\begin{frame}{If-else}
+
+\end{frame}
+
 
 
 \section{Visualisation}
@@ -711,7 +824,7 @@ mean of x mean of y
   \hlkwd{boxplot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlnum{7}\hlopt{:}\hlnum{20}\hlstd{)} \hlopt{~} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{10}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{14}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-31-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-38-1} 
 
 \end{knitrout}
 \end{frame}

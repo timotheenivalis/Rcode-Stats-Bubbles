@@ -269,10 +269,39 @@ Use them
     for (i in 1:N)
     {
       something as a function of i
-    }
+    }#end of the loop
   @
 
   \pause
+  <<eval = FALSE>>=
+    for (i in 1:31)
+    {
+      print(i)
+    }
+  @
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{How to get the row means? For-loops}
+
+Start by buiding the code for 1 iteration (1 "i" value, e.g., 22):
+
+    <<eval = FALSE>>=
+    mean(as.numeric(trees[22,]))
+  @
+
+\pause 
+We will want to store the result somewhere:
+  
+    <<eval = FALSE>>=
+  ResultMean <- vector() # we will store the results there
+  ResultMean[22] <- mean(as.numeric(trees[22,]))
+  @
+  
+  \pause
+  
+Now change 22 to "i" and write a loop around:
     <<eval = FALSE>>=
     ResultMean <- vector() # we will store the results there
     for (i in 1:31)
@@ -360,7 +389,10 @@ Less common than for-loops\\
 Stop the loop after a condition is met\\
 
 <<eval=FALSE>>=
-    
+    while(condition TRUE)
+    {
+      something
+    }
   @
   
 \end{frame}
@@ -381,6 +413,91 @@ mat[1,2]
 
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{But think twice before running a while loop\dots}
+  
+What happens if you run:
+<<eval=FALSE>>=
+x <- 1
+while(x>0)
+{
+  x <- x + 1
+}
+@
+
+\end{frame}
+%%%%%%%%%%%
+
+\begin{frame}[fragile]{Looking for a rare event}
+
+The function sample() takes 5 number between 1 and 6 (like 5 dice!):
+<<>>=
+x <- sample(x = 1:6, size = 5, replace = TRUE)
+@
+
+Are all die equal?
+<<>>=
+all(x == x[1])
+@
+
+Are they ever going to be equal?
+Write a while loop to find a case
+<<eval=FALSE, echo=FALSE>>=
+condition <- TRUE
+howlong <- 0
+while(condition)
+{
+  x <- sample(x = 1:6, size = 5, replace = TRUE)
+  condition <- !all(x == x[1])
+  howlong <- howlong + 1
+}
+howlong
+x
+@
+
+\end{frame}
+%%%%%%%%%%%%
+
+\section{If-else statements}
+
+\begin{frame}[fragile]{If-else statements}
+
+<<eval=FALSE>>=
+if(condition)
+{
+  do something
+}
+@
+
+
+<<eval=FALSE>>=
+if(condition)
+{
+  do something
+}else{
+  do something else
+}
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{If-else statements}
+
+For instance:
+<<eval=FALSE>>=
+for (i in 1:10)
+{
+  if(i < 6)
+  {
+    print("tofu")
+  }else{
+    print("bacon")
+  }
+}
+
+@
+\end{frame}
+
 
 
 \section{Visualisation}

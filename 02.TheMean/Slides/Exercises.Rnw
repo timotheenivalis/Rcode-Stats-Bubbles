@@ -27,7 +27,7 @@
 
 \title{A minimalist introduction to R}
 \date{\today}
-\author{Timothée Bonnet}
+\author{Timoth\'ee Bonnet}
 
 
 \begin{document}
@@ -59,7 +59,7 @@ sqrt(9) #square root
 
 #trigonometric functions :
 #(use ";" for several expressions on the same line)
-sin(pi/2); cos(1); tan(pi/3) 
+sin(pi/2); cos(1); tan(pi/3)
 @
 
 \subsection{Practice}
@@ -126,7 +126,7 @@ Try and guess the result of these logical tests before running them:
 <<eval=FALSE>>=
 ! 1==2
 (1!=2 | 3==4) & (2==4/2)
-"abc" != "bc" 
+"abc" != "bc"
 @
 
 \section{Assignment}
@@ -151,12 +151,12 @@ c <- a == "b"
 c
 @
 
-\begin{Containers}
+\section{Containers}
 
 \subsection{Vectors}
 The simplest container is a vector.
 A flexible way to create a vector by \textit{concatenating} several values with the syntax \verb+ c(x,y,...)+.
-
+ 
 <<>>=
 a <- c(3,9,3,5) # c is for concatenate
 a
@@ -189,15 +189,170 @@ a[1:2] <- 1
 a
 @
 
+
+\section{For-loop}
+
+\subsection{What you need to know}
+
+A for loop follows the basic structure:
+  <<eval = FALSE>>=
+    for (i in 1:N)
+    {
+      something as a function of i0
+    }#end of the loop
+  @
+
+1:N means all the integer values between 1 and 10.
+
+Instead of "i" you can write anything
+
+For instance:
+  <<eval = TRUE>>=
+    for (i in 1:10)
+    {
+      print(i)
+    }
+  @
+
+\subsection{Practice}
+
+\subsubsection{Calculate averages}
 Load rock data
   <<>>=
   rock <- read.csv("rock.csv")
   @
-  
+
 
 \textbf{\large Use a for loop to obtain column averages}
+
+\subsubsection{Matrix operations}
+
+We create two random matrices:
+<<>>=
+Mat1 <- matrix(rnorm(9), nrow = 3)
+Mat2 <- matrix(rnorm(9), nrow = 3)
+@
+
+We would like to add these two matrices to create third matrix. We initialize it with empty values:
+<<>>=
+MatAdd <- matrix(NA, nrow = 3, ncol = 3)
+@
+
+\textbf{Write a for-loop to fill the cells following $MatAdd_{ij}= Mat1_{ij}+Mat2_{ij}$.}
+
+\textbf{Do the same with two nested for-loops!}
+
+
+Now, we would like to multiply the two matrices.
+The inner product of matrices $V$ and $U$ to create matrix $W$ is defined by $w_{ij} = \sum_{k=1}^{k=m} v_ik * u_kj $
+
+For instance, the first cell is calculated as:
+<<>>=
+Mat1[1,1]*Mat2[1,1]+Mat1[1,2]*Mat2[2,1]+Mat1[1,3]*Mat2[3,1]
+@
+
+\textbf{Write nested for-loops to calculate the matrix $W$.}
+
+
+NB: you can check the result by using the R command \verb+%*%+:
+<<eval=FALSE>>=
+Mat1 %*% Mat2
+@
+
+\section{While-loop}
+
+\subsection{What you need to know}
+<<eval=FALSE>>=
+    while(condition TRUE)
+    {
+      something
+    }
+  @
   
+For instance:
+<<eval=TRUE>>=
+x <- 0
+while(x<10)
+    {
+      x <- x+1
+      print(x)
+    }
+  @
+  
+  
+\subsection{Practice}
+
+The function sample() takes 5 number between 1 and 6 (like 5 dice!):
+<<>>=
+x <- sample(x = 1:6, size = 5, replace = TRUE)
+@
+
+Are all die equal?
+<<>>=
+all(x == x[1])
+@
+
+Are they ever going to be equal?
+
+\textbf{Write a while loop to find a case with all die equal}
+
+\textbf{How many attempts does it take}
+
+\textbf{Write a for while loop within a for loop to estimate how long it take on average.}
 
 
+\section{If-else statement}
+
+\subsection{What you need to know}
+
+<<eval=FALSE>>=
+if(condition)
+{
+  do something
+}
+@
+
+
+<<eval=FALSE>>=
+if(condition)
+{
+  do something
+}else{
+  do something else
+}
+@
+
+
+For instance:
+<<>>=
+for (i in 1:10)
+{
+  if(i < 6)
+  {
+    print("tofu")
+  }else{
+    print("bacon")
+  }
+}
+
+@
+
+\subsection{Practice}
+
+We can draw 100 random number following a random distribution of mean 0 and variance one with:
+<<>>=
+x <- rnorm(n = 100, mean = 0, sd = 1)
+@
+
+If we take their logarithm we obtain many "NaN" (Not A Number), because the log of a negative number is undefined:
+<<>>=
+log(x)
+@
+
+Let's say we want 0 instead of NaN.
+
+\textbf{Use a for loop and an if-else statement to do that.}
+
+\textbf{More difficult: Use a for loop and a while loop to re-draw random numbers until they are all positive.}
 
 \end{document}
