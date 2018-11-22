@@ -189,6 +189,23 @@ a[1:2] <- 1
 a
 @
 
+Some useful ways to create vectors:
+<<>>=
+#successive integers:
+1:10
+
+#arbitrary sequence:
+seq(from=-0.2, to = 0.5, by=0.03)
+
+#random numbers:
+runif(n = 4, min = 1, max = 5)
+@
+
+\subsection{Practice}
+
+\textbf{Create a vector of 100 random numbers between -1 and 1. Then subsitute all values below -0.5 by 0.}
+
+\textbf{Create a sequence of number between 0 and 10. Find a way to repeat the sequence 50 times and save the result to a vector.}
 
 \section{For-loop}
 

@@ -380,6 +380,25 @@ Load rock data.
 
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{The last value}
+
+Sometimes a function takes very long to run\\
+<<eval=FALSE>>=
+    rowMeans(rock[rep(1:nrow(rock),100000),])
+@
+\pause
+What if you forgot to save the output to an object??
+
+\pause 
+
+<<>>=
+ourlasthope <- .Last.value
+@
+
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{While-loop}
@@ -480,6 +499,7 @@ if(condition)
 @
 
 \end{frame}
+%%%%%%%%%%%%
 
 \begin{frame}[fragile]{If-else statements}
 
@@ -497,7 +517,7 @@ for (i in 1:10)
 
 @
 \end{frame}
-
+%%%%%%%%%%%
 
 
 \section{Visualisation}

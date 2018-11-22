@@ -571,6 +571,33 @@ Load rock data.
 
 \end{frame}
 %%%%%%%%%%%
+
+\begin{frame}[fragile]{The last value}
+
+Sometimes a function takes very long to run\\
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlkwd{rowMeans}\hlstd{(rock[}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(rock),}\hlnum{100000}\hlstd{),])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\pause
+What if you forgot to save the output to an object??
+
+\pause 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ourlasthope} \hlkwb{<-} \hlstd{.Last.value}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{While-loop}
@@ -671,10 +698,56 @@ Write a while loop to find a case
 
 \section{If-else statements}
 
-\begin{frame}{If-else}
+\begin{frame}[fragile]{If-else statements}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{if}(condition)
+\{
+  do something
+\}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{if}(condition)
+\{
+  do something
+\}else\{
+  do something else
+\}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
+%%%%%%%%%%%%
 
+\begin{frame}[fragile]{If-else statements}
+
+For instance:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.843, 0.867, 0.922}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)}
+\hlstd{\{}
+  \hlkwa{if}\hlstd{(i} \hlopt{<} \hlnum{6}\hlstd{)}
+  \hlstd{\{}
+    \hlkwd{print}\hlstd{(}\hlstr{"tofu"}\hlstd{)}
+  \hlstd{\}}\hlkwa{else}\hlstd{\{}
+    \hlkwd{print}\hlstd{(}\hlstr{"bacon"}\hlstd{)}
+  \hlstd{\}}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+%%%%%%%%%%%
 
 
 \section{Visualisation}
@@ -824,7 +897,7 @@ mean of x mean of y
   \hlkwd{boxplot}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{,} \hlnum{7}\hlopt{:}\hlnum{20}\hlstd{)} \hlopt{~} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{10}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{14}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-38-1} 
+\includegraphics[width=0.8\textwidth,height=0.6\textwidth]{figure/unnamed-chunk-43-1} 
 
 \end{knitrout}
 \end{frame}
