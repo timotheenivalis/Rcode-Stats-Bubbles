@@ -1,4 +1,7 @@
 # Rcode-Stats-Bubbles
+
+This is the 2017-2018 Website. The material for the current workshop series is [here](https://github.com/timotheenivalis/RSB-R-Stats-Biology).
+
 Let's play with some bubbles of biological statistics in R.
 
 Navigate the different topics with the folders above, or with the following links:
